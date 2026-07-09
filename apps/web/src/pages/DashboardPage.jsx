@@ -1,144 +1,414 @@
-import { useQuery } from '@tanstack/react-query';
-import { authApi } from '../lib/authApi';
-import { Card } from '../components/ui/Card';
-import { Alert } from '../components/ui/Alert';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
+import { dashboardApi } from "../lib/dashboardApi";
+import { Card } from "../components/ui/Card";
+import { Alert } from "../components/ui/Alert";
+import { Button } from "../components/ui/Button";
+import { ViewsChart } from "../components/dashboard/ViewsChart";
+import { ActivityTimeline } from "../components/dashboard/ActivityTimeline";
+import { LeadRow } from "../components/dashboard/LeadRow";
+import { AppointmentList } from "../components/dashboard/AppointmentList";
+import { TaskChecklist } from "../components/dashboard/TaskChecklist";
 
 export function DashboardPage() {
-  const meQuery = useQuery({
-    queryKey: ['auth', 'me'],
+  const queryClient = useQueryClient();
+  const [selectedLead, setSelectedLead] = useState(null);
+
+  // 1. Fetch Dashboard Summary Data
+  const { data: summary, isLoading, isError, refetch } = useQuery({
+    queryKey: ["dashboard", "summary"],
     queryFn: async () => {
-      const response = await authApi.me();
-      return response.data.data.user;
-    }
+      const response = await dashboardApi.summary();
+      return response.data.data;
+    },
   });
 
-  const displayUser = meQuery.data;
+  // 2. Fetch Recent Activities
+  const { data: activities = [] } = useQuery({
+    queryKey: ["dashboard", "activities"],
+    queryFn: async () => {
+      const response = await dashboardApi.activity();
+      return response.data.data;
+    },
+  });
 
-  // Mock analytics stats for premium aesthetics
-  const stats = [
-    { label: "Profile Views", value: "1,280", trend: "+12.3% this week", icon: "👁️" },
-    { label: "Digital Card Shares", value: "342", trend: "+8.1% this week", icon: "🎴" },
-    { label: "Lead Conversions", value: "48", trend: "+15.4% this week", icon: "⚡" },
+  // 3. Fetch Recent Appointments
+  const { data: appointments = [] } = useQuery({
+    queryKey: ["dashboard", "appointments"],
+    queryFn: async () => {
+      const response = await dashboardApi.appointments();
+      return response.data.data;
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8 select-none animate-pulse">
+        {/* Header Skeleton */}
+        <div className="h-10 w-64 bg-white/[0.03] border border-white/[0.04] rounded-2xl" />
+        
+        {/* Stats Grid Skeleton */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {[1, 2, 3, 4].map((n) => (
+            <div key={n} className="h-28 rounded-3xl bg-white/[0.02] border border-white/[0.04]" />
+          ))}
+        </div>
+
+        {/* Main Grid Skeleton */}
+        <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
+          <div className="space-y-6">
+            <div className="h-64 rounded-3xl bg-white/[0.02] border border-white/[0.04]" />
+            <div className="h-48 rounded-3xl bg-white/[0.02] border border-white/[0.04]" />
+          </div>
+          <div className="space-y-6">
+            <div className="h-44 rounded-3xl bg-white/[0.02] border border-white/[0.04]" />
+            <div className="h-44 rounded-3xl bg-white/[0.02] border border-white/[0.04]" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="py-12 max-w-md mx-auto">
+        <Alert variant="error" title="Dashboard Error">
+          Unable to pull dashboard summaries. Please check connection and refresh.
+        </Alert>
+        <div className="mt-4 flex justify-center">
+          <Button onClick={() => refetch()}>Try Again</Button>
+        </div>
+      </div>
+    );
+  }
+
+  const {
+    user = {},
+    statistics = {},
+    viewsChart = [],
+    leadDistribution = {},
+    healthScore = 0,
+    subscription = {},
+    aiSuggestions = [],
+    tasks = [],
+    popularLinks = [],
+    todayInsights = {},
+  } = summary;
+
+  // Simple statistics rendering array
+  const statsList = [
+    { label: "Profile Views", value: statistics.profileViews, trend: "Last 30 days", icon: "👁️" },
+    { label: "Card Shares", value: statistics.cardShares, trend: "Scans & Links", icon: "🎴" },
+    { label: "CRM Leads", value: statistics.leadConversions, trend: "Inbound cards", icon: "⚡" },
+    { label: "Conversion Rate", value: `${statistics.conversionRate}%`, trend: "Funnel output", icon: "📈" },
   ];
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="space-y-8"
+      className="space-y-8 min-w-0 pb-12"
     >
-      {/* Welcome header with display name */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {/* Header bar and greeting summary */}
+      <div className="flex flex-col gap-4.5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Welcome back, {displayUser?.name ? <span className="text-gradient-brand">{displayUser.name.split(" ")[0]}</span> : "Professional"} ✨
+            Welcome, <span className="text-gradient-brand">{user.name?.split(" ")[0]}</span> 👋
           </h1>
-          <p className="text-sm text-slate-400 mt-1">Here is a summary of your digital business workspace status.</p>
+          <p className="text-xs text-slate-400 mt-1">Here is a live performance audit of your digital identity card.</p>
         </div>
 
-        {displayUser?.onboardingStatus !== "published" ? (
-          <a
-            href="/onboarding"
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-amber-500/10 border border-amber-500/25 px-4 text-xs font-bold text-amber-300 hover:bg-amber-500/15 transition-all"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-            Resume Profile Onboarding
-          </a>
-        ) : (
-          <span className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 px-3.5 text-xs font-bold text-emerald-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Profile Published
-          </span>
-        )}
+        {/* Today's quick insight tag */}
+        <div className="px-4 py-2.5 rounded-2xl bg-brand-500/[0.02] border border-brand-500/15 flex items-center gap-2 max-w-xs shrink-0 select-none">
+          <span className="text-md">💡</span>
+          <span className="text-3xs font-semibold text-slate-300 leading-snug">{todayInsights.summaryText}</span>
+        </div>
       </div>
 
-      {meQuery.isLoading ? (
-        <div className="grid gap-6 md:grid-cols-3">
-          {[1, 2, 3].map((n) => (
-            <Card key={n} className="animate-pulse h-28 bg-white/[0.01] border-white/[0.04]" />
-          ))}
-        </div>
-      ) : null}
+      {/* 1. Quick Statistics Row */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {statsList.map((stat, i) => (
+          <Card key={i} hoverEffect className="relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-brand-500/5 rounded-full blur-xl group-hover:bg-brand-500/10 transition-colors" />
+            <div className="flex items-center justify-between">
+              <span className="text-3xs font-bold uppercase tracking-wider text-slate-400">{stat.label}</span>
+              <span className="text-md">{stat.icon}</span>
+            </div>
+            <div className="text-3xl font-extrabold text-white mt-4 font-display tracking-tight">{stat.value}</div>
+            <div className="text-3xs text-slate-500 font-semibold mt-1">{stat.trend}</div>
+          </Card>
+        ))}
+      </div>
 
-      {meQuery.isError ? <Alert variant="error">Unable to load profile. Please refresh.</Alert> : null}
-
-      {displayUser ? (
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Main Account details card */}
-          <Card className="lg:col-span-2 relative overflow-hidden" hoverEffect>
-            <div className="absolute top-0 right-0 w-36 h-36 bg-brand-500/10 rounded-full blur-3xl pointer-events-none" />
-            
-            <div className="flex items-center gap-4.5">
-              <div className="h-16 w-16 rounded-3xl bg-gradient-to-tr from-brand-500 to-brand-400 p-0.5 shadow-lg">
-                <div className="h-full w-full rounded-[22px] bg-[#12141c] flex items-center justify-center text-lg font-black text-brand-400">
-                  {displayUser.name?.charAt(0).toUpperCase()}
-                </div>
-              </div>
+      {/* Main split content area */}
+      <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] items-start">
+        
+        {/* LEFT COLUMN: Charts, CRM Leads, Timelines */}
+        <div className="space-y-8 min-w-0">
+          
+          {/* Analytics Overview Widget */}
+          <Card className="space-y-6" hoverEffect={false}>
+            <div className="flex items-center justify-between border-b border-white/[0.04] pb-4">
               <div>
-                <span className="text-2xs uppercase tracking-[0.25em] text-brand-400 font-bold">Identity Profile</span>
-                <h3 className="mt-1 text-2xl font-bold text-white tracking-tight">{displayUser.name}</h3>
-                <p className="text-xs text-slate-400 mt-0.5">{displayUser.email || displayUser.phone}</p>
+                <h3 className="font-display text-md font-bold text-white tracking-tight">Profile Traffic Views</h3>
+                <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">Daily visitors (Last 7 days)</p>
               </div>
+              <span className="rounded-full bg-brand-500/10 border border-brand-500/20 px-2.5 py-0.5 text-3xs font-bold uppercase tracking-wider text-brand-400">Live</span>
             </div>
-
-            <div className="mt-8 grid gap-4 border-t border-white/[0.06] pt-6 sm:grid-cols-2">
-              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                <div className="text-xs text-slate-400 font-semibold">Account Role</div>
-                <div className="text-sm font-bold text-white mt-1 capitalize">{displayUser.role || "User"}</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                <div className="text-xs text-slate-400 font-semibold">Profile Setup Completion</div>
-                <div className="text-sm font-bold text-white mt-1 flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-brand-400" />
-                  {displayUser.onboardingProgress || 0}% Complete
-                </div>
-              </div>
+            <div className="pt-2">
+              <ViewsChart data={viewsChart} />
             </div>
           </Card>
 
-          {/* Quick Actions Card */}
-          <Card className="flex flex-col justify-between" hoverEffect>
+          {/* Recent CRM Leads Widget */}
+          <Card className="space-y-5" hoverEffect={false}>
+            <div className="flex items-center justify-between border-b border-white/[0.04] pb-4">
+              <div>
+                <h3 className="font-display text-md font-bold text-white tracking-tight">Recent Inbound Leads</h3>
+                <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">CRM inquiries captured from profile cards</p>
+              </div>
+              <a 
+                href="/identity" 
+                className="text-3xs font-bold text-brand-400 hover:underline select-none"
+              >
+                View CRM Workspace →
+              </a>
+            </div>
+
+            {/* Simulated Leads listing */}
+            <div className="space-y-3">
+              {activities.filter(a => a.type === 'lead_captured').slice(0, 4).map((activity, idx) => {
+                const mockLead = {
+                  _id: activity._id,
+                  name: activity.description.split("from ")[1] || "Lead Inquiry",
+                  email: activity.metadata?.email || "inquiry@client.com",
+                  company: activity.metadata?.company || "Corporate Customer",
+                  status: idx === 0 ? "new" : "converted",
+                  createdAt: activity.createdAt,
+                  message: activity.metadata?.message || "Requested contact presentation details."
+                };
+                return (
+                  <LeadRow 
+                    key={mockLead._id} 
+                    lead={mockLead} 
+                    onSelect={(lead) => setSelectedLead(lead)} 
+                  />
+                );
+              })}
+            </div>
+          </Card>
+
+          {/* Recent Activity Timeline Widget */}
+          <Card className="space-y-5" hoverEffect={false}>
             <div>
-              <h3 className="text-lg font-bold text-white">Identity Ecosystem</h3>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">Manage different touchpoints of your business identity from this dashboard workspace.</p>
+              <h3 className="font-display text-md font-bold text-white tracking-tight">Recent Workspace Activity</h3>
+              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">Timeline track of system operations</p>
+            </div>
+            <div className="pt-2">
+              <ActivityTimeline activities={activities} />
+            </div>
+          </Card>
+
+        </div>
+
+        {/* RIGHT COLUMN: Business Health, AI tips, Bookings, Checklist */}
+        <div className="space-y-8 shrink-0">
+          
+          {/* Business Health & Profile completion */}
+          <Card className="space-y-4 relative overflow-hidden" hoverEffect={false}>
+            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider">Business Health Score</h4>
+                <p className="text-3xs text-slate-500 mt-0.5">System calculation index</p>
+              </div>
+              <span className="text-xl">🏆</span>
             </div>
             
-            <div className="space-y-2.5 mt-6">
-              <a href="/identity" className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] text-xs font-semibold text-slate-300 hover:text-white transition-all group">
-                <span>Manage Public Profile</span>
-                <span className="group-hover:translate-x-0.5 transition-transform">→</span>
-              </a>
-              <a href="/sessions" className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] text-xs font-semibold text-slate-300 hover:text-white transition-all group">
-                <span>Security & Active Devices</span>
-                <span className="group-hover:translate-x-0.5 transition-transform">→</span>
-              </a>
+            {/* Visual radial/percentage bar */}
+            <div className="flex items-center gap-4.5 pt-2">
+              <div className="relative h-16 w-16 rounded-full border-4 border-white/[0.04] flex items-center justify-center font-display font-black text-white text-lg shadow-inner">
+                <div 
+                  className="absolute inset-0 rounded-full border-4 border-emerald-400 border-t-transparent animate-spin-slow pointer-events-none"
+                  style={{ transform: `rotate(${healthScore * 3.6}deg)` }}
+                />
+                {healthScore}%
+              </div>
+              <div className="space-y-1">
+                <div className="text-xs font-bold text-white">Status: Excellent</div>
+                <div className="text-3xs text-slate-400 leading-normal">Your digital card is fully set up, receiving views, and generating conversions.</div>
+              </div>
             </div>
           </Card>
-        </div>
-      ) : null}
 
-      {/* Mock Analytics Section */}
-      <div className="space-y-4">
-        <h3 className="font-display text-lg font-bold text-white tracking-tight">Growth Insights</h3>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {stats.map((stat, i) => (
-            <Card key={i} hoverEffect className="relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/5 rounded-full blur-2xl group-hover:bg-brand-500/10 transition-colors duration-300" />
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-400 font-semibold">{stat.label}</span>
-                <span className="text-lg">{stat.icon}</span>
+          {/* AI Suggestions Center */}
+          <Card className="space-y-4" hoverEffect={false}>
+            <div className="flex items-center gap-2">
+              <span className="text-md">✨</span>
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider">AI Suggestion Center</h4>
+            </div>
+
+            <div className="space-y-3">
+              {aiSuggestions.map((item, i) => (
+                <div key={i} className="p-3.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-2 relative overflow-hidden">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-white">{item.title}</span>
+                    <span className={`px-2 py-0.5 rounded-md text-3xs font-extrabold uppercase tracking-wide ${item.urgency === 'high' ? 'bg-red-500/10 text-red-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                      {item.urgency}
+                    </span>
+                  </div>
+                  <p className="text-2xs text-slate-400 leading-relaxed">{item.description}</p>
+                  <a 
+                    href={item.action}
+                    className="inline-block text-3xs font-bold text-brand-400 hover:underline"
+                  >
+                    Resolve Suggestion →
+                  </a>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Upcoming Appointment Bookings */}
+          <Card className="space-y-4" hoverEffect={false}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-md">📅</span>
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider">Recent Appointments</h4>
               </div>
-              <div className="text-3xl font-extrabold text-white mt-4 font-display tracking-tight">{stat.value}</div>
-              <div className="text-2xs text-emerald-400 font-semibold mt-1 flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                {stat.trend}
+              <span className="text-3xs font-bold text-slate-500 uppercase tracking-wider">2 Scheduled</span>
+            </div>
+            
+            <AppointmentList appointments={appointments} />
+          </Card>
+
+          {/* Task Checklist Widget */}
+          <Card className="space-y-4" hoverEffect={false}>
+            <div className="flex items-center gap-2">
+              <span className="text-md">📋</span>
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Profile Checklist</h4>
+            </div>
+            
+            <TaskChecklist tasks={tasks} />
+          </Card>
+
+          {/* Subscription widget */}
+          <Card className="p-5 border-brand-500/15 bg-brand-500/[0.01] relative overflow-hidden" hoverEffect={false}>
+            <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/5 rounded-full blur-2xl pointer-events-none" />
+            
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <span className="text-3xs font-bold uppercase tracking-wider text-slate-400">Subscription Tier</span>
+                <h4 className="text-md font-bold text-white mt-0.5 capitalize">{subscription.tier} plan</h4>
               </div>
-            </Card>
-          ))}
+              <span className="text-xs font-extrabold uppercase bg-brand-500/10 border border-brand-500/25 px-2.5 py-0.5 rounded-full text-brand-400">Upgrade</span>
+            </div>
+
+            <p className="text-2xs text-slate-400 leading-relaxed mb-4">
+              Your free quota allows 1 published profile card. Upgrade to unlock custom SEO domains, multi-site booking, and unlimited AI content.
+            </p>
+
+            <Button variant="secondary" className="w-full text-xs border-white/[0.08]">
+              Upgrade Plan
+            </Button>
+          </Card>
+
+          {/* Popular links listing */}
+          <Card className="space-y-4.5" hoverEffect={false}>
+            <div className="flex items-center gap-2">
+              <span className="text-md">🔗</span>
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Popular Card Links</h4>
+            </div>
+
+            <div className="space-y-3">
+              {popularLinks.map((link, i) => (
+                <div key={i} className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.01] border border-white/[0.04]">
+                  <span className="text-xs font-semibold text-slate-300 truncate max-w-[170px]">{link.title}</span>
+                  <span className="text-3xs font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-full">
+                    {link.clicks} clicks
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Card>
+
         </div>
+
       </div>
+
+      {/* CRM Lead Details Modal overlay */}
+      <AnimatePresence>
+        {selectedLead ? (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedLead(null)}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.25 }}
+              className="fixed inset-x-4 bottom-[10%] sm:bottom-auto sm:top-[20%] mx-auto z-50 max-w-md bg-[#12141c] border border-white/[0.08] rounded-[28px] p-6 shadow-2xl space-y-6"
+            >
+              <div className="flex justify-between items-start border-b border-white/[0.05] pb-4">
+                <div>
+                  <span className="text-3xs font-bold uppercase tracking-wider text-slate-500">CRM Lead Details</span>
+                  <h3 className="font-display text-xl font-bold text-white tracking-tight mt-1">{selectedLead.name}</h3>
+                  <p className="text-2xs text-slate-400 mt-0.5">{selectedLead.company || "Individual Customer"}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedLead(null)}
+                  className="h-8 w-8 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] flex items-center justify-center border border-white/[0.05] text-slate-400 hover:text-white transition-all active:scale-95"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4 text-xs">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                    <span className="text-3xs font-bold uppercase tracking-wider text-slate-500">Email Address</span>
+                    <p className="font-semibold text-white mt-1 select-all">{selectedLead.email}</p>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                    <span className="text-3xs font-bold uppercase tracking-wider text-slate-500">Phone Number</span>
+                    <p className="font-semibold text-white mt-1 select-all">{selectedLead.phone || "Not provided"}</p>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04] space-y-1.5">
+                  <span className="text-3xs font-bold uppercase tracking-wider text-slate-500">Client Message</span>
+                  <p className="leading-relaxed text-slate-300 whitespace-pre-wrap">{selectedLead.message}</p>
+                </div>
+              </div>
+
+              <div className="border-t border-white/[0.05] pt-4.5 flex gap-3">
+                <Button 
+                  variant="secondary" 
+                  className="flex-1 text-xs" 
+                  onClick={() => setSelectedLead(null)}
+                >
+                  Close Inquiry
+                </Button>
+                <a 
+                  href={`mailto:${selectedLead.email}`}
+                  className="flex-1 inline-flex min-h-11 items-center justify-center rounded-2xl px-5 py-2.5 text-xs font-bold bg-brand-500 text-white hover:bg-brand-400 shadow-glow text-center"
+                >
+                  Reply Email ✉️
+                </a>
+              </div>
+            </motion.div>
+          </>
+        ) : null}
+      </AnimatePresence>
     </motion.div>
   );
 }
