@@ -4,6 +4,7 @@ import { User } from '../models/User.js';
 import { ProfileView } from '../models/ProfileView.js';
 import { Activity } from '../models/Activity.js';
 import { ApiError } from '../utils/apiError.js';
+import { uploadLogoDataUri } from "./storage/cloudinary.service.js";
 
 /**
  * Generate a unique slug based on a user's name or company name
@@ -186,6 +187,33 @@ export async function getPublicProfile(slug, visitorIp, userAgent, referrer) {
     }
   })();
 
+  return profile;
+}
+
+export async function uploadProfileAvatar(userId, dataUri) {
+  const profile = await Profile.findOne({ userId });
+  if (!profile) {
+    throw new ApiError(404, 'Profile not found');
+  }
+  const result = await uploadLogoDataUri(dataUri);
+  
+  if (profile.profileType === 'professional') {
+    profile.avatarUrl = result.secure_url;
+  } else {
+    profile.logoUrl = result.secure_url;
+  }
+  await profile.save();
+  return profile;
+}
+
+export async function uploadProfileCover(userId, dataUri) {
+  const profile = await Profile.findOne({ userId });
+  if (!profile) {
+    throw new ApiError(404, 'Profile not found');
+  }
+  const result = await uploadLogoDataUri(dataUri);
+  profile.coverImageUrl = result.secure_url;
+  await profile.save();
   return profile;
 }
 

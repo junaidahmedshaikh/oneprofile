@@ -16,7 +16,12 @@ export function DashboardPage() {
   const queryClient = useQueryClient();
 
   // 1. Fetch Dashboard Summary Data
-  const { data: summary, isLoading, isError, refetch } = useQuery({
+  const {
+    data: summary,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["dashboard", "summary"],
     queryFn: async () => {
       const response = await dashboardApi.summary();
@@ -47,11 +52,14 @@ export function DashboardPage() {
       <div className="space-y-8 select-none animate-pulse">
         {/* Header Skeleton */}
         <div className="h-10 w-64 bg-white/[0.03] border border-white/[0.04] rounded-2xl" />
-        
+
         {/* Stats Grid Skeleton */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[1, 2, 3, 4].map((n) => (
-            <div key={n} className="h-28 rounded-3xl bg-white/[0.02] border border-white/[0.04]" />
+            <div
+              key={n}
+              className="h-28 rounded-3xl bg-white/[0.02] border border-white/[0.04]"
+            />
           ))}
         </div>
 
@@ -74,7 +82,8 @@ export function DashboardPage() {
     return (
       <div className="py-12 max-w-md mx-auto">
         <Alert variant="error" title="Dashboard Error">
-          Unable to pull dashboard summaries. Please check connection and refresh.
+          Unable to pull dashboard summaries. Please check connection and
+          refresh.
         </Alert>
         <div className="mt-4 flex justify-center">
           <Button onClick={() => refetch()}>Try Again</Button>
@@ -96,19 +105,60 @@ export function DashboardPage() {
   } = summary;
 
   // Dynamic statistics rendering array based on profileType
-  const statsList = user.profileType === "professional"
-    ? [
-        { label: "Profile Views", value: statistics.profileViews || 0, trend: "Total traffic", icon: "👁️" },
-        { label: "Card Shares", value: statistics.cardShares || 0, trend: "Total shares", icon: "🔗" },
-        { label: "Expertise Skills", value: statistics.skillsCount || 0, trend: "Core skills", icon: "👤" },
-        { label: "Experience Nodes", value: statistics.experienceCount || 0, trend: "Work history", icon: "💼" },
-      ]
-    : [
-        { label: "Profile Views", value: statistics.profileViews || 0, trend: "Total traffic", icon: "👁️" },
-        { label: "Card Shares", value: statistics.cardShares || 0, trend: "Total shares", icon: "🔗" },
-        { label: "Services", value: statistics.servicesCount || 0, trend: "Booking packages", icon: "🏷️" },
-        { label: "Products", value: statistics.productsCount || 0, trend: "Catalog items", icon: "📦" },
-      ];
+  const statsList =
+    user.profileType === "professional"
+      ? [
+          {
+            label: "Profile Views",
+            value: statistics.profileViews || 0,
+            trend: "Total traffic",
+            icon: "👁️",
+          },
+          {
+            label: "Card Shares",
+            value: statistics.cardShares || 0,
+            trend: "Total shares",
+            icon: "🔗",
+          },
+          {
+            label: "Expertise Skills",
+            value: statistics.skillsCount || 0,
+            trend: "Core skills",
+            icon: "👤",
+          },
+          {
+            label: "Experience Nodes",
+            value: statistics.experienceCount || 0,
+            trend: "Work history",
+            icon: "💼",
+          },
+        ]
+      : [
+          {
+            label: "Profile Views",
+            value: statistics.profileViews || 0,
+            trend: "Total traffic",
+            icon: "👁️",
+          },
+          {
+            label: "Card Shares",
+            value: statistics.cardShares || 0,
+            trend: "Total shares",
+            icon: "🔗",
+          },
+          {
+            label: "Services",
+            value: statistics.servicesCount || 0,
+            trend: "Booking packages",
+            icon: "🏷️",
+          },
+          {
+            label: "Products",
+            value: statistics.productsCount || 0,
+            trend: "Catalog items",
+            icon: "📦",
+          },
+        ];
 
   return (
     <motion.div
@@ -121,15 +171,23 @@ export function DashboardPage() {
       <div className="flex flex-col gap-4.5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Welcome, <span className="text-gradient-brand">{user.name?.split(" ")[0]}</span> 👋
+            Welcome,{" "}
+            <span className="text-gradient-brand">
+              {user.name?.split(" ")[0]}
+            </span>{" "}
+            👋
           </h1>
-          <p className="text-xs text-slate-400 mt-1">Here is a live performance audit of your digital identity card.</p>
+          <p className="text-xs text-slate-400 mt-1">
+            Here is a live performance audit of your digital identity card.
+          </p>
         </div>
 
         {/* Today's quick insight tag */}
         <div className="px-4 py-2.5 rounded-2xl bg-brand-500/[0.02] border border-brand-500/15 flex items-center gap-2 max-w-xs shrink-0 select-none">
           <span className="text-md">💡</span>
-          <span className="text-3xs font-semibold text-slate-300 leading-snug">{todayInsights.summaryText}</span>
+          <span className="text-3xs font-semibold text-slate-300 leading-snug">
+            {todayInsights.summaryText}
+          </span>
         </div>
       </div>
 
@@ -139,11 +197,17 @@ export function DashboardPage() {
           <Card key={i} hoverEffect className="relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-20 h-20 bg-brand-500/5 rounded-full blur-xl group-hover:bg-brand-500/10 transition-colors" />
             <div className="flex items-center justify-between">
-              <span className="text-3xs font-bold uppercase tracking-wider text-slate-400">{stat.label}</span>
+              <span className="text-3xs font-bold uppercase tracking-wider text-slate-400">
+                {stat.label}
+              </span>
               <span className="text-md">{stat.icon}</span>
             </div>
-            <div className="text-3xl font-extrabold text-white mt-4 font-display tracking-tight">{stat.value}</div>
-            <div className="text-3xs text-slate-500 font-semibold mt-1">{stat.trend}</div>
+            <div className="text-3xl font-extrabold text-white mt-4 font-display tracking-tight">
+              {stat.value}
+            </div>
+            <div className="text-3xs text-slate-500 font-semibold mt-1">
+              {stat.trend}
+            </div>
           </Card>
         ))}
       </div>
@@ -152,30 +216,86 @@ export function DashboardPage() {
       <Card className="p-5.5 space-y-4" hoverEffect={false}>
         <div className="flex items-center gap-2">
           <span className="text-md">⚡</span>
-          <h4 className="text-xs font-bold text-white uppercase tracking-wider">Quick Actions</h4>
+          <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+            Quick Actions
+          </h4>
         </div>
         <div className="grid gap-4.5 grid-cols-1 sm:grid-cols-3">
           {user.profileType === "professional" ? (
             <>
-              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#personal"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+              <Button
+                type="button"
+                onClick={() => {
+                  navigate("/identity");
+                  setTimeout(() => {
+                    window.location.hash = "#personal";
+                  }, 100);
+                }}
+                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+              >
                 + Add Skill
               </Button>
-              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#experience"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+              <Button
+                type="button"
+                onClick={() => {
+                  navigate("/identity");
+                  setTimeout(() => {
+                    window.location.hash = "#experience";
+                  }, 100);
+                }}
+                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+              >
                 + Add Experience
               </Button>
-              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#contact"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+              <Button
+                type="button"
+                onClick={() => {
+                  navigate("/identity");
+                  setTimeout(() => {
+                    window.location.hash = "#contact";
+                  }, 100);
+                }}
+                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+              >
                 Edit Contact Info
               </Button>
             </>
           ) : (
             <>
-              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#offerings"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+              <Button
+                type="button"
+                onClick={() => {
+                  navigate("/identity");
+                  setTimeout(() => {
+                    window.location.hash = "#offerings";
+                  }, 100);
+                }}
+                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+              >
                 Create Service
               </Button>
-              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#offerings"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+              <Button
+                type="button"
+                onClick={() => {
+                  navigate("/identity");
+                  setTimeout(() => {
+                    window.location.hash = "#offerings";
+                  }, 100);
+                }}
+                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+              >
                 Add Product
               </Button>
-              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#contact"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+              <Button
+                type="button"
+                onClick={() => {
+                  navigate("/identity");
+                  setTimeout(() => {
+                    window.location.hash = "#contact";
+                  }, 100);
+                }}
+                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+              >
                 Edit Contact Info
               </Button>
             </>
@@ -185,66 +305,82 @@ export function DashboardPage() {
 
       {/* Main split content area */}
       <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] items-start">
-        
         {/* LEFT COLUMN: Charts, Timelines */}
         <div className="space-y-8 min-w-0">
-          
           {/* Analytics Overview Widget */}
           <Card className="space-y-6" hoverEffect={false}>
             <div className="flex items-center justify-between border-b border-white/[0.04] pb-4">
               <div>
-                <h3 className="font-display text-md font-bold text-white tracking-tight">Profile Traffic Views</h3>
-                <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">Daily visitors (Last 7 days)</p>
+                <h3 className="font-display text-md font-bold text-white tracking-tight">
+                  Profile Traffic Views
+                </h3>
+                <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">
+                  Daily visitors (Last 7 days)
+                </p>
               </div>
-              <span className="rounded-full bg-brand-500/10 border border-brand-500/20 px-2.5 py-0.5 text-3xs font-bold uppercase tracking-wider text-brand-400">Live</span>
+              <span className="rounded-full bg-brand-500/10 border border-brand-500/20 px-2.5 py-0.5 text-3xs font-bold uppercase tracking-wider text-brand-400">
+                Live
+              </span>
             </div>
             <div className="pt-2">
               <ViewsChart data={viewsChart} />
             </div>
           </Card>
 
-
-
           {/* Recent Activity Timeline Widget */}
           <Card className="space-y-5" hoverEffect={false}>
             <div>
-              <h3 className="font-display text-md font-bold text-white tracking-tight">Recent Workspace Activity</h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">Timeline track of system operations</p>
+              <h3 className="font-display text-md font-bold text-white tracking-tight">
+                Recent Workspace Activity
+              </h3>
+              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">
+                Timeline track of system operations
+              </p>
             </div>
             <div className="pt-2">
               <ActivityTimeline activities={activities} />
             </div>
           </Card>
-
         </div>
 
         {/* RIGHT COLUMN: Business Health, AI tips, Bookings, Checklist */}
         <div className="space-y-8 shrink-0">
-          
           {/* Business Health & Profile completion */}
-          <Card className="space-y-4 relative overflow-hidden" hoverEffect={false}>
+          <Card
+            className="space-y-4 relative overflow-hidden"
+            hoverEffect={false}
+          >
             <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
-            
+
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider">Business Health Score</h4>
-                <p className="text-3xs text-slate-500 mt-0.5">System calculation index</p>
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                  Business Health Score
+                </h4>
+                <p className="text-3xs text-slate-500 mt-0.5">
+                  System calculation index
+                </p>
               </div>
               <span className="text-xl">🏆</span>
             </div>
-            
+
             {/* Visual radial/percentage bar */}
             <div className="flex items-center gap-4.5 pt-2">
               <div className="relative h-16 w-16 rounded-full border-4 border-white/[0.04] flex items-center justify-center font-display font-black text-white text-lg shadow-inner">
-                <div 
+                <div
                   className="absolute inset-0 rounded-full border-4 border-emerald-400 border-t-transparent animate-spin-slow pointer-events-none"
                   style={{ transform: `rotate(${healthScore * 3.6}deg)` }}
                 />
                 {healthScore}%
               </div>
               <div className="space-y-1">
-                <div className="text-xs font-bold text-white">Status: Excellent</div>
-                <div className="text-3xs text-slate-400 leading-normal">Your digital card is fully set up, receiving views, and generating conversions.</div>
+                <div className="text-xs font-bold text-white">
+                  Status: Excellent
+                </div>
+                <div className="text-3xs text-slate-400 leading-normal">
+                  Your digital card is fully set up, receiving views, and
+                  generating conversions.
+                </div>
               </div>
             </div>
           </Card>
@@ -253,21 +389,32 @@ export function DashboardPage() {
           <Card className="space-y-4" hoverEffect={false}>
             <div className="flex items-center gap-2">
               <span className="text-md">✨</span>
-              <h4 className="text-xs font-bold text-white uppercase tracking-wider">AI Suggestion Center</h4>
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                AI Suggestion Center
+              </h4>
             </div>
 
             <div className="space-y-3">
               {aiSuggestions.length ? (
                 aiSuggestions.map((item, i) => (
-                  <div key={i} className="p-3.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-2 relative overflow-hidden">
+                  <div
+                    key={i}
+                    className="p-3.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-2 relative overflow-hidden"
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white">{item.title}</span>
-                      <span className={`px-2 py-0.5 rounded-md text-3xs font-extrabold uppercase tracking-wide ${item.urgency === 'high' ? 'bg-red-500/10 text-red-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                      <span className="text-xs font-bold text-white">
+                        {item.title}
+                      </span>
+                      <span
+                        className={`px-2 py-0.5 rounded-md text-3xs font-extrabold uppercase tracking-wide ${item.urgency === "high" ? "bg-red-500/10 text-red-400" : "bg-amber-500/10 text-amber-400"}`}
+                      >
                         {item.urgency}
                       </span>
                     </div>
-                    <p className="text-2xs text-slate-400 leading-relaxed">{item.description}</p>
-                    <a 
+                    <p className="text-2xs text-slate-400 leading-relaxed">
+                      {item.description}
+                    </p>
+                    <a
                       href={item.action}
                       className="inline-block text-3xs font-bold text-brand-400 hover:underline"
                     >
@@ -288,75 +435,53 @@ export function DashboardPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-md">📅</span>
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider">Recent Appointments</h4>
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                  Recent Appointments
+                </h4>
               </div>
-              <span className="text-3xs font-bold text-slate-500 uppercase tracking-wider">2 Scheduled</span>
+              <span className="text-3xs font-bold text-slate-500 uppercase tracking-wider">
+                2 Scheduled
+              </span>
             </div>
-            
+
             <AppointmentList appointments={appointments} />
           </Card>
 
-          {/* Task Checklist Widget */}
-          <Card className="space-y-4" hoverEffect={false}>
-            <div className="flex items-center gap-2">
-              <span className="text-md">📋</span>
-              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Profile Checklist</h4>
-            </div>
-            
-            <TaskChecklist tasks={tasks} />
-          </Card>
-
           {/* Subscription widget */}
-          <Card className="p-5 border-brand-500/15 bg-brand-500/[0.01] relative overflow-hidden" hoverEffect={false}>
+          <Card
+            className="p-5 border-brand-500/15 bg-brand-500/[0.01] relative overflow-hidden"
+            hoverEffect={false}
+          >
             <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/5 rounded-full blur-2xl pointer-events-none" />
-            
+
             <div className="flex items-center justify-between mb-4">
               <div>
-                <span className="text-3xs font-bold uppercase tracking-wider text-slate-400">Subscription Tier</span>
-                <h4 className="text-md font-bold text-white mt-0.5 capitalize">{subscription.tier} plan</h4>
+                <span className="text-3xs font-bold uppercase tracking-wider text-slate-400">
+                  Subscription Tier
+                </span>
+                <h4 className="text-md font-bold text-white mt-0.5 capitalize">
+                  {subscription.tier} plan
+                </h4>
               </div>
-              <span className="text-xs font-extrabold uppercase bg-brand-500/10 border border-brand-500/25 px-2.5 py-0.5 rounded-full text-brand-400">Upgrade</span>
+              <span className="text-xs font-extrabold uppercase bg-brand-500/10 border border-brand-500/25 px-2.5 py-0.5 rounded-full text-brand-400">
+                Upgrade
+              </span>
             </div>
 
             <p className="text-2xs text-slate-400 leading-relaxed mb-4">
-              Your free quota allows 1 published profile card. Upgrade to unlock custom SEO domains, multi-site booking, and unlimited AI content.
+              Your free quota allows 1 published profile card. Upgrade to unlock
+              custom SEO domains, multi-site booking, and unlimited AI content.
             </p>
 
-            <Button variant="secondary" className="w-full text-xs border-white/[0.08]">
+            <Button
+              variant="secondary"
+              className="w-full text-xs border-white/[0.08]"
+            >
               Upgrade Plan
             </Button>
           </Card>
-
-          {/* Popular links listing */}
-          <Card className="space-y-4.5" hoverEffect={false}>
-            <div className="flex items-center gap-2">
-              <span className="text-md">🔗</span>
-              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Popular Card Links</h4>
-            </div>
-
-            <div className="space-y-3">
-              {popularLinks.length ? (
-                popularLinks.map((link, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.01] border border-white/[0.04]">
-                    <span className="text-xs font-semibold text-slate-300 truncate max-w-[170px]">{link.title}</span>
-                    <span className="text-3xs font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-full">
-                      {link.clicks} clicks
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <div className="py-6 text-center text-xs text-slate-500">
-                  No links click activity recorded yet.
-                </div>
-              )}
-            </div>
-          </Card>
-
         </div>
-
       </div>
-
-
     </motion.div>
   );
 }

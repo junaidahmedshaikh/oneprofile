@@ -54,4 +54,36 @@ export async function getPublic(req, res, next) {
   }
 }
 
+export async function uploadAvatar(req, res, next) {
+  try {
+    const userId = req.auth.userId;
+    const { dataUri } = req.body;
+    const profile = await profileService.uploadProfileAvatar(userId, dataUri);
+
+    res.json({
+      success: true,
+      message: 'Avatar uploaded successfully',
+      data: profile
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function uploadCover(req, res, next) {
+  try {
+    const userId = req.auth.userId;
+    const { dataUri } = req.body;
+    const profile = await profileService.uploadProfileCover(userId, dataUri);
+
+    res.json({
+      success: true,
+      message: 'Cover image uploaded successfully',
+      data: profile
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 

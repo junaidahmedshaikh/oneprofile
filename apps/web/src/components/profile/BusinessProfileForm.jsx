@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import { Button } from "../ui/Button";
+import { CoverImageUpload } from "./CoverImageUpload";
 
 export function BusinessProfileForm({ form, activeTab }) {
   const { register, watch, setValue, formState } = form;
@@ -73,6 +74,11 @@ export function BusinessProfileForm({ form, activeTab }) {
               error={formState.errors.logoUrl?.message}
             />
           </div>
+
+          <CoverImageUpload
+            value={watch("coverImageUrl")}
+            onChange={(val) => setValue("coverImageUrl", val, { shouldDirty: true })}
+          />
 
           <Input
             label="Company Tagline"

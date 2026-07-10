@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import { Button } from "../ui/Button";
+import { CoverImageUpload } from "./CoverImageUpload";
 
 export function ProfessionalProfileForm({ form, activeTab }) {
   const { register, watch, setValue, formState } = form;
@@ -74,12 +75,9 @@ export function ProfessionalProfileForm({ form, activeTab }) {
               error={formState.errors.yearsOfExperience?.message}
             />
             <div className="sm:col-span-2">
-              <Input
-                label="Profile Cover Banner URL"
-                placeholder="https://cloudinary.com/cover.jpg"
-                {...register("coverImageUrl")}
-                error={formState.errors.coverImageUrl?.message}
-                hint="Displays as a horizontal banner background behind your profile avatar."
+              <CoverImageUpload
+                value={watch("coverImageUrl")}
+                onChange={(val) => setValue("coverImageUrl", val, { shouldDirty: true })}
               />
             </div>
 
