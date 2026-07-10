@@ -18,4 +18,4 @@ const activitySchema = new mongoose.Schema(
 // Compound index to fetch the most recent activities quickly
 activitySchema.index({ userId: 1, createdAt: -1 });
 
-export const Activity = mongoose.model('Activity', activitySchema);
+export const Activity = mongoose.model('Activity', activitySchema, process.env.ACTIVITY_COLLECTION || 'activities');

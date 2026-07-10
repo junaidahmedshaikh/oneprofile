@@ -31,23 +31,7 @@ export async function getActivities(req, res, next) {
   }
 }
 
-export async function getLeads(req, res, next) {
-  try {
-    const userId = req.auth.userId;
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
-    
-    const leadsData = await dashboardService.getRecentLeads(userId, page, limit);
 
-    res.json({
-      success: true,
-      message: 'Leads list retrieved successfully',
-      data: leadsData
-    });
-  } catch (error) {
-    next(error);
-  }
-}
 
 export async function getAppointments(req, res, next) {
   try {

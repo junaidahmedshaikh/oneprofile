@@ -3,7 +3,6 @@ import { authenticate } from '../middleware/authenticate.js';
 import {
   getSummary,
   getActivities,
-  getLeads,
   getAppointments,
   getNotifications,
   markNotificationRead
@@ -13,7 +12,6 @@ const router = Router();
 
 router.get('/summary', authenticate, getSummary);
 router.get('/activity', authenticate, getActivities);
-router.get('/leads', authenticate, getLeads);
 router.get('/appointments', authenticate, getAppointments);
 router.get('/notifications', authenticate, getNotifications);
 router.put('/notifications/:id/read', authenticate, markNotificationRead);

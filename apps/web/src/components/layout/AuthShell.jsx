@@ -40,7 +40,7 @@ export function AuthShell({ eyebrow, title, subtitle, children, sideContent }) {
               <span className="h-1.5 w-1.5 rounded-full bg-brand-400 animate-pulse" />
               {eyebrow || "Digital Identity"}
             </span>
-            <h1 className="mt-6 font-display text-4xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl leading-[1.1]">
+            <h1 className="mt-6 font-display text-2xl font-extrabold tracking-tight text-white sm:text-2xl lg:text-4xl leading-[1.1]">
               {title}
             </h1>
             <p className="mt-6 text-base leading-relaxed text-slate-400  lg:text-xs">
@@ -93,9 +93,9 @@ export function AuthShell({ eyebrow, title, subtitle, children, sideContent }) {
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-slate-400 py-1">
-                      <span>CRM & Lead Collector</span>
+                      <span>Booking Calendar</span>
                       <span className="text-brand-400 font-semibold">
-                        Synced
+                        Active
                       </span>
                     </div>
                   </div>

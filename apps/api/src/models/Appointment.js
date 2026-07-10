@@ -22,4 +22,4 @@ const appointmentSchema = new mongoose.Schema(
 // Compound index for querying a user's upcoming active appointments
 appointmentSchema.index({ userId: 1, dateTime: 1, status: 1 });
 
-export const Appointment = mongoose.model('Appointment', appointmentSchema);
+export const Appointment = mongoose.model('Appointment', appointmentSchema, process.env.APPOINTMENT_COLLECTION || 'appointments');

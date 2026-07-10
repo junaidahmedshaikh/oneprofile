@@ -13,29 +13,8 @@ import { DashboardPage } from "../pages/DashboardPage";
 import { SessionsPage } from "../pages/SessionsPage";
 import { OnboardingShell } from "../components/onboarding/OnboardingShell";
 import { OnboardingPage } from "../pages/OnboardingPage";
-
-function Placeholder({ title, description }) {
-  return (
-    <div className="relative rounded-[32px] border border-white/[0.05] bg-gradient-to-b from-white/[0.03] to-transparent p-8 sm:p-10 shadow-2xl backdrop-blur-xl overflow-hidden max-w-2xl">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="flex flex-col sm:flex-row items-start gap-6">
-        <div className="h-12 w-12 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center shrink-0 text-xl shadow-inner">
-          ✨
-        </div>
-        <div className="space-y-3">
-          <h2 className="font-display text-2.5xl font-extrabold text-white tracking-tight">{title}</h2>
-          <p className="text-sm leading-relaxed text-slate-400">{description}</p>
-          <div className="pt-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-3xs font-bold uppercase tracking-wider text-brand-400">
-              <span className="h-1 w-1 rounded-full bg-brand-400 animate-pulse" />
-              Feature In Development
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { IdentityPage } from "../pages/IdentityPage";
+import { PublicProfilePage } from "../pages/PublicProfilePage";
 
 export function App() {
   return (
@@ -70,6 +49,9 @@ export function App() {
         <Route path="/verify" element={<VerificationPage />} />
       </Route>
 
+      {/* Public profile page route */}
+      <Route path="/p/:slug" element={<PublicProfilePage />} />
+
       <Route element={<ProtectedRoute />}>
         <Route element={<OnboardingShell />}>
           <Route path="/onboarding" element={<OnboardingPage />} />
@@ -77,18 +59,11 @@ export function App() {
         <Route element={<AppShell />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/sessions" element={<SessionsPage />} />
-          <Route
-            path="/identity"
-            element={
-              <Placeholder
-                title="Identity Settings"
-                description="This module is ready for profile, roles, and verification management in the next build phase."
-              />
-            }
-          />
+          <Route path="/identity" element={<IdentityPage />} />
         </Route>
       </Route>
 
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );

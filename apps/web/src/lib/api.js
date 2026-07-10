@@ -24,6 +24,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+let refreshPromise = null;
+
+export function executeRefresh() {
+  if (!refreshPromise) {
+    refreshPromise = api.post('/auth/refresh', {}).finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+}
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -32,7 +43,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry && !isRefreshRequest) {
       originalRequest._retry = true;
       try {
-        const refreshResponse = await api.post('/auth/refresh', {});
+        const refreshResponse = await executeRefresh();
         const newToken = refreshResponse.data?.data?.accessToken;
         if (newToken) {
           setAccessToken(newToken);

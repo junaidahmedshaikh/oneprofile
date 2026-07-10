@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { dashboardApi } from "../lib/dashboardApi";
@@ -7,13 +8,12 @@ import { Alert } from "../components/ui/Alert";
 import { Button } from "../components/ui/Button";
 import { ViewsChart } from "../components/dashboard/ViewsChart";
 import { ActivityTimeline } from "../components/dashboard/ActivityTimeline";
-import { LeadRow } from "../components/dashboard/LeadRow";
 import { AppointmentList } from "../components/dashboard/AppointmentList";
 import { TaskChecklist } from "../components/dashboard/TaskChecklist";
 
 export function DashboardPage() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [selectedLead, setSelectedLead] = useState(null);
 
   // 1. Fetch Dashboard Summary Data
   const { data: summary, isLoading, isError, refetch } = useQuery({
@@ -87,7 +87,6 @@ export function DashboardPage() {
     user = {},
     statistics = {},
     viewsChart = [],
-    leadDistribution = {},
     healthScore = 0,
     subscription = {},
     aiSuggestions = [],
@@ -96,13 +95,20 @@ export function DashboardPage() {
     todayInsights = {},
   } = summary;
 
-  // Simple statistics rendering array
-  const statsList = [
-    { label: "Profile Views", value: statistics.profileViews, trend: "Last 30 days", icon: "👁️" },
-    { label: "Card Shares", value: statistics.cardShares, trend: "Scans & Links", icon: "🎴" },
-    { label: "CRM Leads", value: statistics.leadConversions, trend: "Inbound cards", icon: "⚡" },
-    { label: "Conversion Rate", value: `${statistics.conversionRate}%`, trend: "Funnel output", icon: "📈" },
-  ];
+  // Dynamic statistics rendering array based on profileType
+  const statsList = user.profileType === "professional"
+    ? [
+        { label: "Profile Views", value: statistics.profileViews || 0, trend: "Total traffic", icon: "👁️" },
+        { label: "Card Shares", value: statistics.cardShares || 0, trend: "Total shares", icon: "🔗" },
+        { label: "Expertise Skills", value: statistics.skillsCount || 0, trend: "Core skills", icon: "👤" },
+        { label: "Experience Nodes", value: statistics.experienceCount || 0, trend: "Work history", icon: "💼" },
+      ]
+    : [
+        { label: "Profile Views", value: statistics.profileViews || 0, trend: "Total traffic", icon: "👁️" },
+        { label: "Card Shares", value: statistics.cardShares || 0, trend: "Total shares", icon: "🔗" },
+        { label: "Services", value: statistics.servicesCount || 0, trend: "Booking packages", icon: "🏷️" },
+        { label: "Products", value: statistics.productsCount || 0, trend: "Catalog items", icon: "📦" },
+      ];
 
   return (
     <motion.div
@@ -142,10 +148,45 @@ export function DashboardPage() {
         ))}
       </div>
 
+      {/* Quick Actions Panel */}
+      <Card className="p-5.5 space-y-4" hoverEffect={false}>
+        <div className="flex items-center gap-2">
+          <span className="text-md">⚡</span>
+          <h4 className="text-xs font-bold text-white uppercase tracking-wider">Quick Actions</h4>
+        </div>
+        <div className="grid gap-4.5 grid-cols-1 sm:grid-cols-3">
+          {user.profileType === "professional" ? (
+            <>
+              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#personal"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+                + Add Skill
+              </Button>
+              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#experience"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+                + Add Experience
+              </Button>
+              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#contact"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+                Edit Contact Info
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#offerings"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+                Create Service
+              </Button>
+              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#offerings"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+                Add Product
+              </Button>
+              <Button type="button" onClick={() => { navigate("/identity"); setTimeout(() => { window.location.hash = "#contact"; }, 100); }} className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20">
+                Edit Contact Info
+              </Button>
+            </>
+          )}
+        </div>
+      </Card>
+
       {/* Main split content area */}
       <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] items-start">
         
-        {/* LEFT COLUMN: Charts, CRM Leads, Timelines */}
+        {/* LEFT COLUMN: Charts, Timelines */}
         <div className="space-y-8 min-w-0">
           
           {/* Analytics Overview Widget */}
@@ -162,43 +203,7 @@ export function DashboardPage() {
             </div>
           </Card>
 
-          {/* Recent CRM Leads Widget */}
-          <Card className="space-y-5" hoverEffect={false}>
-            <div className="flex items-center justify-between border-b border-white/[0.04] pb-4">
-              <div>
-                <h3 className="font-display text-md font-bold text-white tracking-tight">Recent Inbound Leads</h3>
-                <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">CRM inquiries captured from profile cards</p>
-              </div>
-              <a 
-                href="/identity" 
-                className="text-3xs font-bold text-brand-400 hover:underline select-none"
-              >
-                View CRM Workspace →
-              </a>
-            </div>
 
-            {/* Simulated Leads listing */}
-            <div className="space-y-3">
-              {activities.filter(a => a.type === 'lead_captured').slice(0, 4).map((activity, idx) => {
-                const mockLead = {
-                  _id: activity._id,
-                  name: activity.description.split("from ")[1] || "Lead Inquiry",
-                  email: activity.metadata?.email || "inquiry@client.com",
-                  company: activity.metadata?.company || "Corporate Customer",
-                  status: idx === 0 ? "new" : "converted",
-                  createdAt: activity.createdAt,
-                  message: activity.metadata?.message || "Requested contact presentation details."
-                };
-                return (
-                  <LeadRow 
-                    key={mockLead._id} 
-                    lead={mockLead} 
-                    onSelect={(lead) => setSelectedLead(lead)} 
-                  />
-                );
-              })}
-            </div>
-          </Card>
 
           {/* Recent Activity Timeline Widget */}
           <Card className="space-y-5" hoverEffect={false}>
@@ -252,23 +257,29 @@ export function DashboardPage() {
             </div>
 
             <div className="space-y-3">
-              {aiSuggestions.map((item, i) => (
-                <div key={i} className="p-3.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-2 relative overflow-hidden">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-white">{item.title}</span>
-                    <span className={`px-2 py-0.5 rounded-md text-3xs font-extrabold uppercase tracking-wide ${item.urgency === 'high' ? 'bg-red-500/10 text-red-400' : 'bg-amber-500/10 text-amber-400'}`}>
-                      {item.urgency}
-                    </span>
+              {aiSuggestions.length ? (
+                aiSuggestions.map((item, i) => (
+                  <div key={i} className="p-3.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-2 relative overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white">{item.title}</span>
+                      <span className={`px-2 py-0.5 rounded-md text-3xs font-extrabold uppercase tracking-wide ${item.urgency === 'high' ? 'bg-red-500/10 text-red-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                        {item.urgency}
+                      </span>
+                    </div>
+                    <p className="text-2xs text-slate-400 leading-relaxed">{item.description}</p>
+                    <a 
+                      href={item.action}
+                      className="inline-block text-3xs font-bold text-brand-400 hover:underline"
+                    >
+                      Resolve Suggestion →
+                    </a>
                   </div>
-                  <p className="text-2xs text-slate-400 leading-relaxed">{item.description}</p>
-                  <a 
-                    href={item.action}
-                    className="inline-block text-3xs font-bold text-brand-400 hover:underline"
-                  >
-                    Resolve Suggestion →
-                  </a>
+                ))
+              ) : (
+                <div className="py-6 text-center text-xs text-slate-500">
+                  Profile optimized! No current suggestions.
                 </div>
-              ))}
+              )}
             </div>
           </Card>
 
@@ -324,14 +335,20 @@ export function DashboardPage() {
             </div>
 
             <div className="space-y-3">
-              {popularLinks.map((link, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.01] border border-white/[0.04]">
-                  <span className="text-xs font-semibold text-slate-300 truncate max-w-[170px]">{link.title}</span>
-                  <span className="text-3xs font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-full">
-                    {link.clicks} clicks
-                  </span>
+              {popularLinks.length ? (
+                popularLinks.map((link, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.01] border border-white/[0.04]">
+                    <span className="text-xs font-semibold text-slate-300 truncate max-w-[170px]">{link.title}</span>
+                    <span className="text-3xs font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-full">
+                      {link.clicks} clicks
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="py-6 text-center text-xs text-slate-500">
+                  No links click activity recorded yet.
                 </div>
-              ))}
+              )}
             </div>
           </Card>
 
@@ -339,76 +356,7 @@ export function DashboardPage() {
 
       </div>
 
-      {/* CRM Lead Details Modal overlay */}
-      <AnimatePresence>
-        {selectedLead ? (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedLead(null)}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-x-4 bottom-[10%] sm:bottom-auto sm:top-[20%] mx-auto z-50 max-w-md bg-[#12141c] border border-white/[0.08] rounded-[28px] p-6 shadow-2xl space-y-6"
-            >
-              <div className="flex justify-between items-start border-b border-white/[0.05] pb-4">
-                <div>
-                  <span className="text-3xs font-bold uppercase tracking-wider text-slate-500">CRM Lead Details</span>
-                  <h3 className="font-display text-xl font-bold text-white tracking-tight mt-1">{selectedLead.name}</h3>
-                  <p className="text-2xs text-slate-400 mt-0.5">{selectedLead.company || "Individual Customer"}</p>
-                </div>
-                <button
-                  onClick={() => setSelectedLead(null)}
-                  className="h-8 w-8 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] flex items-center justify-center border border-white/[0.05] text-slate-400 hover:text-white transition-all active:scale-95"
-                >
-                  ✕
-                </button>
-              </div>
 
-              <div className="space-y-4 text-xs">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                    <span className="text-3xs font-bold uppercase tracking-wider text-slate-500">Email Address</span>
-                    <p className="font-semibold text-white mt-1 select-all">{selectedLead.email}</p>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                    <span className="text-3xs font-bold uppercase tracking-wider text-slate-500">Phone Number</span>
-                    <p className="font-semibold text-white mt-1 select-all">{selectedLead.phone || "Not provided"}</p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04] space-y-1.5">
-                  <span className="text-3xs font-bold uppercase tracking-wider text-slate-500">Client Message</span>
-                  <p className="leading-relaxed text-slate-300 whitespace-pre-wrap">{selectedLead.message}</p>
-                </div>
-              </div>
-
-              <div className="border-t border-white/[0.05] pt-4.5 flex gap-3">
-                <Button 
-                  variant="secondary" 
-                  className="flex-1 text-xs" 
-                  onClick={() => setSelectedLead(null)}
-                >
-                  Close Inquiry
-                </Button>
-                <a 
-                  href={`mailto:${selectedLead.email}`}
-                  className="flex-1 inline-flex min-h-11 items-center justify-center rounded-2xl px-5 py-2.5 text-xs font-bold bg-brand-500 text-white hover:bg-brand-400 shadow-glow text-center"
-                >
-                  Reply Email ✉️
-                </a>
-              </div>
-            </motion.div>
-          </>
-        ) : null}
-      </AnimatePresence>
     </motion.div>
   );
 }

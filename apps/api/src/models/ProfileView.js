@@ -13,4 +13,4 @@ const profileViewSchema = new mongoose.Schema(
 // Optimize time-series analytics grouping by indexing userId and createdAt
 profileViewSchema.index({ userId: 1, createdAt: 1 });
 
-export const ProfileView = mongoose.model('ProfileView', profileViewSchema);
+export const ProfileView = mongoose.model('ProfileView', profileViewSchema, process.env.PROFILE_VIEW_COLLECTION || 'profile_views');

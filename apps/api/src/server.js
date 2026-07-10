@@ -1,5 +1,9 @@
 import { createApp } from "./app.js";
-import { connectDatabase, disconnectDatabase, getDatabaseStatus } from "./config/database.js";
+import {
+  connectDatabase,
+  disconnectDatabase,
+  getDatabaseStatus,
+} from "./config/database.js";
 import { env } from "./config/env.js";
 import { logger } from "./config/logger.js";
 
@@ -41,8 +45,14 @@ async function shutdown(signal, error = null) {
 function registerProcessHandlers() {
   process.on("SIGINT", () => void shutdown("SIGINT"));
   process.on("SIGTERM", () => void shutdown("SIGTERM"));
-  process.on("uncaughtException", (error) => void shutdown("uncaughtException", error));
-  process.on("unhandledRejection", (error) => void shutdown("unhandledRejection", error));
+  process.on(
+    "uncaughtException",
+    (error) => void shutdown("uncaughtException", error),
+  );
+  process.on(
+    "unhandledRejection",
+    (error) => void shutdown("unhandledRejection", error),
+  );
 }
 
 async function bootstrap() {
@@ -55,14 +65,14 @@ async function bootstrap() {
   const app = createApp();
 
   server = app.listen(env.PORT, () => {
-    logger.info(
-      {
-        port: env.PORT,
-        database: getDatabaseStatus(),
-        degradedMode: !databaseConnection,
-      },
-      "oneprofile API listening",
-    );
+    // logger.info(
+    //   {
+    //     port: env.PORT,
+    //     database: getDatabaseStatus(),
+    //     degradedMode: !databaseConnection,
+    //   },
+    //   "oneprofile API listening",
+    // );
   });
 }
 

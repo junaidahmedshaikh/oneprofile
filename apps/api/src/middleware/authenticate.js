@@ -12,6 +12,9 @@ export function authenticate(req, _res, next) {
 
   try {
     req.auth = verifyAccessToken(token);
+    if (req.auth && req.auth.sub) {
+      req.auth.userId = req.auth.sub;
+    }
     return next();
   } catch {
     return next(new ApiError(401, 'Invalid or expired token', 'AUTH_INVALID_TOKEN'));

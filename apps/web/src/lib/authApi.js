@@ -1,4 +1,4 @@
-import api from './api';
+import api, { executeRefresh } from './api';
 
 export const authApi = {
   register: (payload) => api.post('/auth/register', payload),
@@ -11,7 +11,7 @@ export const authApi = {
   verifyEmailConfirm: (payload) => api.post('/auth/verify-email/confirm', payload),
   verifyPhoneRequest: (payload) => api.post('/auth/verify-phone/request', payload),
   verifyPhoneConfirm: (payload) => api.post('/auth/verify-phone/confirm', payload),
-  refresh: () => api.post('/auth/refresh', {}),
+  refresh: () => executeRefresh(),
   logout: () => api.post('/auth/logout', {}),
   me: () => api.get('/auth/me'),
   sessions: () => api.get('/auth/sessions'),

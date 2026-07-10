@@ -36,6 +36,22 @@ export default {
         sans: ["Manrope", "ui-sans-serif", "system-ui"],
         display: ["Sora", "Manrope", "ui-sans-serif"],
       },
+      fontSize: {
+        "3xs": ["0.625rem", { lineHeight: "0.75rem" }],
+        "2xs": ["0.6875rem", { lineHeight: "0.875rem" }],
+        xs: ["0.75rem", { lineHeight: "1rem" }],
+        sm: ["0.875rem", { lineHeight: "1.25rem" }],
+        base: ["1rem", { lineHeight: "1.5rem" }],
+        lg: ["1.125rem", { lineHeight: "1.75rem" }],
+        xl: ["1.25rem", { lineHeight: "1.75rem" }],
+        "2xl": ["1.5rem", { lineHeight: "2rem" }],
+        "3xl": [
+          "clamp(1.75rem, 2.2vw + 1.15rem, 2.4rem)",
+          { lineHeight: "1.1" },
+        ],
+        "4xl": ["clamp(2.2rem, 3vw + 1.2rem, 2.8rem)", { lineHeight: "1.05" }],
+        "5xl": ["clamp(2.7rem, 4.2vw + 1.5rem, 4rem)", { lineHeight: "1" }],
+      },
       keyframes: {
         fadeUp: {
           "0%": { opacity: "0", transform: "translateY(8px)" },

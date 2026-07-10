@@ -7,7 +7,8 @@ import { queryClient } from './app/queryClient';
 import { store } from './store';
 import { App } from './app/App';
 import { bindAuthTokenAccessors } from './lib/api';
-import { setToken, clearAuth, setCredentials, setBootstrapped } from './store/authSlice';
+import { useQuery } from '@tanstack/react-query';
+import { setToken, clearAuth, setCredentials, setBootstrapped, setUser } from './store/authSlice';
 import { authApi } from './lib/authApi';
 import './styles/index.css';
 
@@ -19,6 +20,22 @@ bindAuthTokenAccessors(
 function Bootstrap() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.accessToken);
+
+  // Global user query synchronizer to prevent Redux status desyncs
+  const { data: userData } = useQuery({
+    queryKey: ['auth', 'me'],
+    queryFn: async () => {
+      const response = await authApi.me();
+      return response.data.data.user;
+    },
+    enabled: !!token
+  });
+
+  React.useEffect(() => {
+    if (userData) {
+      dispatch(setUser(userData));
+    }
+  }, [userData, dispatch]);
 
   React.useEffect(() => {
     if (!token) {

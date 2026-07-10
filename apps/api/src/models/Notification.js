@@ -19,4 +19,4 @@ const notificationSchema = new mongoose.Schema(
 // Compound index for getting unread notifications quickly
 notificationSchema.index({ userId: 1, isRead: 1, createdAt: -1 });
 
-export const Notification = mongoose.model('Notification', notificationSchema);
+export const Notification = mongoose.model('Notification', notificationSchema, process.env.NOTIFICATION_COLLECTION || 'notifications');
