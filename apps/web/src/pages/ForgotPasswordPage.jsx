@@ -34,10 +34,10 @@ export function ForgotPasswordPage() {
       className="space-y-6"
     >
       <div className="space-y-2">
-        <h2 className="font-display text-2.5xl font-extrabold text-white tracking-tight">
+        <h2 className="font-display text-2.5xl font-extrabold text-slate-300 dark:text-white tracking-tight">
           Reset access
         </h2>
-        <p className="text-sm text-slate-400">
+        <p className="text-xs text-oneprofile-600 font-semibold">
           We will send a secure reset link if the account exists.
         </p>
       </div>
@@ -70,9 +70,9 @@ export function ForgotPasswordPage() {
         </div>
       </form>
 
-      <div className="pt-3 border-t border-white/[0.05] text-xs font-semibold text-center">
+      <div className="pt-3 border-t border-oneprofile-700 text-xs font-semibold text-center">
         <Link
-          className="text-slate-400 hover:text-white transition-colors"
+          className="text-oneprofile-600 hover:text-slate-300 dark:hover:text-white transition-colors"
           to="/login"
         >
           Back to login

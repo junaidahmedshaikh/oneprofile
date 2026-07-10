@@ -10,7 +10,6 @@ import { ResetPasswordPage } from "../pages/ResetPasswordPage";
 import { OtpPage } from "../pages/OtpPage";
 import { VerificationPage } from "../pages/VerificationPage";
 import { DashboardPage } from "../pages/DashboardPage";
-import { SessionsPage } from "../pages/SessionsPage";
 import { OnboardingShell } from "../components/onboarding/OnboardingShell";
 import { OnboardingPage } from "../pages/OnboardingPage";
 import { IdentityPage } from "../pages/IdentityPage";
@@ -60,7 +59,6 @@ export function App() {
         </Route>
         <Route element={<AppShell />}>
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/sessions" element={<SessionsPage />} />
           <Route path="/identity" element={<IdentityPage />} />
         </Route>
       </Route>

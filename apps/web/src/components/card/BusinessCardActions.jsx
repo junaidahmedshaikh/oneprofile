@@ -10,11 +10,12 @@ export function BusinessCardActions({ profile }) {
             href={`tel:${profile.contactDetails.phone}`}
             className="h-11 w-11 rounded-full bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.1] text-slate-200 hover:text-white flex items-center justify-center text-md transition-all duration-200 active:scale-90"
             title="Call Phone"
+            aria-label="Call Phone"
           >
             📞
           </a>
         ) : (
-          <div className="h-11 w-11 rounded-full bg-white/[0.01] border border-white/[0.02] opacity-20 flex items-center justify-center text-md select-none">
+          <div className="h-11 w-11 rounded-full bg-white/[0.01] border border-white/[0.02] opacity-20 flex items-center justify-center text-md select-none" aria-hidden="true">
             📞
           </div>
         )}
@@ -30,11 +31,12 @@ export function BusinessCardActions({ profile }) {
             rel="noreferrer"
             className="h-11 w-11 rounded-full bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366]/20 flex items-center justify-center text-md transition-all duration-200 active:scale-90"
             title="Chat on WhatsApp"
+            aria-label="Send WhatsApp message"
           >
             💬
           </a>
         ) : (
-          <div className="h-11 w-11 rounded-full bg-white/[0.01] border border-white/[0.02] opacity-20 flex items-center justify-center text-md select-none">
+          <div className="h-11 w-11 rounded-full bg-white/[0.01] border border-white/[0.02] opacity-20 flex items-center justify-center text-md select-none" aria-hidden="true">
             💬
           </div>
         )}
@@ -48,11 +50,12 @@ export function BusinessCardActions({ profile }) {
             href={`mailto:${profile.contactDetails.email}`}
             className="h-11 w-11 rounded-full bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.1] text-slate-200 hover:text-white flex items-center justify-center text-md transition-all duration-200 active:scale-90"
             title="Send Email"
+            aria-label="Send Email"
           >
             ✉️
           </a>
         ) : (
-          <div className="h-11 w-11 rounded-full bg-white/[0.01] border border-white/[0.02] opacity-20 flex items-center justify-center text-md select-none">
+          <div className="h-11 w-11 rounded-full bg-white/[0.01] border border-white/[0.02] opacity-20 flex items-center justify-center text-md select-none" aria-hidden="true">
             ✉️
           </div>
         )}
@@ -68,11 +71,12 @@ export function BusinessCardActions({ profile }) {
             rel="noreferrer"
             className="h-11 w-11 rounded-full bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.1] text-slate-200 hover:text-white flex items-center justify-center text-md transition-all duration-200 active:scale-90"
             title="Visit Website"
+            aria-label="Visit Website"
           >
             🌐
           </a>
         ) : (
-          <div className="h-11 w-11 rounded-full bg-white/[0.01] border border-white/[0.02] opacity-20 flex items-center justify-center text-md select-none">
+          <div className="h-11 w-11 rounded-full bg-white/[0.01] border border-white/[0.02] opacity-20 flex items-center justify-center text-md select-none" aria-hidden="true">
             🌐
           </div>
         )}
@@ -88,11 +92,12 @@ export function BusinessCardActions({ profile }) {
             rel="noreferrer"
             className="h-11 w-11 rounded-full bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.1] text-slate-200 hover:text-white flex items-center justify-center text-md transition-all duration-200 active:scale-90"
             title="Open Maps Location"
+            aria-label="Directions on Google Maps"
           >
             📍
           </a>
         ) : (
-          <div className="h-11 w-11 rounded-full bg-white/[0.01] border border-white/[0.02] opacity-20 flex items-center justify-center text-md select-none">
+          <div className="h-11 w-11 rounded-full bg-white/[0.01] border border-white/[0.02] opacity-20 flex items-center justify-center text-md select-none" aria-hidden="true">
             📍
           </div>
         )}

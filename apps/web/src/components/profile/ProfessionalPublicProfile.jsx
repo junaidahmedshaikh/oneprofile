@@ -22,10 +22,10 @@ export function ProfessionalPublicProfile({ profile, st, isLight, leadForm }) {
                 <img
                   src={profile.avatarUrl}
                   alt={profile.title}
-                  className="h-24 w-24 rounded-[2rem] object-cover border border-white/10 shadow-lg -mt-16 sm:-mt-20 relative z-10 bg-slate-900"
+                  className="h-24 w-24 rounded-3xl object-cover border border-white/10 shadow-lg -mt-16 sm:-mt-20 relative z-10 bg-slate-900"
                 />
               ) : (
-                <div className={clsx("h-24 w-24 rounded-[2rem] border flex items-center justify-center text-3xl font-black shadow-inner bg-brand-500/10 border-brand-500/20 -mt-16 sm:-mt-20 relative z-10 bg-slate-900", st.brandText)}>
+                <div className={clsx("h-24 w-24 rounded-3xl border flex items-center justify-center text-3xl font-black shadow-inner bg-brand-500/10 border-brand-500/20 -mt-16 sm:-mt-20 relative z-10 bg-slate-900", st.brandText)}>
                   {(profile.title || "U").charAt(0).toUpperCase()}
                 </div>
               )}

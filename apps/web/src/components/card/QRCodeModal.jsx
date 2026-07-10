@@ -47,6 +47,7 @@ export function QRCodeModal({ isOpen, onClose, profile, st }) {
                 <span className="text-xs font-bold text-white font-display">Scan QR Code</span>
                 <button
                   onClick={onClose}
+                  aria-label="Close QR Code Modal"
                   className="h-7 w-7 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] flex items-center justify-center border border-white/[0.05] text-slate-400 hover:text-white transition-all active:scale-95"
                 >
                   ✕
@@ -75,6 +76,7 @@ export function QRCodeModal({ isOpen, onClose, profile, st }) {
                   className="flex-1 text-3xs font-bold rounded-xl h-10 border-white/[0.08]"
                   onClick={handleDownloadQr}
                   disabled={!profile.qrCodeUrl}
+                  aria-label="Download QR Code image"
                 >
                   Download PNG
                 </Button>
@@ -82,6 +84,7 @@ export function QRCodeModal({ isOpen, onClose, profile, st }) {
                   variant="secondary"
                   className="flex-1 text-3xs font-bold rounded-xl h-10 border-white/[0.08]"
                   onClick={handlePrint}
+                  aria-label="Print QR Code"
                 >
                   Print QR Code
                 </Button>

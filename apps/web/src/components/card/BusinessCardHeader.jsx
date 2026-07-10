@@ -33,7 +33,7 @@ export function BusinessCardHeader({ profile, st }) {
               <img
                 src={avatar}
                 alt={name}
-                className="h-20 w-20 rounded-[22px] object-cover bg-slate-950 border-2 border-slate-950"
+                className="h-20 w-20 rounded-2xl object-cover bg-slate-950 border-2 border-slate-950"
               />
             </div>
           ) : (
@@ -51,7 +51,7 @@ export function BusinessCardHeader({ profile, st }) {
             </h2>
             {/* Verification Badge */}
             {profile.isVerified && (
-              <span className="h-4.5 w-4.5 rounded-full bg-blue-500 flex items-center justify-center text-[10px] text-white select-none" title="Verified Professional">
+              <span className="h-4.5 w-4.5 rounded-full bg-blue-500 flex items-center justify-center text-[10px] text-white select-none" aria-label="Verified Profile" title="Verified Professional">
                 ✓
               </span>
             )}

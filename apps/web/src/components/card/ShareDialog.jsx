@@ -114,6 +114,7 @@ export function ShareDialog({ isOpen, onClose, profile, st }) {
                 </div>
                 <button
                   onClick={onClose}
+                  aria-label="Close Share Dialog"
                   className="h-8 w-8 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] flex items-center justify-center border border-white/[0.05] text-slate-400 hover:text-white transition-all active:scale-95"
                 >
                   ✕
@@ -140,49 +141,89 @@ export function ShareDialog({ isOpen, onClose, profile, st }) {
                   <span className="text-4xs font-bold uppercase tracking-widest text-slate-500 block">Sharing Actions</span>
                   <div className="grid grid-cols-4 gap-3.5">
                     {/* Copy Link */}
-                    <button onClick={handleCopyLink} className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] hover:border-white/[0.08] transition-all text-center select-none active:scale-95 group">
+                    <button
+                      onClick={handleCopyLink}
+                      aria-label="Copy digital card URL link to clipboard"
+                      className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] hover:border-white/[0.08] transition-all text-center select-none active:scale-95 group"
+                    >
                       <span className="text-xl group-hover:scale-110 transition-transform">🔗</span>
                       <span className="text-5xs font-bold uppercase tracking-wider mt-2 text-slate-400">Copy Link</span>
                     </button>
 
                     {/* Native Share */}
-                    <button onClick={handleShareNative} className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] hover:border-white/[0.08] transition-all text-center select-none active:scale-95 group">
+                    <button
+                      onClick={handleShareNative}
+                      aria-label="Share digital card using native device share sheet"
+                      className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] hover:border-white/[0.08] transition-all text-center select-none active:scale-95 group"
+                    >
                       <span className="text-xl group-hover:scale-110 transition-transform">📤</span>
                       <span className="text-5xs font-bold uppercase tracking-wider mt-2 text-slate-400">Share Sheet</span>
                     </button>
 
                     {/* WhatsApp */}
-                    <a href={shareLinks.whatsapp} target="_blank" rel="noreferrer" className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-[#25D366]/10 border border-white/[0.03] hover:border-[#25D366]/20 transition-all text-center group">
+                    <a
+                      href={shareLinks.whatsapp}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Share digital card link via WhatsApp"
+                      className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-[#25D366]/10 border border-white/[0.03] hover:border-[#25D366]/20 transition-all text-center group"
+                    >
                       <span className="text-xl group-hover:scale-110 transition-transform">💬</span>
                       <span className="text-5xs font-bold uppercase tracking-wider mt-2 text-slate-400">WhatsApp</span>
                     </a>
 
                     {/* Email */}
-                    <a href={shareLinks.email} className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-[#4F8CFF]/10 border border-white/[0.03] hover:border-[#4F8CFF]/20 transition-all text-center group">
+                    <a
+                      href={shareLinks.email}
+                      aria-label="Share digital card link via Email"
+                      className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-[#4F8CFF]/10 border border-white/[0.03] hover:border-[#4F8CFF]/20 transition-all text-center group"
+                    >
                       <span className="text-xl group-hover:scale-110 transition-transform">✉️</span>
                       <span className="text-5xs font-bold uppercase tracking-wider mt-2 text-slate-400">Email</span>
                     </a>
 
                     {/* SMS */}
-                    <a href={shareLinks.sms} className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-slate-700/10 border border-white/[0.03] hover:border-slate-500/20 transition-all text-center group">
+                    <a
+                      href={shareLinks.sms}
+                      aria-label="Share digital card link via SMS text message"
+                      className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-slate-700/10 border border-white/[0.03] hover:border-slate-500/20 transition-all text-center group"
+                    >
                       <span className="text-xl group-hover:scale-110 transition-transform">📱</span>
                       <span className="text-5xs font-bold uppercase tracking-wider mt-2 text-slate-400">SMS</span>
                     </a>
 
                     {/* LinkedIn */}
-                    <a href={shareLinks.linkedin} target="_blank" rel="noreferrer" className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-[#0077B5]/10 border border-white/[0.03] hover:border-[#0077B5]/20 transition-all text-center group">
+                    <a
+                      href={shareLinks.linkedin}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Share digital card link on LinkedIn feed"
+                      className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-[#0077B5]/10 border border-white/[0.03] hover:border-[#0077B5]/20 transition-all text-center group"
+                    >
                       <span className="text-xl group-hover:scale-110 transition-transform">💼</span>
                       <span className="text-5xs font-bold uppercase tracking-wider mt-2 text-slate-400">LinkedIn</span>
                     </a>
 
                     {/* Twitter */}
-                    <a href={shareLinks.twitter} target="_blank" rel="noreferrer" className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-slate-700/10 border border-white/[0.03] hover:border-slate-500/20 transition-all text-center group">
+                    <a
+                      href={shareLinks.twitter}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Share digital card link on Twitter or X"
+                      className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-slate-700/10 border border-white/[0.03] hover:border-slate-500/20 transition-all text-center group"
+                    >
                       <span className="text-xl group-hover:scale-110 transition-transform">🐦</span>
                       <span className="text-5xs font-bold uppercase tracking-wider mt-2 text-slate-400">Twitter</span>
                     </a>
 
                     {/* Telegram */}
-                    <a href={shareLinks.telegram} target="_blank" rel="noreferrer" className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-[#0088cc]/10 border border-white/[0.03] hover:border-[#0088cc]/20 transition-all text-center group">
+                    <a
+                      href={shareLinks.telegram}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Share digital card link via Telegram messenger"
+                      className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.01] hover:bg-[#0088cc]/10 border border-white/[0.03] hover:border-[#0088cc]/20 transition-all text-center group"
+                    >
                       <span className="text-xl group-hover:scale-110 transition-transform">✈️</span>
                       <span className="text-5xs font-bold uppercase tracking-wider mt-2 text-slate-400">Telegram</span>
                     </a>
@@ -195,6 +236,7 @@ export function ShareDialog({ isOpen, onClose, profile, st }) {
                   <div className="flex gap-3">
                     <button
                       onClick={handleDownloadVcard}
+                      aria-label="Download vCard contact file"
                       className="flex-1 h-11 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-2xl text-3xs font-bold flex items-center justify-center gap-2 select-none active:scale-95 transition-all"
                     >
                       📥 Save vCard (.vcf)
@@ -202,6 +244,7 @@ export function ShareDialog({ isOpen, onClose, profile, st }) {
                     <button
                       onClick={handleDownloadQr}
                       disabled={!profile.qrCodeUrl}
+                      aria-label="Download QR Code image file"
                       className="flex-1 h-11 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-2xl text-3xs font-bold flex items-center justify-center gap-2 select-none active:scale-95 transition-all"
                     >
                       🖼️ Download QR Code

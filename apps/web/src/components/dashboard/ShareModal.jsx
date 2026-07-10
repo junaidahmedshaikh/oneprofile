@@ -8,12 +8,19 @@ export function ShareModal({ isOpen, onClose, profile }) {
 
   if (!profile) return null;
 
-  const name = profile.profileType === "professional" ? (profile.title || "Professional") : (profile.companyName || "Business");
-  const subtitle = profile.profileType === "professional" ? (profile.designation || "") : (profile.tagline || "");
-  
+  const name =
+    profile.profileType === "professional"
+      ? profile.title || "Professional"
+      : profile.companyName || "Business";
+  const subtitle =
+    profile.profileType === "professional"
+      ? profile.designation || ""
+      : profile.tagline || "";
+
   // Construct card URL pointing to the card view page
   const cardUrl = `${window.location.origin}/p/${profile.slug}/card`;
-  const publicUrl = profile.publicProfileUrl || `${window.location.origin}/p/${profile.slug}`;
+  const publicUrl =
+    profile.publicProfileUrl || `${window.location.origin}/p/${profile.slug}`;
 
   const handleCopyLink = async () => {
     try {
@@ -55,7 +62,9 @@ export function ShareModal({ isOpen, onClose, profile }) {
     }
   };
 
-  const shareText = encodeURIComponent(`Check out my digital business card: ${name} - ${subtitle}`);
+  const shareText = encodeURIComponent(
+    `Check out my digital business card: ${name} - ${subtitle}`,
+  );
   const shareUrl = encodeURIComponent(cardUrl);
 
   const shareLinks = {
@@ -65,7 +74,7 @@ export function ShareModal({ isOpen, onClose, profile }) {
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
     twitter: `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`,
-    telegram: `https://t.me/share/url?url=${shareUrl}&text=${shareText}`
+    telegram: `https://t.me/share/url?url=${shareUrl}&text=${shareText}`,
   };
 
   const handleShareNative = async () => {
@@ -74,7 +83,7 @@ export function ShareModal({ isOpen, onClose, profile }) {
         await navigator.share({
           title: name,
           text: subtitle,
-          url: cardUrl
+          url: cardUrl,
         });
       } catch (err) {
         // Cancelled
@@ -103,7 +112,7 @@ export function ShareModal({ isOpen, onClose, profile }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 16 }}
             transition={{ type: "spring", stiffness: 350, damping: 30 }}
-            className="fixed inset-x-4 top-[10%] bottom-[10%] sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-50 w-full sm:max-w-lg bg-[#12141c] border border-white/[0.06] rounded-3xl p-6 shadow-2xl overflow-y-auto flex flex-col justify-between"
+            className="fixed inset-x-4 top-[10%] bottom-[10%] sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-50 w-full sm:max-w-lg border border-oneprofile-700 bg-oneprofile-900/40 rounded-3xl p-6 shadow-2xl overflow-y-auto flex flex-col justify-between"
           >
             <div className="space-y-6 flex-1">
               {/* Header */}
@@ -130,7 +139,11 @@ export function ShareModal({ isOpen, onClose, profile }) {
                 <div className="flex flex-col items-center gap-3">
                   <div className="bg-white p-3 rounded-2xl border border-white/10 shadow-lg inline-block">
                     {profile.qrCodeUrl ? (
-                      <img src={profile.qrCodeUrl} alt="QR Code" className="w-28 h-28 object-contain select-none" />
+                      <img
+                        src={profile.qrCodeUrl}
+                        alt="QR Code"
+                        className="w-28 h-28 object-contain select-none"
+                      />
                     ) : (
                       <div className="w-28 h-28 flex items-center justify-center text-slate-500 text-3xs font-bold bg-slate-900 rounded-xl">
                         Generating...
@@ -159,7 +172,9 @@ export function ShareModal({ isOpen, onClose, profile }) {
                 {/* Sharing links & action icons */}
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <span className="text-4xs font-bold uppercase tracking-widest text-slate-500 block">Copy Share URL</span>
+                    <span className="text-4xs font-bold uppercase tracking-widest text-slate-500 block">
+                      Copy Share URL
+                    </span>
                     <div className="p-2.5 bg-white/[0.01] border border-white/[0.04] rounded-xl flex items-center justify-between gap-4">
                       <span className="truncate text-3xs text-slate-400 font-mono select-all">
                         {cardUrl}
@@ -174,23 +189,47 @@ export function ShareModal({ isOpen, onClose, profile }) {
                   </div>
 
                   <div className="space-y-2">
-                    <span className="text-4xs font-bold uppercase tracking-widest text-slate-500 block">Instant Sharing</span>
+                    <span className="text-4xs font-bold uppercase tracking-widest text-slate-500 block">
+                      Instant Sharing
+                    </span>
                     <div className="grid grid-cols-4 gap-2">
-                      <a href={shareLinks.whatsapp} target="_blank" rel="noreferrer" className="flex flex-col items-center p-2 rounded-xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] transition-colors text-center">
+                      <a
+                        href={shareLinks.whatsapp}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex flex-col items-center p-2 rounded-xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] transition-colors text-center"
+                      >
                         <span className="text-md">💬</span>
-                        <span className="text-5xs font-bold uppercase tracking-wider mt-1 text-slate-400">WhatsApp</span>
+                        <span className="text-5xs font-bold uppercase tracking-wider mt-1 text-slate-400">
+                          WhatsApp
+                        </span>
                       </a>
-                      <a href={shareLinks.email} className="flex flex-col items-center p-2 rounded-xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] transition-colors text-center">
+                      <a
+                        href={shareLinks.email}
+                        className="flex flex-col items-center p-2 rounded-xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] transition-colors text-center"
+                      >
                         <span className="text-md">✉️</span>
-                        <span className="text-5xs font-bold uppercase tracking-wider mt-1 text-slate-400">Email</span>
+                        <span className="text-5xs font-bold uppercase tracking-wider mt-1 text-slate-400">
+                          Email
+                        </span>
                       </a>
-                      <a href={shareLinks.sms} className="flex flex-col items-center p-2 rounded-xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] transition-colors text-center">
+                      <a
+                        href={shareLinks.sms}
+                        className="flex flex-col items-center p-2 rounded-xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] transition-colors text-center"
+                      >
                         <span className="text-md">📱</span>
-                        <span className="text-5xs font-bold uppercase tracking-wider mt-1 text-slate-400">SMS</span>
+                        <span className="text-5xs font-bold uppercase tracking-wider mt-1 text-slate-400">
+                          SMS
+                        </span>
                       </a>
-                      <button onClick={handleShareNative} className="flex flex-col items-center p-2 rounded-xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] transition-colors text-center select-none active:scale-95">
+                      <button
+                        onClick={handleShareNative}
+                        className="flex flex-col items-center p-2 rounded-xl bg-white/[0.01] hover:bg-white/[0.04] border border-white/[0.03] transition-colors text-center select-none active:scale-95"
+                      >
                         <span className="text-md">🔗</span>
-                        <span className="text-5xs font-bold uppercase tracking-wider mt-1 text-slate-400">Share Sheet</span>
+                        <span className="text-5xs font-bold uppercase tracking-wider mt-1 text-slate-400">
+                          Share Sheet
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -199,9 +238,12 @@ export function ShareModal({ isOpen, onClose, profile }) {
 
               {/* NFC programming instructions */}
               <div className="border-t border-white/[0.05] pt-4.5 space-y-2">
-                <span className="text-4xs font-bold uppercase tracking-widest text-brand-400 block">NFC Hardware Tag Programming</span>
+                <span className="text-4xs font-bold uppercase tracking-widest text-brand-400 block">
+                  NFC Hardware Tag Programming
+                </span>
                 <p className="text-4xs text-slate-500 leading-normal">
-                  Write this public profile URL to a physical NFC card to instantly tap-and-share with smartphones:
+                  Write this public profile URL to a physical NFC card to
+                  instantly tap-and-share with smartphones:
                 </p>
                 <div className="p-2.5 bg-white/[0.01] border border-white/[0.04] rounded-xl flex items-center justify-between gap-4">
                   <span className="truncate text-3xs text-slate-500 select-all font-mono">
@@ -226,7 +268,11 @@ export function ShareModal({ isOpen, onClose, profile }) {
               >
                 👁️ View Digital Card
               </a>
-              <Button variant="secondary" className="flex-1 text-3xs" onClick={onClose}>
+              <Button
+                variant="secondary"
+                className="flex-1 text-3xs"
+                onClick={onClose}
+              >
                 Close Panel
               </Button>
             </div>

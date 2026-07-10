@@ -111,7 +111,7 @@ function SearchableDropdown({
   return (
     <div className="relative space-y-1.5 min-w-0 searchable-dropdown-container">
       {label && (
-        <label className="text-3xs font-extrabold uppercase tracking-wider text-slate-400">
+        <label className="text-3xs font-extrabold uppercase tracking-wider text-oneprofile-600">
           {label}
         </label>
       )}
@@ -119,22 +119,28 @@ function SearchableDropdown({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-2.5 text-left text-xs font-semibold text-white shadow-sm transition-all hover:bg-white/[0.04] active:scale-[0.99] select-none"
+        className="flex h-11 w-full items-center justify-between rounded-xl border border-oneprofile-700 bg-oneprofile-900/40 px-4 py-2.5 text-left text-xs font-semibold text-slate-300 dark:text-white shadow-sm transition-all hover:bg-oneprofile-100 active:scale-[0.99] select-none"
       >
-        <span className={selectedOption ? "text-white" : "text-slate-400"}>
+        <span
+          className={
+            selectedOption
+              ? "text-slate-300 dark:text-white"
+              : "text-oneprofile-600"
+          }
+        >
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <span className="text-slate-400">▼</span>
+        <span className="text-oneprofile-600">▼</span>
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 mt-1 w-full rounded-2xl border border-white/[0.08] bg-[#0c0d12]/95 p-2 shadow-xl backdrop-blur-xl max-h-[220px] overflow-y-auto space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+        <div className="absolute z-50 mt-1 w-full rounded-2xl border border-oneprofile-700 bg-oneprofile-900/40 dark:bg-[#12141c]/95 light:bg-white p-2 shadow-xl backdrop-blur-xl max-h-[220px] overflow-y-auto space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search..."
-            className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-1.5 text-xs text-white focus:outline-none focus:border-brand-500"
+            className="w-full rounded-lg bg-oneprofile-950/60 border border-oneprofile-700 px-3 py-1.5 text-xs text-slate-300 dark:text-white focus:outline-none focus:border-primary"
           />
           <div className="space-y-0.5 max-h-[140px] overflow-y-auto">
             {filteredOptions.length > 0 ? (
@@ -149,15 +155,15 @@ function SearchableDropdown({
                   }}
                   className={`w-full rounded-lg px-3 py-2 text-left text-xs font-semibold transition-colors ${
                     value === opt.key
-                      ? "bg-brand-500 text-slate-950"
-                      : "text-slate-300 hover:bg-white/5 hover:text-white"
+                      ? "bg-primary text-slate-950"
+                      : "text-slate-800 dark:text-slate-300 hover:bg-oneprofile-100 hover:text-slate-950 dark:hover:text-white"
                   }`}
                 >
                   {opt.label}
                 </button>
               ))
             ) : (
-              <div className="px-3 py-2 text-3xs text-slate-500 font-bold uppercase">
+              <div className="px-3 py-2 text-3xs text-oneprofile-600 font-bold uppercase">
                 No results found
               </div>
             )}
@@ -550,15 +556,16 @@ export function OnboardingPage() {
       ),
   });
 
-  const resumeMutation = useMutation({
-    mutationFn: () => onboardingApi.resumeLater(),
-    onSuccess: () => {
-      dispatch(setOnboardingError(null));
-      setResumeMessage(
-        "Your onboarding draft has been saved. You can return here whenever you are ready.",
-      );
-    },
-  });
+  // const resumeMutation = useMutation({
+  //   mutationFn: () => onboardingApi.resumeLater(),
+  //   onSuccess: () => {
+  //     dispatch(setOnboardingError(null));
+  //     setResumeMessage(
+  //       "Your onboarding draft has been saved. You can return here whenever you are ready.",
+  //     );
+  //   },
+  // navigate("/dashboard", { replace: true });
+  // });
 
   // Debounced Autosave effect
   useEffect(() => {
@@ -834,21 +841,14 @@ export function OnboardingPage() {
         </div>
 
         <div className="flex flex-wrap gap-2 shrink-0 select-none">
-          <Button
+          {/* <Button
             variant="secondary"
             loading={resumeMutation.isPending}
             onClick={() => resumeMutation.mutate()}
             className="rounded-xl h-8.5 min-h-[34px] px-3.5 text-3xs font-bold border-white/[0.08]"
           >
             Save & Exit
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => setLocalStep("content")}
-            className="rounded-xl h-8.5 min-h-[34px] px-3.5 text-3xs font-bold"
-          >
-            Review Step
-          </Button>
+          </Button> */}
           <Button
             loading={publishMutation.isPending}
             onClick={() => publishMutation.mutate()}
@@ -887,10 +887,10 @@ export function OnboardingPage() {
                 className="space-y-4"
               >
                 <div className="space-y-0.5">
-                  <h2 className="font-display text-base font-bold text-white tracking-tight">
+                  <h2 className="font-display text-base font-bold text-slate-300 dark:text-white tracking-tight">
                     What best describes you?
                   </h2>
-                  <p className="text-3xs text-slate-400 tracking-wide">
+                  <p className="text-3xs text-oneprofile-600 tracking-wide font-semibold">
                     Choose between setting up a Business Organization card or a
                     Professional Personal card.
                   </p>
@@ -901,15 +901,13 @@ export function OnboardingPage() {
                     onClick={() => setSelectedProfileType("business")}
                     className={`flex flex-col gap-2 rounded-2xl p-5 text-left transition-all duration-300 border ${
                       selectedProfileType === "business"
-                        ? "bg-brand-500/10 border-brand-500/30 text-white shadow-[0_8px_32px_rgba(79,140,255,0.08)]"
-                        : "bg-white/[0.01] border-white/[0.04] text-slate-400 hover:bg-white/[0.03]"
+                        ? "bg-primary/10 border-primary/30 text-slate-300 dark:text-white shadow-ds-card"
+                        : "bg-oneprofile-900/40 border-oneprofile-700 text-oneprofile-600 hover:bg-oneprofile-100 hover:text-slate-300 dark:hover:text-white"
                     }`}
                   >
                     <span className="text-2xl">🏢</span>
-                    <span className="text-xs font-bold text-white">
-                      Business
-                    </span>
-                    <span className="text-3xs text-slate-500 font-semibold leading-relaxed">
+                    <span className="text-xs font-bold">Business</span>
+                    <span className="text-3xs text-oneprofile-600 font-semibold leading-relaxed">
                       {" "}
                       E.g., Company, Startup, Agency, Store, Brand,
                       Organization.
@@ -920,15 +918,13 @@ export function OnboardingPage() {
                     onClick={() => setSelectedProfileType("professional")}
                     className={`flex flex-col gap-2 rounded-2xl p-5 text-left transition-all duration-300 border ${
                       selectedProfileType === "professional"
-                        ? "bg-brand-500/10 border-brand-500/30 text-white shadow-[0_8px_32px_rgba(79,140,255,0.08)]"
-                        : "bg-white/[0.01] border-white/[0.04] text-slate-400 hover:bg-white/[0.03]"
+                        ? "bg-primary/10 border-primary/30 text-slate-300 dark:text-white shadow-ds-card"
+                        : "bg-oneprofile-900/40 border-oneprofile-700 text-oneprofile-600 hover:bg-oneprofile-100 hover:text-slate-300 dark:hover:text-white"
                     }`}
                   >
                     <span className="text-2xl">👤</span>
-                    <span className="text-xs font-bold text-white">
-                      Professional
-                    </span>
-                    <span className="text-3xs text-slate-500 font-semibold leading-relaxed">
+                    <span className="text-xs font-bold">Professional</span>
+                    <span className="text-3xs text-oneprofile-600 font-semibold leading-relaxed">
                       {" "}
                       E.g., Doctor, Engineer, Designer, Freelancer, Consultant,
                       Coach, Trainer.
@@ -1707,7 +1703,7 @@ export function OnboardingPage() {
             </div>
           </div>
 
-          <div className="p-4 min-h-[340px] max-h-[340px] overflow-y-auto bg-[#12141c] text-white space-y-3.5">
+          <div className="p-4 min-h-[340px] max-h-[340px] overflow-y-auto bg-oneprofile-900/40 text-white space-y-3.5">
             <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/10 rounded-full blur-2xl pointer-events-none" />
 
             <div className="space-y-4">

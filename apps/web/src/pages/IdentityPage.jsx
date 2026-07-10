@@ -15,6 +15,8 @@ import { BusinessProfileForm } from "../components/profile/BusinessProfileForm";
 import { ProfessionalProfileForm } from "../components/profile/ProfessionalProfileForm";
 import { BusinessPreview } from "../components/profile/BusinessPreview";
 import { ProfessionalPreview } from "../components/profile/ProfessionalPreview";
+import { BillingTab } from "../components/profile/BillingTab";
+import { SecurityTab } from "../components/profile/SecurityTab";
 
 const schema = z.object({
   slug: z.string().optional().or(z.literal("")),
@@ -255,6 +257,8 @@ export function IdentityPage() {
         "offerings",
         "contact",
         "seo",
+        "security",
+        "billing",
       ].includes(hash)
     ) {
       setActiveTab(hash);
@@ -463,25 +467,25 @@ export function IdentityPage() {
   }
 
   return (
-    <div className="space-y-8 min-w-0 select-none">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-1.5">
-          <span className="text-2xs uppercase tracking-[0.25em] text-brand-400 font-bold">
-            Identity Configuration
+    <div className="space-y-10 min-w-0 select-none pb-12">
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+        <div className="space-y-1">
+          <span className="text-3xs uppercase tracking-[0.25em] text-primary font-bold">
+            Settings Workspace
           </span>
-          {/* <h1 className="font-display text-sm font-extrabold tracking-tight text-white sm:text-4xl">
-            Edit Professional Profile
-          </h1> */}
+          <h1 className="font-display text-2xl font-black tracking-tight text-slate-300 dark:text-white">
+            Identity Settings
+          </h1>
 
           {/* Autosaving beacon status */}
-          <div className="flex items-center gap-2 pt-1">
+          <div className="flex items-center gap-2 pt-1.5">
             <span
               className={clsx(
                 "h-2 w-2 rounded-full",
                 isAutosaving ? "bg-amber-400 animate-pulse" : "bg-emerald-400",
               )}
             />
-            <span className="text-3xs text-slate-400 font-bold uppercase tracking-wider">
+            <span className="text-3xs text-oneprofile-600 font-extrabold uppercase tracking-wider">
               {isAutosaving ? "Autosaving changes..." : "All changes autosaved"}
             </span>
           </div>
@@ -492,7 +496,7 @@ export function IdentityPage() {
           <button
             type="button"
             onClick={toggleVisibility}
-            className={`px-3.5 py-2 rounded-xl text-3xs font-extrabold uppercase tracking-wide border flex items-center gap-1.5 transition-all select-none active:scale-[0.98] ${
+            className={`px-3.5 py-2 h-10 rounded-ds-btn text-3xs font-extrabold uppercase tracking-wide border flex items-center gap-1.5 transition-all select-none active:scale-[0.98] ${
               watchedValues.visibility === "public"
                 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
                 : "bg-white/5 border-white/10 text-slate-400"
@@ -509,7 +513,7 @@ export function IdentityPage() {
                 href={`/p/${profile.slug}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] hover:border-white/[0.15] px-4 text-xs font-bold text-slate-300 hover:text-white transition-all select-none"
+                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-ds-btn bg-oneprofile-900/40 border border-oneprofile-700 hover:bg-oneprofile-100 hover:border-oneprofile-600 px-4 text-xs font-bold dark:text-white transition-all select-none"
               >
                 Public Profile Link ↗
               </a>
@@ -517,7 +521,7 @@ export function IdentityPage() {
                 href={`/p/${profile.slug}/card`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-brand-500/10 border border-brand-500/20 hover:bg-brand-500/20 px-4 text-xs font-bold text-brand-300 transition-all select-none"
+                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-ds-btn bg-primary/10  border border-oneprofile-700 hover:bg-primary/20 px-4 text-xs font-bold text-primary transition-all select-none"
               >
                 Digital Card 🎴
               </a>
@@ -527,7 +531,7 @@ export function IdentityPage() {
           <Button
             onClick={onSubmit}
             loading={saveMutation.isPending}
-            className="rounded-xl h-10 min-h-10 text-xs font-bold px-5"
+            className="inline-flex h-10 items-center justify-center gap-1.5 rounded-ds-btn bg-slate-700/10  border border-oneprofile-700 hover:bg-primary/20 px-4 text-xs font-bold text-primary transition-all select-none"
           >
             Save All Changes
           </Button>
@@ -546,92 +550,9 @@ export function IdentityPage() {
         </Alert>
       ) : null}
 
-      <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-start">
-        {/* LEFT COLUMN: Tab Navigation and Fields */}
-        <div className="space-y-6">
-          {/* Progress bar widget */}
-          <Card className="p-4 relative overflow-hidden" hoverEffect={false}>
-            <div className="flex justify-between items-center text-3xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">
-              <span>Profile Setup Completion</span>
-              <span className="text-brand-400">{completionPercentage}%</span>
-            </div>
-            <div className="h-2 w-full bg-white/[0.04] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-brand-500 to-brand-400 transition-all duration-500"
-                style={{ width: `${completionPercentage}%` }}
-              />
-            </div>
-          </Card>
-
-          <div className="rounded-[28px] border border-white/[0.05] bg-white/[0.02] p-4 backdrop-blur-xl">
-            <nav className="flex flex-wrap gap-2">
-              {currentTabList.map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all relative ${
-                    activeTab === tab.id
-                      ? "bg-brand-500/10 text-white border border-brand-500/25"
-                      : "text-slate-400 hover:text-white hover:bg-white/[0.03] border border-transparent"
-                  }`}
-                >
-                  <span>{tab.icon}</span>
-                  <span>{tab.label}</span>
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          <Card className="p-6 sm:p-8" hoverEffect={false}>
-            <form onSubmit={onSubmit} noValidate className="space-y-6">
-              <div>
-                {profile?.profileType === "professional" ? (
-                  <ProfessionalProfileForm form={form} activeTab={activeTab} />
-                ) : (
-                  <BusinessProfileForm form={form} activeTab={activeTab} />
-                )}
-              </div>
-
-              {/* Bottom Step Navigation Footer */}
-              <div className="flex justify-between items-center pt-6 border-t border-white/[0.05]">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  disabled={
-                    currentTabList.length > 0 &&
-                    activeTab === currentTabList[0].id
-                  }
-                  onClick={handlePrevTab}
-                  className="text-xs"
-                >
-                  ← Previous Tab
-                </Button>
-
-                {activeTab === "seo" ? (
-                  <Button
-                    type="submit"
-                    loading={saveMutation.isPending}
-                    className="text-xs font-bold"
-                  >
-                    Save Configuration ✓
-                  </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    onClick={handleNextTab}
-                    className="text-xs"
-                  >
-                    Next Tab →
-                  </Button>
-                )}
-              </div>
-            </form>
-          </Card>
-        </div>
-
+      <div className="grid gap-10 items-start">
         {/* RIGHT COLUMN: Preview, Sharing & QR Codes */}
-        <div className="space-y-6 shrink-0 lg:sticky lg:top-24">
+        <div className="space-y-6 ">
           {/* Live Mobile View Preview */}
           {/* <Card
             className="p-0 border-white/[0.06] bg-black overflow-hidden relative"
@@ -689,15 +610,15 @@ export function IdentityPage() {
                 </div>
 
                 {/* Share platforms row */}
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-4 gap-2">
                   <a
                     href={`https://wa.me/?text=${encodeURIComponent("Checkout my oneprofile digital identity card: " + publicUrl)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex flex-col items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
+                    className="flex gap-2 items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
                   >
-                    <span className="text-md">💬</span>
-                    <span className="text-3xs font-bold text-slate-400 mt-1">
+                    <span className="text-xs">💬</span>
+                    <span className="text-xs font-bold text-slate-400 mt-1">
                       WhatsApp
                     </span>
                   </a>
@@ -705,32 +626,31 @@ export function IdentityPage() {
                     href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(publicUrl)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex flex-col items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
+                    className="flex gap-2 items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
                   >
-                    <span className="text-md">💼</span>
-                    <span className="text-3xs font-bold text-slate-400 mt-1">
+                    <span className="text-xs">💼</span>
+                    <span className="text-xs font-bold text-slate-400 mt-1">
                       LinkedIn
                     </span>
                   </a>
                   <a
                     href={`mailto:?subject=${encodeURIComponent("Digital Business Profile")}&body=${encodeURIComponent("Here is my digital business card: " + publicUrl)}`}
-                    className="flex flex-col items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
+                    className="flex gap-2  items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
                   >
-                    <span className="text-md">✉️</span>
-                    <span className="text-3xs font-bold text-slate-400 mt-1">
+                    <span className="text-xs">✉️</span>
+                    <span className="text-xs font-bold text-slate-400">
                       Email
                     </span>
                   </a>
+                  {/* QR Code toggle action */}
+                  <Button
+                    variant="secondary"
+                    className="w-full text-xs"
+                    onClick={() => setShowQr((prev) => !prev)}
+                  >
+                    {showQr ? "Hide QR Code ✕" : "Generate QR Code 📱"}
+                  </Button>
                 </div>
-
-                {/* QR Code toggle action */}
-                <Button
-                  variant="secondary"
-                  className="w-full text-xs"
-                  onClick={() => setShowQr((prev) => !prev)}
-                >
-                  {showQr ? "Hide QR Code ✕" : "Generate QR Code 📱"}
-                </Button>
 
                 <AnimatePresence>
                   {showQr ? (
@@ -760,6 +680,100 @@ export function IdentityPage() {
               </div>
             </Card>
           ) : null}
+        </div>
+        {/* LEFT COLUMN: Tab Navigation and Fields */}
+        <div className="space-y-8">
+          {/* Progress bar widget */}
+          <Card
+            className="p-4 relative overflow-hidden bg-oneprofile-900/40 border-oneprofile-700"
+            hoverEffect={false}
+          >
+            <div className="flex justify-between items-center text-3xs font-bold uppercase tracking-wider text-oneprofile-600 mb-2.5">
+              <span>Profile Setup Completion</span>
+              <span className="text-primary">{completionPercentage}%</span>
+            </div>
+            <div className="h-2 w-full bg-oneprofile-700 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-primary to-brand-400 transition-all duration-500"
+                style={{ width: `${completionPercentage}%` }}
+              />
+            </div>
+          </Card>
+
+          <div className="rounded-ds-card border border-oneprofile-700 bg-oneprofile-900/40 p-4 backdrop-blur-xl">
+            <nav className="flex flex-wrap gap-2">
+              {currentTabList.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all relative ${
+                    activeTab === tab.id
+                      ? "bg-primary/10 text-slate-300 dark:text-white border border-primary/20"
+                      : "text-oneprofile-600 hover:text-slate-300 dark:hover:text-white hover:bg-oneprofile-100 border border-transparent"
+                  }`}
+                >
+                  <span>{tab.icon}</span>
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </nav>
+          </div>
+
+          <Card
+            className="p-6 sm:p-8 bg-oneprofile-900/40 border-oneprofile-700"
+            hoverEffect={false}
+          >
+            <form onSubmit={onSubmit} noValidate className="space-y-6">
+              <div>
+                {activeTab === "billing" ? (
+                  <BillingTab />
+                ) : activeTab === "security" ? (
+                  <SecurityTab />
+                ) : profile?.profileType === "professional" ? (
+                  <ProfessionalProfileForm form={form} activeTab={activeTab} />
+                ) : (
+                  <BusinessProfileForm form={form} activeTab={activeTab} />
+                )}
+              </div>
+
+              {/* Bottom Step Navigation Footer */}
+              <div className="flex justify-between items-center pt-6 border-t border-oneprofile-700">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={
+                    currentTabList.length > 0 &&
+                    activeTab === currentTabList[0].id
+                  }
+                  onClick={handlePrevTab}
+                  className="text-xs"
+                >
+                  ← Previous Tab
+                </Button>
+
+                {activeTab === "seo" ||
+                activeTab === "billing" ||
+                activeTab === "security" ? (
+                  <Button
+                    type="submit"
+                    loading={saveMutation.isPending}
+                    className="text-xs font-bold"
+                  >
+                    Save Configuration ✓
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    onClick={handleNextTab}
+                    className="text-xs"
+                  >
+                    Next Tab →
+                  </Button>
+                )}
+              </div>
+            </form>
+          </Card>
         </div>
       </div>
     </div>

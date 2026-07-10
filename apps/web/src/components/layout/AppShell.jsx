@@ -8,7 +8,6 @@ import { authApi } from "../../lib/authApi";
 import { dashboardApi } from "../../lib/dashboardApi";
 import { clearAuth } from "../../store/authSlice";
 import { DashboardSearch } from "../dashboard/DashboardSearch";
-import { NotificationDrawer } from "../dashboard/NotificationDrawer";
 
 const navItems = [
   {
@@ -83,7 +82,6 @@ export function AppShell() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [notifOpen, setNotifOpen] = useState(false);
 
   const authUser = useSelector((state) => state.auth.user);
 
@@ -117,20 +115,20 @@ export function AppShell() {
   });
 
   return (
-    <div className="relative min-h-screen bg-[#090a0f] text-white flex flex-col">
+    <div className="relative min-h-screen text-white flex flex-col">
       {/* Background ambient glows */}
       <div className="glow-blob w-[500px] h-[500px] bg-brand-500/10 top-[-10%] left-[-10%]" />
       <div className="glow-blob w-[600px] h-[600px] bg-purple-500/5 bottom-[-20%] right-[-10%]" />
 
       {/* Header bar */}
-      <header className="relative z-20 border-b border-white/[0.05] bg-[#090a0f]/65 backdrop-blur-xl px-6 py-4 sticky top-0">
+      <header className="relative z-20 border-b border-white/[0.05] bg-[#090a0f]/10 rounded-3xl mx-10 mt-2 backdrop-blur-xl px-6 py-4 sticky top-0">
         <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 shrink-0">
-            <div className="h-8.5 w-8.5 rounded-2xl bg-gradient-to-tr from-brand-500 to-brand-400 flex items-center justify-center shadow-[0_4px_12px_rgba(79,140,255,0.25)]">
-              <span className="font-display font-black text-slate-950 text-xs tracking-tighter">
-                1P
-              </span>
-            </div>
+            <img
+              src="/oneprofile_logo.png"
+              alt="OneProfile Logo"
+              className="h-10 w-auto object-contain"
+            />
             <span className="font-display font-extrabold text-md tracking-tight hidden xs:inline-block">
               OneProfile
             </span>
@@ -146,22 +144,11 @@ export function AppShell() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Notification Bell with alert indicator */}
-            <button
-              onClick={() => setNotifOpen(true)}
-              className="h-9.5 w-9.5 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] flex items-center justify-center relative text-slate-300 hover:text-white transition-all active:scale-95"
-            >
-              <span>🔔</span>
-              {unreadCount > 0 ? (
-                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-brand-400 animate-pulse" />
-              ) : null}
-            </button>
-
             {displayUser ? (
-              <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                <div className="h-6.5 w-6.5 rounded-full bg-brand-500/20 border border-brand-500/35 flex items-center justify-center text-xs font-bold text-brand-300">
-                  {displayUser.name?.charAt(0).toUpperCase() || "U"}
-                </div>
+              <div
+                className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-white/[0.03] border border-white/[0.06]"
+                aria-label={`Logged in as ${displayUser.name}`}
+              >
                 <span className="text-xs font-semibold text-slate-300 hidden lg:inline-block truncate max-w-[100px]">
                   {displayUser.name}
                 </span>
@@ -170,6 +157,7 @@ export function AppShell() {
 
             <Button
               variant="secondary"
+              aria-label="Sign out of account"
               className="min-h-9 h-9 rounded-xl px-3.5 text-xs font-bold border-white/[0.08]"
               loading={logoutMutation.isPending}
               onClick={() => logoutMutation.mutate()}
@@ -183,32 +171,33 @@ export function AppShell() {
       {/* Main split grid */}
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 lg:px-8 flex-1 grid gap-8 lg:grid-cols-[240px_1fr]">
         {/* Navigation Sidebar */}
-        <aside className="space-y-6">
-          <div className="rounded-[28px] border border-white/[0.05] bg-white/[0.02] p-4.5 backdrop-blur-xl">
-            <div className="text-2xs uppercase tracking-[0.25em] text-brand-400 font-bold px-3 mb-4">
+        <aside className="space-y-8">
+          <div className="rounded-ds-card border border-oneprofile-700 bg-oneprofile-900/40 p-6 backdrop-blur-xl">
+            <div className="text-3xs uppercase tracking-[0.25em] text-primary font-bold px-3 mb-5">
               Menu Navigation
             </div>
 
             {/* Search visible on mobile sidebar */}
-            <div className="block md:hidden mb-4 px-1">
+            <div className="block md:hidden mb-5 px-1">
               <DashboardSearch />
             </div>
 
-            <nav className="space-y-1">
+            <nav className="space-y-2.5" aria-label="Sidebar Navigation">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.to;
                 return (
                   <NavLink
                     key={item.to}
                     to={item.to}
-                    className={`flex items-center gap-3 rounded-2xl px-4.5 py-3 text-sm font-semibold transition-all relative overflow-hidden ${
+                    aria-label={`Go to ${item.label}`}
+                    className={`flex items-center gap-4 rounded-ds-btn px-5 py-3.5 text-xs font-bold transition-all duration-150 ease-ds-out relative overflow-hidden ${
                       isActive
-                        ? "bg-brand-500/10 text-white border border-brand-500/20 shadow-[0_4px_20px_rgba(79,140,255,0.08)]"
+                        ? "bg-primary/10 text-white border border-primary/20 shadow-ds-card"
                         : "text-slate-400 hover:text-white hover:bg-white/[0.03] border border-transparent"
                     }`}
                   >
                     <span
-                      className={isActive ? "text-brand-400" : "text-slate-500"}
+                      className={isActive ? "text-primary" : "text-slate-500"}
                     >
                       {item.icon}
                     </span>
@@ -216,7 +205,7 @@ export function AppShell() {
                     {isActive ? (
                       <motion.div
                         layoutId="activePill"
-                        className="absolute left-0 top-3 bottom-3 w-1 bg-brand-400 rounded-full"
+                        className="absolute left-0 top-3.5 bottom-3.5 w-1.2 bg-primary rounded-full"
                         transition={{
                           type: "spring",
                           stiffness: 380,
@@ -231,18 +220,19 @@ export function AppShell() {
           </div>
 
           {/* Quick Help Card */}
-          <div className="hidden lg:block rounded-[28px] border border-white/[0.03] bg-gradient-to-br from-white/[0.02] to-transparent p-5 backdrop-blur-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-brand-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="hidden lg:block rounded-ds-card border border-white/[0.03] bg-gradient-to-br from-white/[0.02] to-transparent p-5 backdrop-blur-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 rounded-full blur-xl pointer-events-none" />
             <h4 className="text-xs font-bold text-white mb-2">
               Need assistance?
             </h4>
-            <p className="text-2xs leading-relaxed text-slate-400">
+            <p className="text-3xs leading-relaxed text-slate-500 font-semibold">
               Set up your custom username, digital business card, and sync with
               your local integrations securely.
             </p>
             <a
               href="mailto:support@oneprofile.id"
-              className="inline-block mt-3.5 text-2xs font-bold text-brand-400 hover:underline"
+              aria-label="Contact support email address"
+              className="inline-block mt-3.5 text-3xs font-bold text-primary hover:underline"
             >
               Email Helpdesk →
             </a>
@@ -250,16 +240,10 @@ export function AppShell() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="space-y-8 min-w-0">
+        <main className="space-y-8 min-w-0" aria-label="Main Workspace Content">
           <Outlet />
         </main>
       </div>
-
-      {/* Notifications Side Drawer */}
-      <NotificationDrawer
-        isOpen={notifOpen}
-        onClose={() => setNotifOpen(false)}
-      />
     </div>
   );
 }

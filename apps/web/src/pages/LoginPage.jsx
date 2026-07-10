@@ -54,10 +54,10 @@ export function LoginPage() {
       className="space-y-7"
     >
       <div className="space-y-2">
-        <h2 className="font-display text-2.5xl font-extrabold text-white tracking-tight">
+        <h2 className="font-display text-2.5xl font-extrabold text-slate-300 dark:text-white tracking-tight">
           Welcome back
         </h2>
-        <p className="text-sm text-slate-400">
+        <p className="text-xs text-oneprofile-600 font-semibold">
           Sign in with password or move to OTP/Google connection.
         </p>
       </div>
@@ -90,8 +90,10 @@ export function LoginPage() {
         <div className="pt-2">
           <Button
             type="submit"
-            className="w-full h-12 rounded-2xl"
             loading={loginMutation.isPending}
+            // type="button"
+            variant="secondary"
+            className="text-xs font-bold w-full"
           >
             Sign in
           </Button>

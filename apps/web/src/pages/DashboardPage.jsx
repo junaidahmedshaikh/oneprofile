@@ -7,7 +7,6 @@ import { profileApi } from "../lib/profileApi";
 import { Card } from "../components/ui/Card";
 import { Alert } from "../components/ui/Alert";
 import { Button } from "../components/ui/Button";
-import { ViewsChart } from "../components/dashboard/ViewsChart";
 import { ActivityTimeline } from "../components/dashboard/ActivityTimeline";
 import { AppointmentList } from "../components/dashboard/AppointmentList";
 import { TaskChecklist } from "../components/dashboard/TaskChecklist";
@@ -24,7 +23,7 @@ export function DashboardPage() {
     queryFn: async () => {
       const response = await profileApi.me();
       return response.data.data;
-    }
+    },
   });
 
   // 1. Fetch Dashboard Summary Data
@@ -182,7 +181,7 @@ export function DashboardPage() {
       {/* Header bar and greeting summary */}
       <div className="flex flex-col gap-4.5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+          <h1 className="font-display text-xl font-extrabold tracking-tight text-white sm:text-4xl">
             Welcome,{" "}
             <span className="text-gradient-brand">
               {user.name?.split(" ")[0]}
@@ -206,8 +205,12 @@ export function DashboardPage() {
       {/* 1. Quick Statistics Row */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {statsList.map((stat, i) => (
-          <Card key={i} hoverEffect className="relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-20 h-20 bg-brand-500/5 rounded-full blur-xl group-hover:bg-brand-500/10 transition-colors" />
+          <Card
+            key={i}
+            hoverEffect
+            className="relative overflow-hidden group rounded-ds-card border border-oneprofile-700 bg-oneprofile-900/40"
+          >
+            <div className="absolute top-0 right-0 w-20 h-20 bg-brand-500/5  blur-xl group-hover:bg-brand-500/10 transition-all duration-150" />
             <div className="flex items-center justify-between">
               <span className="text-3xs font-bold uppercase tracking-wider text-slate-400">
                 {stat.label}
@@ -228,41 +231,44 @@ export function DashboardPage() {
       <Card className="p-5.5 space-y-4" hoverEffect={false}>
         <div className="flex items-center gap-2">
           <span className="text-md">⚡</span>
-          <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+          <h4 className="text-xs font-bold text-slate-300 dark:text-white uppercase tracking-wider">
             Quick Actions
           </h4>
         </div>
-        <div className="grid gap-4.5 grid-cols-1 sm:grid-cols-3">
+        <div className="grid gap-9 grid-cols-1 sm:grid-cols-3">
           {user.profileType === "professional" ? (
             <>
               <Button
                 type="button"
+                variant="secondary"
                 onClick={() => {
                   navigate("/identity");
                   setTimeout(() => {
                     window.location.hash = "#personal";
                   }, 100);
                 }}
-                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+                className="text-xs font-bold w-full"
               >
                 + Add Skill
               </Button>
               <Button
                 type="button"
+                variant="secondary"
                 onClick={() => {
                   navigate("/identity");
                   setTimeout(() => {
                     window.location.hash = "#experience";
                   }, 100);
                 }}
-                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+                className="text-xs font-bold w-full"
               >
                 + Add Experience
               </Button>
               <Button
                 type="button"
+                variant="secondary"
                 onClick={() => setIsShareOpen(true)}
-                className="text-xs font-bold w-full bg-brand-500 text-slate-950 hover:bg-brand-400 border border-transparent"
+                className="text-xs font-bold w-full"
               >
                 Share Card 🎴
               </Button>
@@ -271,32 +277,35 @@ export function DashboardPage() {
             <>
               <Button
                 type="button"
+                variant="secondary"
                 onClick={() => {
                   navigate("/identity");
                   setTimeout(() => {
                     window.location.hash = "#offerings";
                   }, 100);
                 }}
-                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+                className="text-xs font-bold w-full"
               >
                 Create Service
               </Button>
               <Button
                 type="button"
+                variant="secondary"
                 onClick={() => {
                   navigate("/identity");
                   setTimeout(() => {
                     window.location.hash = "#offerings";
                   }, 100);
                 }}
-                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+                className="text-xs font-bold w-full"
               >
                 Add Product
               </Button>
               <Button
                 type="button"
+                variant="primary"
                 onClick={() => setIsShareOpen(true)}
-                className="text-xs font-bold w-full bg-brand-500 text-slate-950 hover:bg-brand-400 border border-transparent"
+                className="text-xs font-bold w-full"
               >
                 Share Card 🎴
               </Button>
@@ -309,26 +318,6 @@ export function DashboardPage() {
       <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] items-start">
         {/* LEFT COLUMN: Charts, Timelines */}
         <div className="space-y-8 min-w-0">
-          {/* Analytics Overview Widget */}
-          <Card className="space-y-6" hoverEffect={false}>
-            <div className="flex items-center justify-between border-b border-white/[0.04] pb-4">
-              <div>
-                <h3 className="font-display text-md font-bold text-white tracking-tight">
-                  Profile Traffic Views
-                </h3>
-                <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">
-                  Daily visitors (Last 7 days)
-                </p>
-              </div>
-              <span className="rounded-full bg-brand-500/10 border border-brand-500/20 px-2.5 py-0.5 text-3xs font-bold uppercase tracking-wider text-brand-400">
-                Live
-              </span>
-            </div>
-            <div className="pt-2">
-              <ViewsChart data={viewsChart} />
-            </div>
-          </Card>
-
           {/* Recent Activity Timeline Widget */}
           <Card className="space-y-5" hoverEffect={false}>
             <div>

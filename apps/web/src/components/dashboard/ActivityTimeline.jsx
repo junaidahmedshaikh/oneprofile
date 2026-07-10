@@ -22,7 +22,7 @@ const getActivityIcon = (type = "") => {
 const getRelativeTime = (dateStr) => {
   const date = new Date(dateStr);
   const seconds = Math.floor((new Date() - date) / 1000);
-  
+
   if (seconds < 60) return "Just now";
   const minutes = Math.floor(seconds / 60);
   if (minutes < 60) return `${minutes}m ago`;
@@ -55,7 +55,7 @@ export function ActivityTimeline({ activities = [] }) {
           className="relative flex gap-4 items-start group"
         >
           {/* Timeline node */}
-          <div className="absolute -left-6.5 mt-0.5 h-5.5 w-5.5 rounded-full bg-[#12141c] border border-white/[0.08] flex items-center justify-center text-2xs shadow-sm z-10 group-hover:border-brand-500/30 transition-colors">
+          <div className="absolute -left-6.5 mt-0.5 h-5.5 w-5.5 rounded-full border border-oneprofile-700 bg-oneprofile-900/40 flex items-center justify-center text-2xs shadow-sm z-10 group-hover:border-brand-500/30 transition-colors">
             {getActivityIcon(act.type)}
           </div>
 

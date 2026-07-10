@@ -52,12 +52,12 @@ export function CoverImageUpload({ value, onChange }) {
   };
 
   return (
-    <div className="space-y-2.5">
-      <label className="text-xs font-semibold text-slate-300 block">
+    <div className="space-y-2">
+      <label className="text-3xs font-semibold text-slate-400 block uppercase tracking-wider">
         Profile Cover Banner
       </label>
       
-      <div className="relative h-28 w-full rounded-2xl bg-white/[0.01] border border-white/[0.08] overflow-hidden group flex items-center justify-center">
+      <div className="relative h-28 w-full rounded-xl bg-white/[0.01] border border-dashed border-white/[0.08] overflow-hidden group flex items-center justify-center transition-all duration-150">
         {value ? (
           <>
             <img
@@ -65,7 +65,7 @@ export function CoverImageUpload({ value, onChange }) {
               alt="Cover Banner Preview"
               className="absolute inset-0 h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-[2px]">
+            <div className="absolute inset-0 bg-[#000000]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center gap-3 backdrop-blur-[2px]">
               <label className="h-8.5 px-3 bg-white text-slate-950 rounded-xl text-3xs font-bold flex items-center justify-center cursor-pointer hover:bg-slate-200 select-none active:scale-95 transition-all">
                 Replace Banner
                 <input
@@ -108,7 +108,7 @@ export function CoverImageUpload({ value, onChange }) {
         )}
 
         {uploadMutation.isPending && (
-          <div className="absolute inset-0 bg-[#090a0f]/80 flex flex-col items-center justify-center gap-2">
+          <div className="absolute inset-0 bg-[#07080d]/90 flex flex-col items-center justify-center gap-2">
             <Spinner />
             <span className="text-4xs font-bold uppercase tracking-widest text-slate-400 animate-pulse">
               Uploading Banner...

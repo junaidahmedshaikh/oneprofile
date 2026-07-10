@@ -24,17 +24,31 @@ export default {
         },
       },
       borderRadius: {
+        sm: "8px",
+        DEFAULT: "12px",
+        md: "12px",
+        lg: "14px",
         xl: "16px",
         "2xl": "20px",
-        "3xl": "28px",
+        "3xl": "24px",
+        "ds-btn": "14px",
+        "ds-card": "24px",
+        "ds-input": "16px",
+        "ds-modal": "24px",
+        "ds-badge": "9999px",
       },
       boxShadow: {
         soft: "0 24px 80px rgba(2, 8, 23, 0.35)",
         glow: "0 0 0 1px rgba(79, 140, 255, 0.18), 0 12px 40px rgba(79, 140, 255, 0.12)",
+        // Reusable Design System elevation tokens
+        "ds-card": "0 4px 20px -2px rgba(0, 0, 0, 0.15)",
+        "ds-hover": "0 8px 30px -4px rgba(0, 0, 0, 0.25)",
+        "ds-modal": "0 20px 40px -4px rgba(0, 0, 0, 0.4)",
+        "ds-popover": "0 10px 20px -2px rgba(0, 0, 0, 0.2)",
       },
       fontFamily: {
-        sans: ["Manrope", "ui-sans-serif", "system-ui"],
-        display: ["Sora", "Manrope", "ui-sans-serif"],
+        sans: ["'Plus Jakarta Sans'", "Manrope", "ui-sans-serif", "system-ui"],
+        display: ["'Plus Jakarta Sans'", "Sora", "Manrope", "ui-sans-serif"],
       },
       fontSize: {
         "3xs": ["0.625rem", { lineHeight: "0.75rem" }],
@@ -62,9 +76,22 @@ export default {
           "100%": { backgroundPosition: "200% 0" },
         },
       },
+      // Motion System Transitions
+      transitionDuration: {
+        100: "100ms",
+        150: "150ms",
+        200: "200ms",
+        250: "250ms",
+        300: "300ms",
+      },
+      transitionTimingFunction: {
+        "ds-out": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "ds-in-out": "cubic-bezier(0.4, 0, 0.2, 1)",
+      },
       animation: {
-        fadeUp: "fadeUp 240ms ease-out",
+        fadeUp: "fadeUp 240ms cubic-bezier(0.16, 1, 0.3, 1)",
         shimmer: "shimmer 1.6s linear infinite",
+        "spin-slow": "spin 8s linear infinite",
       },
     },
   },

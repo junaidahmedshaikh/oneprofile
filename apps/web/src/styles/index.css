@@ -4,22 +4,22 @@
 
 :root {
   /* Premium Dark Theme Color Tokens */
-  --color-nx-bg: #090a0f;
-  --color-nx-surface: #12141c;
-  --color-nx-surface-2: #1a1d29;
-  --color-nx-border: rgba(255, 255, 255, 0.06);
-  --color-nx-border-active: rgba(79, 140, 255, 0.35);
+  --color-nx-bg: #0B1020;
+  --color-nx-surface: rgba(255, 255, 255, 0.05);
+  --color-nx-surface-2: #111827;
+  --color-nx-border: rgba(255, 255, 255, 0.08);
+  --color-nx-border-active: rgba(37, 99, 235, 0.35);
   --color-nx-muted: #8e96aa;
-  --color-nx-text: #f3f5f9;
+  --color-nx-text: #F8FAFC;
   --color-nx-text-2: #b4bccf;
-  --color-nx-line: rgba(255, 255, 255, 0.05);
+  --color-nx-line: rgba(255, 255, 255, 0.04);
   --color-nx-line-soft: rgba(255, 255, 255, 0.02);
-  --color-nx-surface-soft: rgba(18, 20, 28, 0.6);
+  --color-nx-surface-soft: rgba(255, 255, 255, 0.04);
   
   /* Brand accents */
-  --brand-primary: #528bf2;
-  --brand-secondary: #00dfc0;
-  --brand-tertiary: #f472b6;
+  --brand-primary: #2563EB;
+  --brand-secondary: #3B82F6;
+  --brand-tertiary: #06B6D4;
 }
 
 html,
@@ -35,7 +35,15 @@ body {
   font-size: 16px;
   line-height: 1.6;
   letter-spacing: -0.01em;
-  background-color: var(--color-nx-bg);
+  background-color: #0b1020;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.06) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(11, 16, 32, 0.8) 0px, transparent 50%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+  background-attachment: fixed;
   color: var(--color-nx-text);
   overflow-x: hidden;
   position: relative;

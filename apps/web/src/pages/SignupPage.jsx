@@ -61,8 +61,10 @@ export function SignupPage() {
       className="space-y-7"
     >
       <div className="space-y-2">
-        <h2 className="font-display text-2.5xl font-extrabold text-white tracking-tight">Create account</h2>
-        <p className="text-sm text-slate-400">
+        <h2 className="font-display text-2.5xl font-extrabold text-slate-300 dark:text-white tracking-tight">
+          Create account
+        </h2>
+        <p className="text-xs text-oneprofile-600 font-semibold">
           Start your oneprofile identity workspace in minutes.
         </p>
       </div>
@@ -104,9 +106,13 @@ export function SignupPage() {
           {...form.register("password")}
           error={form.formState.errors.password?.message}
         />
-        
+
         <div className="pt-2">
-          <Button type="submit" className="w-full h-12 rounded-2xl" loading={mutation.isPending}>
+          <Button
+            type="submit"
+            className="w-full h-12 rounded-2xl"
+            loading={mutation.isPending}
+          >
             Create account
           </Button>
         </div>
@@ -115,10 +121,12 @@ export function SignupPage() {
       <div className="space-y-4">
         <div className="relative flex py-2 items-center">
           <div className="flex-grow border-t border-white/[0.06]"></div>
-          <span className="flex-shrink mx-4 text-3xs font-semibold uppercase tracking-[0.25em] text-slate-500">or connect with</span>
+          <span className="flex-shrink mx-4 text-3xs font-semibold uppercase tracking-[0.25em] text-slate-500">
+            or connect with
+          </span>
           <div className="flex-grow border-t border-white/[0.06]"></div>
         </div>
-        
+
         <SocialLoginButton
           label="Sign up with Google"
           onClick={() => googleMutation.mutate()}
@@ -128,7 +136,10 @@ export function SignupPage() {
 
       <div className="pt-3 border-t border-white/[0.05] text-xs text-slate-400 font-semibold text-center">
         Already have an account?{" "}
-        <Link className="text-brand-400 hover:text-brand-300 transition-colors" to="/login">
+        <Link
+          className="text-brand-400 hover:text-brand-300 transition-colors"
+          to="/login"
+        >
           Sign in
         </Link>
       </div>
