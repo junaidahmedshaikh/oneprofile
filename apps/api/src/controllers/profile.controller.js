@@ -86,4 +86,17 @@ export async function uploadCover(req, res, next) {
   }
 }
 
+export async function downloadVCard(req, res, next) {
+  try {
+    const { slug } = req.params;
+    const { filename, content } = await profileService.getVCard(slug);
+
+    res.setHeader('Content-Type', 'text/vcard');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(content);
+  } catch (error) {
+    next(error);
+  }
+}
+
 

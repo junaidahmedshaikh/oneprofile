@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { dashboardApi } from "../lib/dashboardApi";
+import { profileApi } from "../lib/profileApi";
 import { Card } from "../components/ui/Card";
 import { Alert } from "../components/ui/Alert";
 import { Button } from "../components/ui/Button";
@@ -10,10 +11,21 @@ import { ViewsChart } from "../components/dashboard/ViewsChart";
 import { ActivityTimeline } from "../components/dashboard/ActivityTimeline";
 import { AppointmentList } from "../components/dashboard/AppointmentList";
 import { TaskChecklist } from "../components/dashboard/TaskChecklist";
+import { ShareModal } from "../components/dashboard/ShareModal";
 
 export function DashboardPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [isShareOpen, setIsShareOpen] = useState(false);
+
+  // Fetch Owner Profile details for QR/slug sharing
+  const { data: profile } = useQuery({
+    queryKey: ["profile", "me"],
+    queryFn: async () => {
+      const response = await profileApi.me();
+      return response.data.data;
+    }
+  });
 
   // 1. Fetch Dashboard Summary Data
   const {
@@ -249,15 +261,10 @@ export function DashboardPage() {
               </Button>
               <Button
                 type="button"
-                onClick={() => {
-                  navigate("/identity");
-                  setTimeout(() => {
-                    window.location.hash = "#contact";
-                  }, 100);
-                }}
-                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+                onClick={() => setIsShareOpen(true)}
+                className="text-xs font-bold w-full bg-brand-500 text-slate-950 hover:bg-brand-400 border border-transparent"
               >
-                Edit Contact Info
+                Share Card 🎴
               </Button>
             </>
           ) : (
@@ -288,15 +295,10 @@ export function DashboardPage() {
               </Button>
               <Button
                 type="button"
-                onClick={() => {
-                  navigate("/identity");
-                  setTimeout(() => {
-                    window.location.hash = "#contact";
-                  }, 100);
-                }}
-                className="text-xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
+                onClick={() => setIsShareOpen(true)}
+                className="text-xs font-bold w-full bg-brand-500 text-slate-950 hover:bg-brand-400 border border-transparent"
               >
-                Edit Contact Info
+                Share Card 🎴
               </Button>
             </>
           )}
@@ -482,6 +484,11 @@ export function DashboardPage() {
           </Card>
         </div>
       </div>
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        profile={profile}
+      />
     </motion.div>
   );
 }

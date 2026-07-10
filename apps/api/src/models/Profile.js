@@ -113,7 +113,9 @@ const profileSchema = new mongoose.Schema(
       primary: { type: String, default: '#4F8CFF' },
       accent: { type: String, default: '#22D3EE' },
       mode: { type: String, enum: ['light', 'dark'], default: 'dark' }
-    }
+    },
+    qrCodeUrl: { type: String, default: '' },
+    publicProfileUrl: { type: String, default: '' }
   },
   { timestamps: true }
 );

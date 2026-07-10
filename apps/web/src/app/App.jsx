@@ -15,6 +15,7 @@ import { OnboardingShell } from "../components/onboarding/OnboardingShell";
 import { OnboardingPage } from "../pages/OnboardingPage";
 import { IdentityPage } from "../pages/IdentityPage";
 import { PublicProfilePage } from "../pages/PublicProfilePage";
+import { DigitalCardPage } from "../pages/DigitalCardPage";
 
 export function App() {
   return (
@@ -51,6 +52,7 @@ export function App() {
 
       {/* Public profile page route */}
       <Route path="/p/:slug" element={<PublicProfilePage />} />
+      <Route path="/p/:slug/card" element={<DigitalCardPage />} />
 
       <Route element={<ProtectedRoute />}>
         <Route element={<OnboardingShell />}>

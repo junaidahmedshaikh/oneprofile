@@ -5,6 +5,8 @@ import { ProfileView } from '../models/ProfileView.js';
 import { Activity } from '../models/Activity.js';
 import { ApiError } from '../utils/apiError.js';
 import { uploadLogoDataUri } from "./storage/cloudinary.service.js";
+import { env } from "../config/env.js";
+import QRCode from "qrcode";
 
 /**
  * Generate a unique slug based on a user's name or company name
@@ -118,7 +120,7 @@ export async function getOrCreateProfile(userId) {
   user.publishedProfileSlug = slug;
   await user.save();
 
-  return profile;
+  return populateShareAssets(profile);
 }
 
 /**
@@ -149,7 +151,7 @@ export async function updateProfile(userId, updateData) {
   Object.assign(profile, updateData);
   await profile.save();
 
-  return profile;
+  return populateShareAssets(profile);
 }
 
 /**
@@ -187,7 +189,7 @@ export async function getPublicProfile(slug, visitorIp, userAgent, referrer) {
     }
   })();
 
-  return profile;
+  return populateShareAssets(profile);
 }
 
 export async function uploadProfileAvatar(userId, dataUri) {
@@ -203,7 +205,7 @@ export async function uploadProfileAvatar(userId, dataUri) {
     profile.logoUrl = result.secure_url;
   }
   await profile.save();
-  return profile;
+  return populateShareAssets(profile);
 }
 
 export async function uploadProfileCover(userId, dataUri) {
@@ -214,7 +216,75 @@ export async function uploadProfileCover(userId, dataUri) {
   const result = await uploadLogoDataUri(dataUri);
   profile.coverImageUrl = result.secure_url;
   await profile.save();
+  return populateShareAssets(profile);
+}
+
+export async function populateShareAssets(profile) {
+  if (!profile) return profile;
+
+  const publicUrl = `${env.CLIENT_URL || 'http://localhost:5173'}/p/${profile.slug}`;
+  profile.publicProfileUrl = publicUrl;
+
+  try {
+    const qrCode = await QRCode.toDataURL(publicUrl, {
+      margin: 1,
+      width: 400,
+      color: {
+        dark: '#000000',
+        light: '#ffffff'
+      }
+    });
+    profile.qrCodeUrl = qrCode;
+  } catch (err) {
+    // Fail silently
+  }
+
   return profile;
+}
+
+export async function getVCard(slug) {
+  const profile = await Profile.findOne({ slug });
+  if (!profile) {
+    throw new ApiError(404, 'Profile not found');
+  }
+  if (profile.visibility === 'private') {
+    throw new ApiError(403, 'This profile is set to private');
+  }
+
+  const isProd = profile.profileType === 'professional';
+  const name = isProd ? (profile.title || 'Professional') : (profile.companyName || 'Business');
+  const org = isProd ? (profile.companyName || '') : (profile.companyName || '');
+  const title = isProd ? (profile.designation || '') : '';
+  const email = profile.contactDetails?.email || '';
+  const phone = profile.contactDetails?.phone || '';
+  const whatsapp = profile.contactDetails?.whatsAppNumber || '';
+  const website = profile.socialLinks?.website || '';
+  const address = profile.location?.address || '';
+
+  const parts = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    `FN:${name}`,
+  ];
+
+  if (org) parts.push(`ORG:${org}`);
+  if (title) parts.push(`TITLE:${title}`);
+  if (phone) parts.push(`TEL;TYPE=CELL:${phone}`);
+  if (whatsapp) parts.push(`TEL;TYPE=WORK,MSG:${whatsapp}`);
+  if (email) parts.push(`EMAIL;TYPE=PREF,INTERNET:${email}`);
+  if (website) parts.push(`URL:${website}`);
+  if (address) {
+    const city = profile.location?.city || '';
+    const country = profile.location?.country || '';
+    parts.push(`ADR;TYPE=WORK:;;${address.replace(/;/g, ' ')};${city};;${country}`);
+  }
+
+  parts.push('END:VCARD');
+  
+  return {
+    filename: `${name.replace(/[^a-zA-Z0-9]+/g, '_')}.vcf`,
+    content: parts.join('\r\n')
+  };
 }
 
 

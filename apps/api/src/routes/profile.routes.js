@@ -5,7 +5,8 @@ import {
   updateMe,
   getPublic,
   uploadAvatar,
-  uploadCover
+  uploadCover,
+  downloadVCard
 } from '../controllers/profile.controller.js';
 
 const router = Router();
@@ -18,5 +19,6 @@ router.post('/me/upload-cover', authenticate, uploadCover);
 
 // Public profile viewer routes
 router.get('/public/:slug', getPublic);
+router.get('/public/:slug/vcard', downloadVCard);
 
 export default router;
