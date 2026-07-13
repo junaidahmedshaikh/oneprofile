@@ -2,11 +2,17 @@ import { OAuth2Client } from 'google-auth-library';
 import { env } from '../config/env.js';
 import { ApiError } from '../utils/apiError.js';
 
-const client = env.GOOGLE_CLIENT_ID
-  ? new OAuth2Client(env.GOOGLE_CLIENT_ID, env.GOOGLE_CLIENT_SECRET, env.GOOGLE_REDIRECT_URI)
-  : null;
+function getClient(redirectUri) {
+  if (!env.GOOGLE_CLIENT_ID) return null;
+  return new OAuth2Client(
+    env.GOOGLE_CLIENT_ID,
+    env.GOOGLE_CLIENT_SECRET,
+    redirectUri || env.GOOGLE_REDIRECT_URI || 'http://localhost:4000/api/v1/auth/google/callback'
+  );
+}
 
-export function getGoogleAuthUrl() {
+export function getGoogleAuthUrl(redirectUri) {
+  const client = getClient(redirectUri);
   if (!client) {
     throw new ApiError(500, 'Google OAuth is not configured', 'GOOGLE_OAUTH_NOT_CONFIGURED');
   }
@@ -19,6 +25,7 @@ export function getGoogleAuthUrl() {
 }
 
 export async function verifyGoogleIdToken(idToken) {
+  const client = getClient();
   if (!client) {
     throw new ApiError(500, 'Google OAuth is not configured', 'GOOGLE_OAUTH_NOT_CONFIGURED');
   }
@@ -31,7 +38,8 @@ export async function verifyGoogleIdToken(idToken) {
   return ticket.getPayload();
 }
 
-export async function exchangeGoogleCode(code) {
+export async function exchangeGoogleCode(code, redirectUri) {
+  const client = getClient(redirectUri);
   if (!client) {
     throw new ApiError(500, 'Google OAuth is not configured', 'GOOGLE_OAUTH_NOT_CONFIGURED');
   }

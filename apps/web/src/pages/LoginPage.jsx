@@ -64,7 +64,8 @@ export function LoginPage() {
 
       {loginMutation.isError ? (
         <Alert variant="error">
-          Login failed. Check your credentials and try again.
+          {loginMutation.error?.response?.data?.message ||
+            "Login failed. Check your credentials and try again."}
         </Alert>
       ) : null}
       {successMessage ? (

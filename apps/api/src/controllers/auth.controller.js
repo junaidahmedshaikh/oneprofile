@@ -161,14 +161,16 @@ export const confirmPhoneVerification = asyncHandler(async (req, res) => {
   return ok(res, { message: 'Phone verified', data });
 });
 
-export const googleStart = asyncHandler(async (_req, res) => {
-  const url = getGoogleAuthUrl();
+export const googleStart = asyncHandler(async (req, res) => {
+  const redirectUri = env.GOOGLE_REDIRECT_URI || `${req.protocol}://${req.get('host')}/api/v1/auth/google/callback`;
+  const url = getGoogleAuthUrl(redirectUri);
   return ok(res, { data: { url } });
 });
 
 export const googleCallback = asyncHandler(async (req, res) => {
   const code = req.query.code || req.body.code;
-  const profile = code ? await exchangeGoogleCode(code) : await verifyGoogleIdToken(req.body.idToken || req.query.id_token);
+  const redirectUri = env.GOOGLE_REDIRECT_URI || `${req.protocol}://${req.get('host')}/api/v1/auth/google/callback`;
+  const profile = code ? await exchangeGoogleCode(code, redirectUri) : await verifyGoogleIdToken(req.body.idToken || req.query.id_token);
   const result = await loginWithGoogleProfile(profile, req.headers['user-agent'] || '', req.ip, readDevice(req));
   setAuthCookies(res, result);
   return res.redirect(`${runtimeEnv.CLIENT_URL}/dashboard`);
