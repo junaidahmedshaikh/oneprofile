@@ -79,7 +79,7 @@ export function OtpPage() {
         >
           <Input
             label="Email or phone"
-            placeholder="name@company.com or +15550000"
+            placeholder="name@company.com or +91 9223047765"
             {...requestForm.register("identifier")}
             error={requestForm.formState.errors.identifier?.message}
           />

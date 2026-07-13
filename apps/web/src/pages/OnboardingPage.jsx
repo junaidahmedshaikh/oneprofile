@@ -145,7 +145,7 @@ function SearchableDropdown({
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setHighlightedIndex((prev) =>
-        prev < filteredOptions.length - 1 ? prev + 1 : prev
+        prev < filteredOptions.length - 1 ? prev + 1 : prev,
       );
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
@@ -177,74 +177,69 @@ function SearchableDropdown({
         onKeyDown={handleKeyDown}
         className="flex h-11 w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-left text-xs font-semibold text-slate-200 hover:text-white shadow-sm transition-all hover:bg-white/[0.06] active:scale-[0.99] select-none"
       >
-        <span
-          className={
-            selectedOption
-              ? "text-white"
-              : "text-slate-500"
-          }
-        >
+        <span className={selectedOption ? "text-white" : "text-slate-500"}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <span className="text-slate-400 text-[10px]">▼</span>
       </button>
 
-      {isOpen && createPortal(
-        <div
-          ref={dropdownRef}
-          style={{
-            position: "absolute",
-            top: `${coords.top}px`,
-            left: `${coords.left}px`,
-            width: `${coords.width}px`,
-          }}
-          className="z-[9999] mt-1 rounded-2xl border border-white/[0.08] bg-[#12141c] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl space-y-2 flex flex-col max-h-[280px] overflow-hidden"
-        >
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Search options..."
+      {isOpen &&
+        createPortal(
+          <div
+            ref={dropdownRef}
             style={{
-              backgroundColor: "#181a26",
-              color: "#ffffff",
-              borderColor: "rgba(255, 255, 255, 0.08)",
+              position: "absolute",
+              top: `${coords.top}px`,
+              left: `${coords.left}px`,
+              width: `${coords.width}px`,
             }}
-            className="w-full rounded-xl border px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors duration-150"
-            autoFocus
-          />
-          <div className="flex-1 overflow-y-auto pr-1 space-y-0.5 max-h-[200px] custom-scrollbar">
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((opt, idx) => (
-                <button
-                  key={opt.key}
-                  type="button"
-                  onClick={() => {
-                    onChange(opt.key);
-                    setIsOpen(false);
-                    setSearchTerm("");
-                  }}
-                  className={`w-full rounded-xl px-3 py-2.5 text-left text-xs font-semibold transition-all duration-150 ease-in-out ${
-                    value === opt.key
-                      ? "bg-brand-500 text-white shadow-[0_2px_10px_rgba(37,99,235,0.3)]"
-                      : highlightedIndex === idx
-                        ? "bg-white/[0.06] text-white"
-                        : "text-slate-300 hover:bg-brand-500/10 hover:text-brand-300"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))
-            ) : (
-              <div className="px-3 py-2 text-3xs text-slate-500 font-bold uppercase">
-                No results found
-              </div>
-            )}
-          </div>
-        </div>,
-        document.body
-      )}
+            className="z-[9999] mt-1 rounded-2xl border border-white/[0.08] bg-[#12141c] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl space-y-2 flex flex-col max-h-[280px] overflow-hidden"
+          >
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Search options..."
+              style={{
+                backgroundColor: "#181a26",
+                color: "#ffffff",
+                borderColor: "rgba(255, 255, 255, 0.08)",
+              }}
+              className="w-full rounded-xl border px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors duration-150"
+              autoFocus
+            />
+            <div className="flex-1 overflow-y-auto pr-1 space-y-0.5 max-h-[200px] custom-scrollbar">
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map((opt, idx) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    onClick={() => {
+                      onChange(opt.key);
+                      setIsOpen(false);
+                      setSearchTerm("");
+                    }}
+                    className={`w-full rounded-xl px-3 py-2.5 text-left text-xs font-semibold transition-all duration-150 ease-in-out ${
+                      value === opt.key
+                        ? "bg-brand-500 text-white shadow-[0_2px_10px_rgba(37,99,235,0.3)]"
+                        : highlightedIndex === idx
+                          ? "bg-white/[0.06] text-white"
+                          : "text-slate-300 hover:bg-brand-500/10 hover:text-brand-300"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))
+              ) : (
+                <div className="px-3 py-2 text-3xs text-slate-500 font-bold uppercase">
+                  No results found
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
@@ -305,7 +300,6 @@ export function OnboardingPage() {
     }
     return ["industry", "category", "company", "logo", "content"];
   }, [selectedProfileType]);
-
 
   // Fetch Lookups & Onboarding State
   const stateQuery = useQuery({
@@ -399,15 +393,18 @@ export function OnboardingPage() {
     if (!stateQuery.data || isHydrated) return;
     setIsHydrated(true);
     dispatch(hydrateOnboarding(stateQuery.data));
-    
+
     const serverProfileType = stateQuery.data.profileType || "business";
-    const serverStepOrder = serverProfileType === "professional"
-      ? ["industry", "category", "logo", "content"]
-      : ["industry", "category", "company", "logo", "content"];
+    const serverStepOrder =
+      serverProfileType === "professional"
+        ? ["industry", "category", "logo", "content"]
+        : ["industry", "category", "company", "logo", "content"];
     const serverStep = stateQuery.data.currentStep || "industry";
     const sanitizedStep = serverStep === "theme" ? "content" : serverStep;
-    const validStep = serverStepOrder.includes(sanitizedStep) ? sanitizedStep : "industry";
-    
+    const validStep = serverStepOrder.includes(sanitizedStep)
+      ? sanitizedStep
+      : "industry";
+
     setLocalStep(validStep);
     dispatch(setActiveStep(validStep));
     setSelectedProfileType(serverProfileType);
@@ -863,7 +860,9 @@ export function OnboardingPage() {
             .split(",")
             .map((s) => s.trim())
             .filter(Boolean),
-          certifications: (contentValues.personalDetails?.certificationsRaw || "")
+          certifications: (
+            contentValues.personalDetails?.certificationsRaw || ""
+          )
             .split(",")
             .map((s) => s.trim())
             .filter(Boolean),
@@ -999,8 +998,6 @@ export function OnboardingPage() {
           </Button>
         </div>
       </div>
-
-
 
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] items-start">
         {/* Step configuration cards */}
@@ -1216,7 +1213,7 @@ export function OnboardingPage() {
                       />
                       <Input
                         label="Phone Number"
-                        placeholder="+1 (555) 012-3456"
+                        placeholder="+91 9223047765"
                         {...companyForm.register("phone")}
                         error={companyForm.formState.errors.phone?.message}
                       />
@@ -1321,7 +1318,8 @@ export function OnboardingPage() {
                           required: "Full name is required",
                         })}
                         error={
-                          contentForm.formState.errors.personalDetails?.title?.message
+                          contentForm.formState.errors.personalDetails?.title
+                            ?.message
                         }
                       />
                       <Input
@@ -1801,7 +1799,9 @@ export function OnboardingPage() {
               {activeStep !== "industry" ? (
                 <Button
                   variant="secondary"
-                  disabled={completeMutation.isPending || saveMutation.isPending}
+                  disabled={
+                    completeMutation.isPending || saveMutation.isPending
+                  }
                   onClick={() => {
                     const prevIndex = currentStepOrder.indexOf(activeStep) - 1;
                     const prevStep = currentStepOrder[Math.max(prevIndex, 0)];

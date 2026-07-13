@@ -117,7 +117,7 @@ export function VerificationPage() {
         ) : (
           <Input
             label="Phone number"
-            placeholder="+15550199"
+            placeholder="+91 9223047765"
             {...form.register("phone")}
             error={form.formState.errors.phone?.message}
           />

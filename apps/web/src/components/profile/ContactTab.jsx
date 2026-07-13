@@ -9,7 +9,7 @@ const daysList = [
   { key: "thursday", label: "Thursday" },
   { key: "friday", label: "Friday" },
   { key: "saturday", label: "Saturday" },
-  { key: "sunday", label: "Sunday" }
+  { key: "sunday", label: "Sunday" },
 ];
 
 export function ContactTab({ register, watch, setValue, formState }) {
@@ -23,7 +23,9 @@ export function ContactTab({ register, watch, setValue, formState }) {
 
   const addCustomLink = () => {
     if (!newLink.title || !newLink.url) return;
-    setValue("socialLinks.customLinks", [...customLinks, newLink], { shouldDirty: true });
+    setValue("socialLinks.customLinks", [...customLinks, newLink], {
+      shouldDirty: true,
+    });
     setNewLink({ title: "", url: "" });
   };
 
@@ -37,8 +39,12 @@ export function ContactTab({ register, watch, setValue, formState }) {
       {/* 1. Contact Info */}
       <div className="space-y-4">
         <div className="space-y-1">
-          <h3 className="font-display text-lg font-bold text-white tracking-tight">Contact Channels</h3>
-          <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Configure client communication details</p>
+          <h3 className="font-display text-lg font-bold text-white tracking-tight">
+            Contact Channels
+          </h3>
+          <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+            Configure client communication details
+          </p>
         </div>
 
         <div className="grid gap-4.5 sm:grid-cols-3">
@@ -50,12 +56,12 @@ export function ContactTab({ register, watch, setValue, formState }) {
           />
           <Input
             label="Public Phone Number"
-            placeholder="+1 (555) 012-3456"
+            placeholder="+91 9223047765"
             {...register("contactDetails.phone")}
           />
           <Input
             label="WhatsApp Connection Number"
-            placeholder="E.g., +15550123456"
+            placeholder="E.g., +91 9223047765"
             {...register("contactDetails.whatsAppNumber")}
             hint="Include country code, digits only."
           />
@@ -67,8 +73,12 @@ export function ContactTab({ register, watch, setValue, formState }) {
       {/* 2. Social Links */}
       <div className="space-y-4">
         <div className="space-y-1">
-          <h3 className="font-display text-lg font-bold text-white tracking-tight">Social Accounts</h3>
-          <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Link handles to show connection buttons</p>
+          <h3 className="font-display text-lg font-bold text-white tracking-tight">
+            Social Accounts
+          </h3>
+          <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+            Link handles to show connection buttons
+          </p>
         </div>
 
         <div className="grid gap-4.5 sm:grid-cols-2">
@@ -117,17 +127,25 @@ export function ContactTab({ register, watch, setValue, formState }) {
       {/* 3. Additional Custom Links */}
       <div className="space-y-4">
         <div className="space-y-1">
-          <h3 className="font-display text-lg font-bold text-white tracking-tight">Additional Custom Links</h3>
-          <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Add links to your portfolio, blog, or document files</p>
+          <h3 className="font-display text-lg font-bold text-white tracking-tight">
+            Additional Custom Links
+          </h3>
+          <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+            Add links to your portfolio, blog, or document files
+          </p>
         </div>
 
         <div className="p-4.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-4">
-          <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">Add custom URL node</span>
+          <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+            Add custom URL node
+          </span>
           <div className="grid gap-4.5 sm:grid-cols-2">
             <Input
               label="Link Title *"
               value={newLink.title}
-              onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
+              onChange={(e) =>
+                setNewLink({ ...newLink, title: e.target.value })
+              }
               placeholder="E.g., Read My Portfolio Booklet"
             />
             <Input
@@ -137,7 +155,11 @@ export function ContactTab({ register, watch, setValue, formState }) {
               placeholder="E.g., https://my-portfolio.com"
             />
           </div>
-          <Button variant="secondary" className="text-xs w-full" onClick={addCustomLink}>
+          <Button
+            variant="secondary"
+            className="text-xs w-full"
+            onClick={addCustomLink}
+          >
             Add Custom Link Node
           </Button>
         </div>
@@ -145,13 +167,17 @@ export function ContactTab({ register, watch, setValue, formState }) {
         <div className="space-y-3">
           {customLinks.length ? (
             customLinks.map((link, idx) => (
-              <div 
+              <div
                 key={idx}
                 className="flex justify-between items-center gap-4 p-4.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] hover:border-white/[0.08] transition-all"
               >
                 <div>
-                  <h4 className="text-xs font-bold text-white leading-snug">{link.title}</h4>
-                  <span className="text-3xs text-slate-500 font-bold select-all truncate block max-w-[250px] mt-0.5">{link.url}</span>
+                  <h4 className="text-xs font-bold text-white leading-snug">
+                    {link.title}
+                  </h4>
+                  <span className="text-3xs text-slate-500 font-bold select-all truncate block max-w-[250px] mt-0.5">
+                    {link.url}
+                  </span>
                 </div>
                 <button
                   type="button"
@@ -163,7 +189,9 @@ export function ContactTab({ register, watch, setValue, formState }) {
               </div>
             ))
           ) : (
-            <div className="py-4 text-center text-xs text-slate-500">No custom links added yet.</div>
+            <div className="py-4 text-center text-xs text-slate-500">
+              No custom links added yet.
+            </div>
           )}
         </div>
       </div>
@@ -173,8 +201,12 @@ export function ContactTab({ register, watch, setValue, formState }) {
       {/* 4. Location & Google Maps */}
       <div className="space-y-4">
         <div className="space-y-1">
-          <h3 className="font-display text-lg font-bold text-white tracking-tight">Office Location & Map</h3>
-          <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Embed business address details</p>
+          <h3 className="font-display text-lg font-bold text-white tracking-tight">
+            Office Location & Map
+          </h3>
+          <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+            Embed business address details
+          </p>
         </div>
 
         <div className="grid gap-4.5 sm:grid-cols-2">
@@ -211,26 +243,38 @@ export function ContactTab({ register, watch, setValue, formState }) {
       {/* 5. Working Hours */}
       <div className="space-y-4">
         <div className="space-y-1">
-          <h3 className="font-display text-lg font-bold text-white tracking-tight">Office Working Hours</h3>
-          <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Set weekly availability schedules</p>
+          <h3 className="font-display text-lg font-bold text-white tracking-tight">
+            Office Working Hours
+          </h3>
+          <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+            Set weekly availability schedules
+          </p>
         </div>
 
         <div className="space-y-3.5">
           {daysList.map((day) => {
-            const dayConfig = workingHours[day.key] || { enabled: false, open: "09:00", close: "17:00" };
+            const dayConfig = workingHours[day.key] || {
+              enabled: false,
+              open: "09:00",
+              close: "17:00",
+            };
             return (
-              <div 
-                key={day.key} 
+              <div
+                key={day.key}
                 className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-white/[0.01] border border-white/[0.04]"
               >
                 <label className="flex items-center gap-3 select-none cursor-pointer">
                   <input
                     type="checkbox"
                     checked={!!dayConfig.enabled}
-                    onChange={(e) => handleWorkingHourToggle(day.key, e.target.checked)}
+                    onChange={(e) =>
+                      handleWorkingHourToggle(day.key, e.target.checked)
+                    }
                     className="rounded border-white/10 bg-white/5 text-brand-500 h-4.5 w-4.5"
                   />
-                  <span className="text-xs font-bold text-white">{day.label}</span>
+                  <span className="text-xs font-bold text-white">
+                    {day.label}
+                  </span>
                 </label>
 
                 {dayConfig.enabled ? (
