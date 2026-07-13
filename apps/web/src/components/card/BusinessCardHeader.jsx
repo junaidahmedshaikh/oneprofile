@@ -44,24 +44,25 @@ export function BusinessCardHeader({ profile, st }) {
         </div>
 
         {/* Identity Texts */}
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="font-display text-xl font-extrabold text-white tracking-tight leading-tight">
-              {name}
-            </h2>
+        <div className="space-y-3.5">
+          <div className="flex items-start justify-between gap-4 flex-wrap w-full">
+            <div className="space-y-1">
+              <h2 className="font-display text-xl font-extrabold text-white tracking-tight leading-tight">
+                {name}
+              </h2>
+              {subtitle && (
+                <p className={clsx("text-xs font-semibold leading-relaxed", st.brandText)}>
+                  {subtitle}
+                </p>
+              )}
+            </div>
             {/* Verification Badge */}
             {profile.isVerified && (
-              <span className="h-4.5 w-4.5 rounded-full bg-blue-500 flex items-center justify-center text-[10px] text-white select-none" aria-label="Verified Profile" title="Verified Professional">
-                ✓
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#4F8CFF] bg-[#4F8CFF]/10 border border-[#4F8CFF]/20 px-2.5 py-0.5 rounded-full select-none" aria-label="Verified Profile">
+                Verified
               </span>
             )}
           </div>
-
-          {subtitle && (
-            <p className={clsx("text-xs font-semibold leading-relaxed", st.brandText)}>
-              {subtitle}
-            </p>
-          )}
 
           <div className="flex flex-wrap gap-x-3 gap-y-1 text-4xs text-slate-500 font-bold uppercase tracking-wider">
             {isProd && profile.companyName && (

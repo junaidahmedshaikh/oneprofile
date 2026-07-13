@@ -12,7 +12,7 @@ import { authApi } from "../lib/authApi";
 
 const schema = z.object({
   token: z.string().min(8, "Token must be at least 8 characters"),
-  password: z.string().min(12, "Use at least 12 characters"),
+  password: z.string().min(8, "Use at least 8 characters"),
 });
 
 export function ResetPasswordPage() {

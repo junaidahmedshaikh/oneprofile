@@ -71,7 +71,8 @@ export function SignupPage() {
 
       {mutation.isError ? (
         <Alert variant="error">
-          Signup failed. Check your contact details and try again.
+          {mutation.error?.response?.data?.message ||
+            "Registration failed. Check your details and try again."}
         </Alert>
       ) : null}
       {info ? <Alert variant="success">{info}</Alert> : null}
@@ -110,7 +111,8 @@ export function SignupPage() {
         <div className="pt-2">
           <Button
             type="submit"
-            className="w-full h-12 rounded-2xl"
+            variant="secondary"
+            className="text-xs font-bold w-full"
             loading={mutation.isPending}
           >
             Create account

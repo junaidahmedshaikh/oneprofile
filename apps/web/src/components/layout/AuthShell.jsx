@@ -25,7 +25,7 @@ export function AuthShell({ eyebrow, title, subtitle, children, sideContent }) {
       </header>
 
       {/* Main split grid */}
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-12 px-6 py-12 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+      <div className="relative  z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-12 px-6 py-12 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
         {/* Left Side: Presentation */}
         <motion.section
           initial={{ opacity: 0, x: -20 }}
@@ -50,16 +50,21 @@ export function AuthShell({ eyebrow, title, subtitle, children, sideContent }) {
             {sideContent || (
               <div className="relative p-1 bg-oneprofile-100 border border-oneprofile-700 rounded-ds-card overflow-hidden shadow-ds-card backdrop-blur-xl">
                 {/* Simulated Premium profile card */}
-                <div className="relative p-6 rounded-2xl overflow-hidden bg-oneprofile-900/40">
+                <div className="relative  p-6 rounded-2xl overflow-hidden bg-oneprofile-900/40">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
 
                   {/* Card head */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="h-11 w-11 rounded-xl bg-gradient-to-tr from-primary to-cyan-400 p-0.5 shadow-lg">
-                        <div className="h-full w-full rounded-md border border-oneprofile-700 bg-oneprofile-900/40 flex items-center justify-center text-xs font-bold text-primary">
+                      <div className="h-11 w-11 rounded-xl p-0.5 ">
+                        {/* <div className="h-full w-full rounded-md border border-oneprofile-700 bg-oneprofile-900/40 flex items-center justify-center text-xs font-bold text-primary">
                           OP
-                        </div>
+                        </div> */}
+                        <img
+                          src="/oneprofile_logo.png"
+                          alt="OneProfile Logo"
+                          className="h-full w-full object-contain rounded-md"
+                        />
                       </div>
                       <div>
                         <div className="text-sm font-bold text-slate-300 dark:text-white">
@@ -80,13 +85,13 @@ export function AuthShell({ eyebrow, title, subtitle, children, sideContent }) {
                     <div className="h-px bg-oneprofile-700" />
                     <div className="flex items-center justify-between text-xs text-oneprofile-600 py-1">
                       <span>Digital Business Card</span>
-                      <span className="text-slate-800 dark:text-slate-300 font-bold">
+                      <span className="text-primary dark:text-slate-300 font-bold">
                         Active
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-oneprofile-600 py-1">
                       <span>Mini Portfolio Website</span>
-                      <span className="text-slate-800 dark:text-slate-300 font-bold">
+                      <span className="text-primary font-bold dark:text-slate-300">
                         Published
                       </span>
                     </div>

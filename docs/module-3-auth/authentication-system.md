@@ -147,7 +147,7 @@
 ## Validation
 
 - Email must be valid.
-- Password must be at least 12 characters.
+- Password must be at least 8 characters.
 - OTP codes must match expected length.
 - Reset tokens must be present and non-empty.
 

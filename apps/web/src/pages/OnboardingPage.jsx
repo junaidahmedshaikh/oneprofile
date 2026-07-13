@@ -1,4 +1,6 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
+import clsx from "clsx";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -20,8 +22,6 @@ import { Input } from "../components/ui/Input";
 import { Textarea } from "../components/ui/Textarea";
 import { Alert } from "../components/ui/Alert";
 import { Spinner } from "../components/ui/Spinner";
-import { OnboardingStepper } from "../components/onboarding/OnboardingStepper";
-import { OnboardingProgress } from "../components/onboarding/OnboardingProgress";
 
 const stepOrder = [
   "industry", // profileType selection
@@ -89,6 +89,10 @@ function SearchableDropdown({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const triggerRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
 
   const filteredOptions = useMemo(() => {
     return options.filter((opt) =>
@@ -98,9 +102,37 @@ function SearchableDropdown({
 
   const selectedOption = options.find((opt) => opt.key === value);
 
+  const updateCoords = () => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.bottom + 8 + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      updateCoords();
+      setHighlightedIndex(0);
+      const handleScrollResize = () => updateCoords();
+      window.addEventListener("scroll", handleScrollResize, true);
+      window.addEventListener("resize", handleScrollResize);
+      return () => {
+        window.removeEventListener("scroll", handleScrollResize, true);
+        window.removeEventListener("resize", handleScrollResize);
+      };
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (!e.target.closest(".searchable-dropdown-container")) {
+      if (
+        !e.target.closest(".searchable-dropdown-container") &&
+        (!dropdownRef.current || !dropdownRef.current.contains(e.target))
+      ) {
         setIsOpen(false);
       }
     };
@@ -108,43 +140,83 @@ function SearchableDropdown({
     return () => document.removeEventListener("click", handleOutsideClick);
   }, []);
 
+  const handleKeyDown = (e) => {
+    if (!isOpen) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev < filteredOptions.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (filteredOptions[highlightedIndex]) {
+        onChange(filteredOptions[highlightedIndex].key);
+        setIsOpen(false);
+        setSearchTerm("");
+      }
+    } else if (e.key === "Escape") {
+      setIsOpen(false);
+    }
+  };
+
   return (
     <div className="relative space-y-1.5 min-w-0 searchable-dropdown-container">
       {label && (
-        <label className="text-3xs font-extrabold uppercase tracking-wider text-oneprofile-600">
+        <label className="text-3xs font-extrabold uppercase tracking-wider text-slate-400">
           {label}
         </label>
       )}
 
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-11 w-full items-center justify-between rounded-xl border border-oneprofile-700 bg-oneprofile-900/40 px-4 py-2.5 text-left text-xs font-semibold text-slate-300 dark:text-white shadow-sm transition-all hover:bg-oneprofile-100 active:scale-[0.99] select-none"
+        onKeyDown={handleKeyDown}
+        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-left text-xs font-semibold text-slate-200 hover:text-white shadow-sm transition-all hover:bg-white/[0.06] active:scale-[0.99] select-none"
       >
         <span
           className={
             selectedOption
-              ? "text-slate-300 dark:text-white"
-              : "text-oneprofile-600"
+              ? "text-white"
+              : "text-slate-500"
           }
         >
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <span className="text-oneprofile-600">▼</span>
+        <span className="text-slate-400 text-[10px]">▼</span>
       </button>
 
-      {isOpen && (
-        <div className="absolute z-50 mt-1 w-full rounded-2xl border border-oneprofile-700 bg-oneprofile-900/40 dark:bg-[#12141c]/95 light:bg-white p-2 shadow-xl backdrop-blur-xl max-h-[220px] overflow-y-auto space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+      {isOpen && createPortal(
+        <div
+          ref={dropdownRef}
+          style={{
+            position: "absolute",
+            top: `${coords.top}px`,
+            left: `${coords.left}px`,
+            width: `${coords.width}px`,
+          }}
+          className="z-[9999] mt-1 rounded-2xl border border-white/[0.08] bg-[#12141c] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl space-y-2 flex flex-col max-h-[280px] overflow-hidden"
+        >
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search..."
-            className="w-full rounded-lg bg-oneprofile-950/60 border border-oneprofile-700 px-3 py-1.5 text-xs text-slate-300 dark:text-white focus:outline-none focus:border-primary"
+            onKeyDown={handleKeyDown}
+            placeholder="Search options..."
+            style={{
+              backgroundColor: "#181a26",
+              color: "#ffffff",
+              borderColor: "rgba(255, 255, 255, 0.08)",
+            }}
+            className="w-full rounded-xl border px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors duration-150"
+            autoFocus
           />
-          <div className="space-y-0.5 max-h-[140px] overflow-y-auto">
+          <div className="flex-1 overflow-y-auto pr-1 space-y-0.5 max-h-[200px] custom-scrollbar">
             {filteredOptions.length > 0 ? (
-              filteredOptions.map((opt) => (
+              filteredOptions.map((opt, idx) => (
                 <button
                   key={opt.key}
                   type="button"
@@ -153,22 +225,25 @@ function SearchableDropdown({
                     setIsOpen(false);
                     setSearchTerm("");
                   }}
-                  className={`w-full rounded-lg px-3 py-2 text-left text-xs font-semibold transition-colors ${
+                  className={`w-full rounded-xl px-3 py-2.5 text-left text-xs font-semibold transition-all duration-150 ease-in-out ${
                     value === opt.key
-                      ? "bg-primary text-slate-950"
-                      : "text-slate-800 dark:text-slate-300 hover:bg-oneprofile-100 hover:text-slate-950 dark:hover:text-white"
+                      ? "bg-brand-500 text-white shadow-[0_2px_10px_rgba(37,99,235,0.3)]"
+                      : highlightedIndex === idx
+                        ? "bg-white/[0.06] text-white"
+                        : "text-slate-300 hover:bg-brand-500/10 hover:text-brand-300"
                   }`}
                 >
                   {opt.label}
                 </button>
               ))
             ) : (
-              <div className="px-3 py-2 text-3xs text-oneprofile-600 font-bold uppercase">
+              <div className="px-3 py-2 text-3xs text-slate-500 font-bold uppercase">
                 No results found
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
@@ -195,6 +270,15 @@ export function OnboardingPage() {
   const [logoPreview, setLogoPreview] = useState("");
   const [resumeMessage, setResumeMessage] = useState("");
 
+  const [initialCustomValues, setInitialCustomValues] = useState({
+    profileType: "business",
+    industry: "",
+    category: "",
+    professionalCategory: "",
+    themeKey: "",
+    experienceCount: 0,
+  });
+
   // Experience list helper state
   const [experienceList, setExperienceList] = useState([]);
   const [newExp, setNewExp] = useState({
@@ -207,6 +291,14 @@ export function OnboardingPage() {
   });
   const [newLink, setNewLink] = useState({ title: "", url: "" });
 
+  const isCustomDirty =
+    selectedProfileType !== initialCustomValues.profileType ||
+    selectedIndustry !== initialCustomValues.industry ||
+    selectedCategory !== initialCustomValues.category ||
+    selectedProfessionalCategory !== initialCustomValues.professionalCategory ||
+    (selectedTheme?.key || "") !== (initialCustomValues.themeKey || "") ||
+    experienceList.length !== initialCustomValues.experienceCount;
+
   const currentStepOrder = useMemo(() => {
     if (selectedProfileType === "professional") {
       return ["industry", "category", "logo", "content"];
@@ -214,21 +306,6 @@ export function OnboardingPage() {
     return ["industry", "category", "company", "logo", "content"];
   }, [selectedProfileType]);
 
-  // Safety redirect to prevent landing on invalid steps (e.g. Industry step for Professionals or Theme step)
-  useEffect(() => {
-    if (!currentStepOrder.includes(activeStep)) {
-      if (selectedProfileType === "professional" && activeStep === "company") {
-        setLocalStep("logo");
-        dispatch(setActiveStep("logo"));
-      } else if (activeStep === "theme") {
-        setLocalStep("content");
-        dispatch(setActiveStep("content"));
-      } else {
-        setLocalStep("industry");
-        dispatch(setActiveStep("industry"));
-      }
-    }
-  }, [selectedProfileType, activeStep, currentStepOrder, dispatch]);
 
   // Fetch Lookups & Onboarding State
   const stateQuery = useQuery({
@@ -322,8 +399,18 @@ export function OnboardingPage() {
     if (!stateQuery.data || isHydrated) return;
     setIsHydrated(true);
     dispatch(hydrateOnboarding(stateQuery.data));
-    setLocalStep(stateQuery.data.currentStep || "industry");
-    setSelectedProfileType(stateQuery.data.profileType || "business");
+    
+    const serverProfileType = stateQuery.data.profileType || "business";
+    const serverStepOrder = serverProfileType === "professional"
+      ? ["industry", "category", "logo", "content"]
+      : ["industry", "category", "company", "logo", "content"];
+    const serverStep = stateQuery.data.currentStep || "industry";
+    const sanitizedStep = serverStep === "theme" ? "content" : serverStep;
+    const validStep = serverStepOrder.includes(sanitizedStep) ? sanitizedStep : "industry";
+    
+    setLocalStep(validStep);
+    dispatch(setActiveStep(validStep));
+    setSelectedProfileType(serverProfileType);
     setSelectedIndustry(stateQuery.data.industry?.key || "");
     setSelectedCategory(stateQuery.data.businessCategory?.key || "");
     setSelectedProfessionalCategory(
@@ -331,6 +418,15 @@ export function OnboardingPage() {
     );
     setSelectedTheme(stateQuery.data.theme || themeList[0]);
     setExperienceList(stateQuery.data.experience || []);
+
+    setInitialCustomValues({
+      profileType: stateQuery.data.profileType || "business",
+      industry: stateQuery.data.industry?.key || "",
+      category: stateQuery.data.businessCategory?.key || "",
+      professionalCategory: stateQuery.data.professionalCategory?.key || "",
+      themeKey: stateQuery.data.theme?.key || "",
+      experienceCount: (stateQuery.data.experience || []).length,
+    });
 
     companyForm.reset({
       companyName: stateQuery.data.companyDetails?.companyName || "",
@@ -434,13 +530,89 @@ export function OnboardingPage() {
     );
   }, [professionalCategories, selectedProfessionalCategory]);
 
+  // Manual/Autosave draft helper
+  const saveDraft = async () => {
+    const companyValues = companyForm.getValues();
+    const contentValues = contentForm.getValues();
+
+    await saveMutation.mutateAsync({
+      currentStep: activeStep,
+      profileType: selectedProfileType,
+      industry: selectedIndustry
+        ? { key: selectedIndustry, label: selectedIndustryLabel }
+        : undefined,
+      businessCategory: selectedCategory
+        ? { key: selectedCategory, label: selectedCategoryLabel }
+        : undefined,
+      professionalCategory: selectedProfessionalCategory
+        ? {
+            key: selectedProfessionalCategory,
+            label: selectedProfessionalCategoryLabel,
+          }
+        : undefined,
+      companyDetails: companyValues,
+      theme: selectedTheme,
+      completedSteps: onboardingState.completedSteps,
+      skippedSteps: onboardingState.skippedSteps,
+      experience: experienceList,
+      aiContent: {
+        headline: contentValues.headline || "",
+        summary: contentValues.summary || "",
+        ctaLabel: contentValues.ctaLabel || "",
+      },
+      personalDetails: {
+        title: contentValues.personalDetails?.title || "",
+        bio: contentValues.personalDetails?.bio || "",
+        avatarUrl: contentValues.personalDetails?.avatarUrl || "",
+        coverImageUrl: contentValues.personalDetails?.coverImageUrl || "",
+        languages: (contentValues.personalDetails?.languagesRaw || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        skills: (contentValues.personalDetails?.skillsRaw || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        certifications: (contentValues.personalDetails?.certificationsRaw || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        employmentType:
+          contentValues.personalDetails?.employmentType || "self_employed",
+        designation: contentValues.personalDetails?.designation || "",
+        yearsOfExperience: contentValues.personalDetails?.yearsOfExperience
+          ? Number(contentValues.personalDetails.yearsOfExperience)
+          : null,
+        practiceName: contentValues.personalDetails?.practiceName || "",
+        department: contentValues.personalDetails?.department || "",
+        workLocation: contentValues.personalDetails?.workLocation || "",
+        industry: contentValues.personalDetails?.industry || "",
+      },
+      contactDetails: contentValues.contactDetails || {},
+      socialLinks: contentValues.socialLinks || {},
+    });
+  };
+
   // Mutations
   const saveMutation = useMutation({
     mutationFn: (payload) => onboardingApi.save(payload),
     onMutate: () => dispatch(setSaving(true)),
-    onSuccess: async () => {
+    onSuccess: async (res) => {
       dispatch(setOnboardingError(null));
       await queryClient.invalidateQueries({ queryKey: ["onboarding", "me"] });
+      const draft = res?.data?.data?.draft;
+      if (draft) {
+        setInitialCustomValues({
+          profileType: draft.profileType || "business",
+          industry: draft.industry?.key || "",
+          category: draft.businessCategory?.key || "",
+          professionalCategory: draft.professionalCategory?.key || "",
+          themeKey: draft.theme?.key || "",
+          experienceCount: (draft.experience || []).length,
+        });
+      }
+      companyForm.reset(companyForm.getValues());
+      contentForm.reset(contentForm.getValues());
     },
     onError: (error) =>
       dispatch(
@@ -453,10 +625,23 @@ export function OnboardingPage() {
 
   const completeMutation = useMutation({
     mutationFn: (payload) => onboardingApi.completeStep(payload),
-    onSuccess: async (data, variables) => {
+    onSuccess: async (res, variables) => {
       dispatch(setOnboardingError(null));
       await queryClient.invalidateQueries({ queryKey: ["onboarding", "me"] });
       await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+      const draft = res?.data?.data?.draft;
+      if (draft) {
+        setInitialCustomValues({
+          profileType: draft.profileType || "business",
+          industry: draft.industry?.key || "",
+          category: draft.businessCategory?.key || "",
+          professionalCategory: draft.professionalCategory?.key || "",
+          themeKey: draft.theme?.key || "",
+          experienceCount: (draft.experience || []).length,
+        });
+      }
+      companyForm.reset(companyForm.getValues());
+      contentForm.reset(contentForm.getValues());
       if (variables?.step === "content") {
         navigate("/dashboard");
       }
@@ -540,7 +725,6 @@ export function OnboardingPage() {
           user: {
             ...(authUser || {}),
             onboardingStatus: "published",
-            onboardingProgress: 100,
           },
           accessToken,
         }),
@@ -569,66 +753,9 @@ export function OnboardingPage() {
 
   // Debounced Autosave effect
   useEffect(() => {
-    if (!stateQuery.data) return;
+    if (!stateQuery.data || !isHydrated) return;
     const timeout = window.setTimeout(() => {
-      saveMutation.mutate({
-        currentStep: activeStep,
-        profileType: selectedProfileType,
-        industry: selectedIndustry
-          ? { key: selectedIndustry, label: selectedIndustryLabel }
-          : undefined,
-        businessCategory: selectedCategory
-          ? { key: selectedCategory, label: selectedCategoryLabel }
-          : undefined,
-        professionalCategory: selectedProfessionalCategory
-          ? {
-              key: selectedProfessionalCategory,
-              label: selectedProfessionalCategoryLabel,
-            }
-          : undefined,
-        companyDetails: watchedCompany,
-        theme: selectedTheme,
-        completedSteps: onboardingState.completedSteps,
-        skippedSteps: onboardingState.skippedSteps,
-        experience: experienceList,
-        aiContent: {
-          headline: watchedContent.headline,
-          summary: watchedContent.summary,
-          ctaLabel: watchedContent.ctaLabel,
-        },
-        personalDetails: {
-          title: watchedContent.personalDetails?.title,
-          bio: watchedContent.personalDetails?.bio,
-          avatarUrl: watchedContent.personalDetails?.avatarUrl,
-          coverImageUrl: watchedContent.personalDetails?.coverImageUrl,
-          languages: (watchedContent.personalDetails?.languagesRaw || "")
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean),
-          skills: (watchedContent.personalDetails?.skillsRaw || "")
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean),
-          certifications: (
-            watchedContent.personalDetails?.certificationsRaw || ""
-          )
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean),
-          employmentType:
-            watchedContent.personalDetails?.employmentType || "self_employed",
-          designation: watchedContent.personalDetails?.designation || "",
-          yearsOfExperience: watchedContent.personalDetails?.yearsOfExperience
-            ? Number(watchedContent.personalDetails.yearsOfExperience)
-            : null,
-          practiceName: watchedContent.personalDetails?.practiceName || "",
-          department: watchedContent.personalDetails?.department || "",
-          workLocation: watchedContent.personalDetails?.workLocation || "",
-          industry: watchedContent.personalDetails?.industry || "",
-        },
-        contactDetails: watchedContent.contactDetails,
-        socialLinks: watchedContent.socialLinks,
-      });
+      saveDraft();
     }, 1500);
     return () => window.clearTimeout(timeout);
   }, [
@@ -641,6 +768,7 @@ export function OnboardingPage() {
     selectedIndustry,
     selectedTheme,
     experienceList,
+    isHydrated,
   ]);
 
   const addCustomLink = () => {
@@ -688,6 +816,9 @@ export function OnboardingPage() {
       if (selectedProfileType === "business") {
         const valid = await companyForm.trigger();
         if (!valid) return;
+      } else {
+        const valid = await contentForm.trigger("personalDetails.title");
+        if (!valid) return;
       }
     }
     if (step === "theme" && !selectedTheme) return;
@@ -695,62 +826,68 @@ export function OnboardingPage() {
     const companyValues = companyForm.getValues();
     const contentValues = contentForm.getValues();
 
-    await completeMutation.mutateAsync({
-      step,
-      profileType: selectedProfileType,
-      industry: selectedIndustry
-        ? { key: selectedIndustry, label: selectedIndustryLabel }
-        : undefined,
-      businessCategory: selectedCategory
-        ? { key: selectedCategory, label: selectedCategoryLabel }
-        : undefined,
-      professionalCategory: selectedProfessionalCategory
-        ? {
-            key: selectedProfessionalCategory,
-            label: selectedProfessionalCategoryLabel,
-          }
-        : undefined,
-      companyDetails: companyValues,
-      theme: selectedTheme,
-      experience: experienceList,
-      aiContent: {
-        headline: contentValues.headline,
-        summary: contentValues.summary,
-        ctaLabel: contentValues.ctaLabel,
-      },
-      personalDetails: {
-        title: contentValues.personalDetails?.title,
-        bio: contentValues.personalDetails?.bio,
-        avatarUrl: contentValues.personalDetails?.avatarUrl,
-        coverImageUrl: contentValues.personalDetails?.coverImageUrl,
-        languages: (contentValues.personalDetails?.languagesRaw || "")
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
-        skills: (contentValues.personalDetails?.skillsRaw || "")
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
-        certifications: (contentValues.personalDetails?.certificationsRaw || "")
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
-        employmentType:
-          contentValues.personalDetails?.employmentType || "self_employed",
-        designation: contentValues.personalDetails?.designation || "",
-        yearsOfExperience: contentValues.personalDetails?.yearsOfExperience
-          ? Number(contentValues.personalDetails.yearsOfExperience)
-          : null,
-        practiceName: contentValues.personalDetails?.practiceName || "",
-        department: contentValues.personalDetails?.department || "",
-        workLocation: contentValues.personalDetails?.workLocation || "",
-        industry: contentValues.personalDetails?.industry || "",
-      },
-      contactDetails: contentValues.contactDetails,
-      socialLinks: contentValues.socialLinks,
-    });
+    try {
+      await completeMutation.mutateAsync({
+        step,
+        profileType: selectedProfileType,
+        industry: selectedIndustry
+          ? { key: selectedIndustry, label: selectedIndustryLabel }
+          : undefined,
+        businessCategory: selectedCategory
+          ? { key: selectedCategory, label: selectedCategoryLabel }
+          : undefined,
+        professionalCategory: selectedProfessionalCategory
+          ? {
+              key: selectedProfessionalCategory,
+              label: selectedProfessionalCategoryLabel,
+            }
+          : undefined,
+        companyDetails: companyValues,
+        theme: selectedTheme,
+        experience: experienceList,
+        aiContent: {
+          headline: contentValues.headline,
+          summary: contentValues.summary,
+          ctaLabel: contentValues.ctaLabel,
+        },
+        personalDetails: {
+          title: contentValues.personalDetails?.title,
+          bio: contentValues.personalDetails?.bio,
+          avatarUrl: contentValues.personalDetails?.avatarUrl,
+          coverImageUrl: contentValues.personalDetails?.coverImageUrl,
+          languages: (contentValues.personalDetails?.languagesRaw || "")
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+          skills: (contentValues.personalDetails?.skillsRaw || "")
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+          certifications: (contentValues.personalDetails?.certificationsRaw || "")
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+          employmentType:
+            contentValues.personalDetails?.employmentType || "self_employed",
+          designation: contentValues.personalDetails?.designation || "",
+          yearsOfExperience: contentValues.personalDetails?.yearsOfExperience
+            ? Number(contentValues.personalDetails.yearsOfExperience)
+            : null,
+          practiceName: contentValues.personalDetails?.practiceName || "",
+          department: contentValues.personalDetails?.department || "",
+          workLocation: contentValues.personalDetails?.workLocation || "",
+          industry: contentValues.personalDetails?.industry || "",
+        },
+        contactDetails: contentValues.contactDetails,
+        socialLinks: contentValues.socialLinks,
+      });
+    } catch (err) {
+      console.error("Step complete save failed:", err);
+    }
 
     if (step === "content") {
+      const valid = await contentForm.trigger();
+      if (!valid) return;
       navigate("/dashboard");
       return;
     }
@@ -786,20 +923,17 @@ export function OnboardingPage() {
     reader.onload = async () => {
       setLogoPreview(String(reader.result || ""));
       await logoMutation.mutateAsync({ dataUri: String(reader.result || "") });
-      const nextStep = "theme";
-      setLocalStep(nextStep);
-      dispatch(setActiveStep(nextStep));
     };
     reader.readAsDataURL(file);
   };
 
-  const publishReady = Boolean(
-    onboardingState.readyToPublish ||
-    stateQuery.data?.readyToPublish ||
-    (selectedProfileType &&
-      (selectedCategory || selectedProfessionalCategory) &&
-      selectedTheme?.key),
-  );
+  const publishReady =
+    selectedProfileType === "professional"
+      ? Boolean(
+          selectedProfessionalCategory &&
+          watchedContent.personalDetails?.title?.trim(),
+        )
+      : Boolean(selectedCategory && watchedCompany.companyName?.trim());
 
   if (stateQuery.isLoading || lookupsQuery.isLoading) {
     return (
@@ -840,40 +974,38 @@ export function OnboardingPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2 shrink-0 select-none">
-          {/* <Button
+        <div className="flex flex-wrap gap-2 shrink-0 items-center select-none">
+          <Button
             variant="secondary"
-            loading={resumeMutation.isPending}
-            onClick={() => resumeMutation.mutate()}
+            loading={saveMutation.isPending}
+            onClick={() => saveDraft()}
             className="rounded-xl h-8.5 min-h-[34px] px-3.5 text-3xs font-bold border-white/[0.08]"
           >
-            Save & Exit
-          </Button> */}
+            {saveMutation.isPending
+              ? "Saving..."
+              : companyForm.formState.isDirty ||
+                  contentForm.formState.isDirty ||
+                  isCustomDirty
+                ? "Unsaved changes"
+                : "Saved ✓"}
+          </Button>
           <Button
             loading={publishMutation.isPending}
+            disabled={!publishReady}
             onClick={() => publishMutation.mutate()}
-            className="rounded-xl h-8.5 min-h-[34px] px-3.5 text-3xs font-bold"
+            className="rounded-xl h-8.5 min-h-[34px] px-3.5 text-3xs font-bold text-slate-200 bg-oneprofile-500  border-white/[0.08] disabled:opacity-70 disabled:cursor-not-allowed"
           >
             Publish Workspace
           </Button>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-white/[0.04] bg-white/[0.01] p-4 backdrop-blur-md space-y-4">
-        <OnboardingProgress
-          progress={stateQuery.data?.progress || onboardingState.progress || 0}
-        />
-        <OnboardingStepper
-          activeStep={activeStep}
-          completedSteps={onboardingState.completedSteps}
-          profileType={selectedProfileType}
-        />
-      </div>
+
 
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] items-start">
         {/* Step configuration cards */}
         <Card
-          className="p-5 sm:p-6.5 rounded-2xl border-white/[0.04]"
+          className="p-6 sm:p-8 rounded-3xl border border-white/[0.08] bg-white/[0.02] shadow-[0_20px_60px_rgba(0,0,0,0.25)] relative overflow-hidden"
           hoverEffect={false}
         >
           <AnimatePresence mode="wait">
@@ -1018,10 +1150,7 @@ export function OnboardingPage() {
 
             {/* STEP 4: DETAILS (BUSINESS OR PROFESSIONAL) & IMAGES */}
             {activeStep === "logo" ? (
-              <motion.div
-                key="logo"
-                className="space-y-4 max-h-[380px] overflow-y-auto pr-1"
-              >
+              <motion.div key="logo" className="space-y-6">
                 {selectedProfileType === "business" ? (
                   <form
                     onSubmit={companyForm.handleSubmit(() =>
@@ -1188,7 +1317,12 @@ export function OnboardingPage() {
                       <Input
                         label="Full Name *"
                         placeholder="Sarah Connor"
-                        {...contentForm.register("personalDetails.title")}
+                        {...contentForm.register("personalDetails.title", {
+                          required: "Full name is required",
+                        })}
+                        error={
+                          contentForm.formState.errors.personalDetails?.title?.message
+                        }
                       />
                       <Input
                         label="Industry"
@@ -1484,7 +1618,7 @@ export function OnboardingPage() {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="space-y-4 max-h-[380px] overflow-y-auto pr-1"
+                className="space-y-6"
               >
                 <div className="space-y-0.5">
                   <h2 className="font-display text-base font-bold text-white tracking-tight">
@@ -1667,13 +1801,14 @@ export function OnboardingPage() {
               {activeStep !== "industry" ? (
                 <Button
                   variant="secondary"
+                  disabled={completeMutation.isPending || saveMutation.isPending}
                   onClick={() => {
                     const prevIndex = currentStepOrder.indexOf(activeStep) - 1;
                     const prevStep = currentStepOrder[Math.max(prevIndex, 0)];
                     setLocalStep(prevStep);
                     dispatch(setActiveStep(prevStep));
                   }}
-                  className="rounded-xl h-8.5 min-h-[34px] px-3.5 text-3xs font-bold border-white/[0.08]"
+                  className="rounded-xl h-8 mt-2 min-h-[34px] px-3.5 text-3xs font-bold border-white/[0.08]"
                 >
                   Back
                 </Button>
@@ -1682,7 +1817,9 @@ export function OnboardingPage() {
               <Button
                 onClick={() => completeStep(activeStep)}
                 loading={completeMutation.isPending}
-                className="rounded-xl h-8.5 min-h-[34px] px-3.5 text-3xs font-bold"
+                disabled={completeMutation.isPending || saveMutation.isPending}
+                className="rounded-xl h-8 mt-2 min-h-[34px] px-3.5 text-3xs font-bold"
+                variant="secondary"
               >
                 {activeStep === "content" ? "Save" : "Continue"}
               </Button>

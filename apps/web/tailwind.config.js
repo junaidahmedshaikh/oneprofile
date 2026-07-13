@@ -5,6 +5,11 @@ export default {
   theme: {
     extend: {
       colors: {
+        primary: {
+          DEFAULT: "var(--brand-primary)",
+          hover: "var(--brand-secondary)",
+          active: "#1d4ed8",
+        },
         oneprofile: {
           950: "var(--color-nx-bg)",
           900: "var(--color-nx-surface)",

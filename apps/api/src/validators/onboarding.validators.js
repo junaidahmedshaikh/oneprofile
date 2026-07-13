@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const onboardingSaveSchema = z.object({
   currentStep: z.string().optional(),
@@ -14,7 +14,7 @@ export const onboardingSaveSchema = z.object({
   experience: z.any().optional(),
   contactDetails: z.any().optional(),
   profileType: z.any().optional(),
-  professionalCategory: z.any().optional()
+  professionalCategory: z.any().optional(),
 });
 
 export const onboardingStepSchema = z.object({
@@ -29,17 +29,17 @@ export const onboardingStepSchema = z.object({
   experience: z.any().optional(),
   contactDetails: z.any().optional(),
   profileType: z.any().optional(),
-  professionalCategory: z.any().optional()
+  professionalCategory: z.any().optional(),
 });
 
 export const onboardingSkipSchema = z.object({
-  step: z.string().min(1)
+  step: z.string().min(1),
 });
 
 export const onboardingLogoSchema = z.object({
-  dataUri: z.string().min(20)
+  dataUri: z.string().min(20),
 });
 
 export const onboardingResumeSchema = z.object({
-  token: z.string().min(12).optional()
+  token: z.string().min(12).optional(),
 });

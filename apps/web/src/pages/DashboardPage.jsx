@@ -303,7 +303,7 @@ export function DashboardPage() {
               </Button>
               <Button
                 type="button"
-                variant="primary"
+                variant="secondary"
                 onClick={() => setIsShareOpen(true)}
                 className="text-xs font-bold w-full"
               >
@@ -422,7 +422,7 @@ export function DashboardPage() {
           </Card>
 
           {/* Upcoming Appointment Bookings */}
-          <Card className="space-y-4" hoverEffect={false}>
+          {/* <Card className="space-y-4" hoverEffect={false}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-md">📅</span>
@@ -436,7 +436,7 @@ export function DashboardPage() {
             </div>
 
             <AppointmentList appointments={appointments} />
-          </Card>
+          </Card> */}
 
           {/* Subscription widget */}
           <Card

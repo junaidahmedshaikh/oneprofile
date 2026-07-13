@@ -18,7 +18,7 @@ export function BusinessCard({ profile, st, onOpenShare, onOpenQr }) {
   return (
     <div className="space-y-6">
       {/* 1. Glassmorphism Card Container */}
-      <Card className={clsx("p-0 overflow-hidden relative border transition-all duration-300 hover:border-white/10 hover:shadow-[0_0_50px_rgba(79,140,255,0.05)]", st.card)} hoverEffect={false}>
+      <Card className={clsx("p-0 overflow-hidden relative border border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.25)] rounded-3xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#4F8CFF]/5", st.card)} hoverEffect={false}>
         {/* Header Block */}
         <BusinessCardHeader profile={profile} st={st} />
 
@@ -27,21 +27,31 @@ export function BusinessCard({ profile, st, onOpenShare, onOpenQr }) {
           {/* Action Bar */}
           <BusinessCardActions profile={profile} />
 
-          {/* Premium Action Grid */}
-          <div className="grid grid-cols-2 gap-3 mt-4 border-t border-white/[0.04] pt-5">
+          {/* Main CTA Buttons */}
+          <div className="space-y-3 mt-6 border-t border-white/[0.04] pt-6">
             <a
               href={vcardUrl}
               download
-              className={clsx("h-11 rounded-2xl text-3xs font-bold flex items-center justify-center gap-2 select-none active:scale-[0.98] transition-all", st.primaryBtn)}
+              className={clsx("h-12 w-full rounded-ds-btn text-xs font-extrabold flex items-center justify-center gap-2 select-none active:scale-[0.98] transition-all hover:scale-[1.01] hover:shadow-lg shadow-ds-card", st.primaryBtn)}
             >
               📥 Save Contact
             </a>
-            <button
-              onClick={onOpenShare}
-              className="h-11 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-2xl text-3xs font-bold flex items-center justify-center gap-2 select-none active:scale-[0.98] transition-all"
-            >
-              🔗 Share Card
-            </button>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={onOpenShare}
+                className="h-12 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-ds-btn text-xs font-bold flex items-center justify-center gap-2 select-none active:scale-[0.98] transition-all hover:scale-[1.01]"
+              >
+                🔗 Share Card
+              </button>
+              <button
+                type="button"
+                onClick={onOpenQr}
+                className="h-12 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-ds-btn text-xs font-bold flex items-center justify-center gap-2 select-none active:scale-[0.98] transition-all hover:scale-[1.01]"
+              >
+                🎴 View QR
+              </button>
+            </div>
           </div>
 
           {/* About Section */}
@@ -112,13 +122,13 @@ export function BusinessCard({ profile, st, onOpenShare, onOpenQr }) {
       </Card>
 
       {/* 2. Compact QR Code Portal Trigger */}
-      <Card className={clsx("p-6 space-y-4 border text-center relative overflow-hidden", st.card)} hoverEffect={false}>
+      <Card className={clsx("p-6 space-y-5 border border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.25)] rounded-3xl text-center relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#4F8CFF]/5", st.card)} hoverEffect={false}>
         <div className="space-y-1">
           <h3 className="font-display text-sm font-bold text-white tracking-tight">QR Scanner Portal</h3>
           <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Tap to scan or download to share offline</p>
         </div>
 
-        <div onClick={onOpenQr} className="cursor-pointer bg-white p-4.5 rounded-3xl inline-block border border-slate-200 shadow-xl mx-auto my-2 hover:scale-[1.03] transition-all">
+        <div onClick={onOpenQr} className="cursor-pointer bg-white p-4 rounded-2xl inline-block border border-slate-200 shadow-xl mx-auto my-2 hover:scale-[1.03] transition-all">
           {profile.qrCodeUrl ? (
             <img src={profile.qrCodeUrl} alt="QR Code" className="w-36 h-36 object-contain select-none" />
           ) : (
@@ -131,13 +141,23 @@ export function BusinessCard({ profile, st, onOpenShare, onOpenQr }) {
         <div className="flex gap-2">
           <Button
             variant="secondary"
-            className="w-full text-3xs font-bold rounded-xl h-10 border-white/[0.08]"
+            className="w-full text-xs font-bold rounded-ds-btn h-10 border-white/[0.08]"
             onClick={onOpenQr}
           >
             Manage QR Code Settings
           </Button>
         </div>
       </Card>
+
+      {/* 3. Powered by Branding Footer */}
+      <div className="text-center pt-6 pb-2 space-y-1 select-none opacity-45">
+        <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400 block">
+          Powered by OneProfile
+        </span>
+        <span className="text-[9px] font-medium text-slate-600 block">
+          Digital Identity Platform
+        </span>
+      </div>
     </div>
   );
 }

@@ -116,7 +116,9 @@ function computeProgress(draft) {
     draft.profileType === "professional"
       ? ["industry", "category", "logo", "content"]
       : ["industry", "category", "company", "logo", "content"];
-  const completed = new Set((draft.completedSteps || []).filter(s => steps.includes(s)));
+  const completed = new Set(
+    (draft.completedSteps || []).filter((s) => steps.includes(s)),
+  );
   return Math.round((completed.size / steps.length) * 100);
 }
 
@@ -297,30 +299,18 @@ export async function completeStep(userId, step, payload = {}) {
 
   const draft = await ensureDraft(userId);
   if (payload.profileType) draft.profileType = payload.profileType;
-  if (step === "category") {
-    if (payload.businessCategory) {
-      draft.businessCategory = normalizeCategory(payload.businessCategory);
-    }
-    if (payload.professionalCategory) {
-      draft.professionalCategory = normalizeProfessionalCategory(
-        payload.professionalCategory,
-      );
-    }
-  }
-  if (step === "company") {
-    if (payload.industry) {
-      draft.industry = normalizeIndustry(payload.industry);
-    }
-  }
-  if (step === "logo") {
-    if (payload.companyDetails)
-      draft.companyDetails = normalizeCompanyDetails(payload.companyDetails);
-    if (payload.logo) draft.logo = payload.logo;
-  }
-  if (step === "theme" && payload.theme) {
-    draft.theme = normalizeTheme(payload.theme);
-  }
-  if (step === "content" && payload.aiContent) {
+  if (payload.industry) draft.industry = normalizeIndustry(payload.industry);
+  if (payload.businessCategory)
+    draft.businessCategory = normalizeCategory(payload.businessCategory);
+  if (payload.professionalCategory)
+    draft.professionalCategory = normalizeProfessionalCategory(
+      payload.professionalCategory,
+    );
+  if (payload.companyDetails)
+    draft.companyDetails = normalizeCompanyDetails(payload.companyDetails);
+  if (payload.theme) draft.theme = normalizeTheme(payload.theme);
+  if (payload.logo) draft.logo = payload.logo;
+  if (payload.aiContent) {
     draft.aiContent = {
       headline: payload.aiContent.headline || "",
       summary: payload.aiContent.summary || "",
@@ -490,9 +480,10 @@ export async function publishOnboarding(userId) {
     };
   }
 
-  const required = draft.profileType === 'professional'
-    ? [draft.professionalCategory?.key, draft.personalDetails?.title]
-    : [draft.businessCategory?.key, draft.companyDetails?.companyName];
+  const required =
+    draft.profileType === "professional"
+      ? [draft.professionalCategory?.key, draft.personalDetails?.title]
+      : [draft.businessCategory?.key, draft.companyDetails?.companyName];
 
   if (required.some((value) => !value)) {
     throw new ApiError(
@@ -577,7 +568,7 @@ export async function publishOnboarding(userId) {
       practiceName: draft.personalDetails?.practiceName || "",
       department: draft.personalDetails?.department || "",
       workLocation: draft.personalDetails?.workLocation || "",
-      
+
       title:
         draft.personalDetails?.title ||
         (user.firstName
@@ -593,7 +584,7 @@ export async function publishOnboarding(userId) {
       skills: draft.personalDetails?.skills || [],
       certifications: draft.personalDetails?.certifications || [],
       experience: draft.experience || [],
-      
+
       companyName: draft.companyDetails?.companyName || "",
       tagline: draft.companyDetails?.tagline || "",
       description: draft.companyDetails?.description || "",
