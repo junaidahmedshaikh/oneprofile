@@ -336,10 +336,21 @@ export async function refreshSession(refreshToken) {
     );
   }
 
-  const nextRefreshToken = generateSecureToken(64);
+  const user = await User.findById(payload.sub);
+  if (!user) {
+    throw new ApiError(404, "Account not found", "AUTH_ACCOUNT_NOT_FOUND");
+  }
+
+  // Generate new tokens (which generates a new signed JWT refresh token)
+  const tempSessionId = payload.sessionId;
+  const tempTenantId = payload.tenantId;
+  const tokens = buildAuthTokens(user, tempSessionId, tempTenantId);
+
+  // Compute the SHA-256 hash of the newly generated signed JWT refresh token
+  const nextRefreshTokenHash = sha256(tokens.refreshToken);
   const session = await rotateSession({
     refreshToken,
-    nextRefreshToken,
+    nextRefreshTokenHash,
     expiresAt: getRefreshTokenExpiresAt(),
   });
 
@@ -350,20 +361,6 @@ export async function refreshSession(refreshToken) {
       "AUTH_REFRESH_INVALID",
     );
   }
-
-  const user = await User.findById(payload.sub);
-  if (!user) {
-    throw new ApiError(404, "Account not found", "AUTH_ACCOUNT_NOT_FOUND");
-  }
-
-  const tokens = buildAuthTokens(
-    user,
-    session._id,
-    payload.tenantId || null,
-    nextRefreshToken,
-  );
-  session.refreshTokenHash = sha256(tokens.refreshToken);
-  await session.save();
 
   return { user: sanitizeUser(user), ...tokens };
 }

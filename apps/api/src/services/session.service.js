@@ -53,11 +53,11 @@ export async function createSession({
   });
 }
 
-export async function rotateSession({ refreshToken, nextRefreshToken, expiresAt }) {
+export async function rotateSession({ refreshToken, nextRefreshTokenHash, expiresAt }) {
   const refreshTokenHash = refreshTokenFingerprint(refreshToken);
   const session = await Session.findOne({ refreshTokenHash, isRevoked: false, expiresAt: { $gt: new Date() } });
   if (!session) return null;
-  session.refreshTokenHash = refreshTokenFingerprint(nextRefreshToken);
+  session.refreshTokenHash = nextRefreshTokenHash;
   session.expiresAt = expiresAt;
   session.lastUsedAt = new Date();
   await session.save();
