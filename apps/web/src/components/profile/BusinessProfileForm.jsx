@@ -12,8 +12,17 @@ export function BusinessProfileForm({ form, activeTab }) {
   const socialLinks = watch("socialLinks") || {};
   const customLinks = socialLinks.customLinks || [];
 
-  const [newService, setNewService] = useState({ title: "", description: "", price: "" });
-  const [newProduct, setNewProduct] = useState({ title: "", description: "", price: "", imageUrl: "" });
+  const [newService, setNewService] = useState({
+    title: "",
+    description: "",
+    price: "",
+  });
+  const [newProduct, setNewProduct] = useState({
+    title: "",
+    description: "",
+    price: "",
+    imageUrl: "",
+  });
   const [newLink, setNewLink] = useState({ title: "", url: "" });
 
   const addService = () => {
@@ -40,7 +49,9 @@ export function BusinessProfileForm({ form, activeTab }) {
 
   const addCustomLink = () => {
     if (!newLink.title || !newLink.url) return;
-    setValue("socialLinks.customLinks", [...customLinks, newLink], { shouldDirty: true });
+    setValue("socialLinks.customLinks", [...customLinks, newLink], {
+      shouldDirty: true,
+    });
     setNewLink({ title: "", url: "" });
   };
 
@@ -49,15 +60,27 @@ export function BusinessProfileForm({ form, activeTab }) {
     setValue("socialLinks.customLinks", updated, { shouldDirty: true });
   };
 
-  const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+  const days = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
 
   return (
     <div className="space-y-6">
       {activeTab === "business" && (
         <div className="space-y-5 animate-fadeUp">
           <div className="space-y-1">
-            <h3 className="font-display text-lg font-bold text-white tracking-tight">Business Details</h3>
-            <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Configure your organization and company card parameters</p>
+            <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              Business Details
+            </h3>
+            <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+              Configure your organization and company card parameters
+            </p>
           </div>
 
           <div className="grid gap-4.5 sm:grid-cols-2">
@@ -77,7 +100,9 @@ export function BusinessProfileForm({ form, activeTab }) {
 
           <CoverImageUpload
             value={watch("coverImageUrl")}
-            onChange={(val) => setValue("coverImageUrl", val, { shouldDirty: true })}
+            onChange={(val) =>
+              setValue("coverImageUrl", val, { shouldDirty: true })
+            }
           />
 
           <Input
@@ -99,7 +124,9 @@ export function BusinessProfileForm({ form, activeTab }) {
           <hr className="border-white/[0.05]" />
 
           <div className="space-y-4">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">Advanced Organization Credentials</span>
+            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+              Advanced Organization Credentials
+            </span>
             <div className="grid gap-4.5 sm:grid-cols-2">
               <Input
                 label="GST Identification Number (GSTIN) - Optional"
@@ -116,7 +143,7 @@ export function BusinessProfileForm({ form, activeTab }) {
               <div className="sm:col-span-2">
                 <Input
                   label="Service Area / Geographical Coverage"
-                  placeholder="E.g., North America, EMEA Region, or Local (San Francisco)"
+                  placeholder="E.g., Mumbai, Maharashtra, India"
                   {...register("serviceArea")}
                   error={formState.errors.serviceArea?.message}
                 />
@@ -144,33 +171,50 @@ export function BusinessProfileForm({ form, activeTab }) {
         <div className="space-y-8 animate-fadeUp">
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">Professional Services</h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Configure booking rates and packages</p>
+              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+                Professional Services
+              </h3>
+              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+                Configure booking rates and packages
+              </p>
             </div>
 
             <div className="p-4.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-4">
-              <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">Add service offering</span>
+              <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+                Add service offering
+              </span>
               <div className="grid gap-4.5 sm:grid-cols-2">
                 <Input
                   label="Service Title *"
                   value={newService.title}
-                  onChange={(e) => setNewService({ ...newService, title: e.target.value })}
+                  onChange={(e) =>
+                    setNewService({ ...newService, title: e.target.value })
+                  }
                   placeholder="E.g., 1-on-1 Consultation"
                 />
                 <Input
                   label="Pricing (E.g., $150 / hr)"
                   value={newService.price}
-                  onChange={(e) => setNewService({ ...newService, price: e.target.value })}
+                  onChange={(e) =>
+                    setNewService({ ...newService, price: e.target.value })
+                  }
                   placeholder="E.g., Free or $99"
                 />
               </div>
               <Textarea
                 label="Service Description"
                 value={newService.description}
-                onChange={(e) => setNewService({ ...newService, description: e.target.value })}
+                onChange={(e) =>
+                  setNewService({ ...newService, description: e.target.value })
+                }
                 placeholder="Describe what is included in this service package..."
               />
-              <Button type="button" variant="secondary" className="text-xs w-full" onClick={addService}>
+              <Button
+                type="button"
+                variant="secondary"
+                className="text-xs w-full"
+                onClick={addService}
+              >
                 Add Service Package
               </Button>
             </div>
@@ -178,23 +222,40 @@ export function BusinessProfileForm({ form, activeTab }) {
             <div className="space-y-3">
               {services.length ? (
                 services.map((srv, index) => (
-                  <div key={index} className="flex justify-between items-start gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] hover:border-white/[0.08] transition-all">
+                  <div
+                    key={index}
+                    className="flex justify-between items-start gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] hover:border-white/[0.08] transition-all"
+                  >
                     <div className="flex-1">
                       <div className="flex justify-between">
-                        <h4 className="text-sm font-bold text-white leading-snug">{srv.title}</h4>
-                        {srv.price ? <span className="text-xs font-bold text-brand-300">{srv.price}</span> : null}
+                        <h4 className="text-sm font-bold text-white leading-snug">
+                          {srv.title}
+                        </h4>
+                        {srv.price ? (
+                          <span className="text-xs font-bold text-brand-300">
+                            {srv.price}
+                          </span>
+                        ) : null}
                       </div>
                       {srv.description && (
-                        <p className="text-3xs text-slate-400 leading-relaxed mt-2">{srv.description}</p>
+                        <p className="text-3xs text-slate-400 leading-relaxed mt-2">
+                          {srv.description}
+                        </p>
                       )}
                     </div>
-                    <button type="button" onClick={() => removeService(index)} className="h-8 w-8 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition-all shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => removeService(index)}
+                      className="h-8 w-8 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition-all shrink-0"
+                    >
                       ✕
                     </button>
                   </div>
                 ))
               ) : (
-                <div className="py-6 text-center text-xs text-slate-500">No service packages added yet.</div>
+                <div className="py-6 text-center text-xs text-slate-500">
+                  No service packages added yet.
+                </div>
               )}
             </div>
           </div>
@@ -203,30 +264,42 @@ export function BusinessProfileForm({ form, activeTab }) {
 
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">Products Catalog</h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Feature digital downloads, books, or physical assets</p>
+              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+                Products Catalog
+              </h3>
+              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+                Feature digital downloads, books, or physical assets
+              </p>
             </div>
 
             <div className="p-4.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-4">
-              <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">Add catalog product</span>
+              <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+                Add catalog product
+              </span>
               <div className="grid gap-4.5 sm:grid-cols-2">
                 <Input
                   label="Product Name *"
                   value={newProduct.title}
-                  onChange={(e) => setNewProduct({ ...newProduct, title: e.target.value })}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, title: e.target.value })
+                  }
                   placeholder="E.g., Masterclass Video Course"
                 />
                 <Input
                   label="Price (E.g., $49)"
                   value={newProduct.price}
-                  onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, price: e.target.value })
+                  }
                   placeholder="E.g., $19.99"
                 />
                 <div className="sm:col-span-2">
                   <Input
                     label="Product Image URL (optional)"
                     value={newProduct.imageUrl}
-                    onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, imageUrl: e.target.value })
+                    }
                     placeholder="https://cloudinary.com/product.jpg"
                   />
                 </div>
@@ -234,10 +307,17 @@ export function BusinessProfileForm({ form, activeTab }) {
               <Textarea
                 label="Product Description"
                 value={newProduct.description}
-                onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                onChange={(e) =>
+                  setNewProduct({ ...newProduct, description: e.target.value })
+                }
                 placeholder="Detail product features, specs, download files, or links..."
               />
-              <Button type="button" variant="secondary" className="text-xs w-full" onClick={addProduct}>
+              <Button
+                type="button"
+                variant="secondary"
+                className="text-xs w-full"
+                onClick={addProduct}
+              >
                 Add Product Item
               </Button>
             </div>
@@ -245,24 +325,45 @@ export function BusinessProfileForm({ form, activeTab }) {
             <div className="grid gap-4.5 sm:grid-cols-2">
               {products.length ? (
                 products.map((prod, index) => (
-                  <div key={index} className="flex gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] hover:border-white/[0.08] transition-all relative group">
+                  <div
+                    key={index}
+                    className="flex gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] hover:border-white/[0.08] transition-all relative group"
+                  >
                     {prod.imageUrl ? (
-                      <img src={prod.imageUrl} alt={prod.title} className="h-16 w-16 rounded-xl object-cover border border-white/10 shrink-0" />
+                      <img
+                        src={prod.imageUrl}
+                        alt={prod.title}
+                        className="h-16 w-16 rounded-xl object-cover border border-white/10 shrink-0"
+                      />
                     ) : (
-                      <div className="h-16 w-16 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-center text-lg shrink-0">📦</div>
+                      <div className="h-16 w-16 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-center text-lg shrink-0">
+                        📦
+                      </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-bold text-white truncate">{prod.title}</div>
-                      <div className="text-xs font-bold text-brand-300 mt-0.5">{prod.price || "Free"}</div>
-                      <p className="text-3xs text-slate-400 leading-normal mt-1.5 truncate-2-lines">{prod.description}</p>
+                      <div className="text-xs font-bold text-white truncate">
+                        {prod.title}
+                      </div>
+                      <div className="text-xs font-bold text-brand-300 mt-0.5">
+                        {prod.price || "Free"}
+                      </div>
+                      <p className="text-3xs text-slate-400 leading-normal mt-1.5 truncate-2-lines">
+                        {prod.description}
+                      </p>
                     </div>
-                    <button type="button" onClick={() => removeProduct(index)} className="absolute top-2 right-2 h-7 w-7 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => removeProduct(index)}
+                      className="absolute top-2 right-2 h-7 w-7 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shrink-0"
+                    >
                       ✕
                     </button>
                   </div>
                 ))
               ) : (
-                <div className="sm:col-span-2 py-6 text-center text-xs text-slate-500">No catalog product items added yet.</div>
+                <div className="sm:col-span-2 py-6 text-center text-xs text-slate-500">
+                  No catalog product items added yet.
+                </div>
               )}
             </div>
           </div>
@@ -273,55 +374,146 @@ export function BusinessProfileForm({ form, activeTab }) {
         <div className="space-y-6 animate-fadeUp">
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">Business Contact Channels</h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Configure active contact channels and address directories</p>
+              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+                Business Contact Channels
+              </h3>
+              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+                Configure active contact channels and address directories
+              </p>
             </div>
             <div className="grid gap-4.5 sm:grid-cols-2">
-              <Input label="Business Email" placeholder="hello@company.com" {...register("contactDetails.email")} error={formState.errors.contactDetails?.email?.message} />
-              <Input label="Direct Phone Number" placeholder="+15551234" {...register("contactDetails.phone")} error={formState.errors.contactDetails?.phone?.message} />
-              <Input label="WhatsApp Direct Number" placeholder="+15551234" {...register("contactDetails.whatsAppNumber")} hint="Includes country code, digits only" />
-              <Input label="Company Website URL" placeholder="https://company.com" {...register("socialLinks.website")} />
-              <Input label="Physical Address" placeholder="123 Main St, San Francisco, CA" {...register("location.address")} />
-              <Input label="Google Maps Embed / URL" placeholder="https://maps.google.com/..." {...register("location.mapsEmbedUrl")} />
+              <Input
+                label="Business Email"
+                placeholder="hello@company.com"
+                {...register("contactDetails.email")}
+                error={formState.errors.contactDetails?.email?.message}
+              />
+              <Input
+                label="Direct Phone Number"
+                placeholder="+15551234"
+                {...register("contactDetails.phone")}
+                error={formState.errors.contactDetails?.phone?.message}
+              />
+              <Input
+                label="WhatsApp Direct Number"
+                placeholder="+15551234"
+                {...register("contactDetails.whatsAppNumber")}
+                hint="Includes country code, digits only"
+              />
+              <Input
+                label="Company Website URL"
+                placeholder="https://company.com"
+                {...register("socialLinks.website")}
+              />
+              <Input
+                label="Physical Address"
+                placeholder="123 Main St, Mumbai, Maharashtra, India"
+                {...register("location.address")}
+              />
+              <Input
+                label="Google Maps Embed / URL"
+                placeholder="https://maps.google.com/..."
+                {...register("location.mapsEmbedUrl")}
+              />
             </div>
           </div>
 
           <hr className="border-white/[0.05]" />
 
           <div className="space-y-4">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">Social Connections</span>
+            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+              Social Connections
+            </span>
             <div className="grid gap-4.5 sm:grid-cols-2">
-              <Input label="LinkedIn URL" placeholder="https://linkedin.com/company/..." {...register("socialLinks.linkedin")} />
-              <Input label="Instagram Page URL" placeholder="https://instagram.com/..." {...register("socialLinks.instagram")} />
-              <Input label="Facebook Business Link" placeholder="https://facebook.com/..." {...register("socialLinks.facebook")} />
-              <Input label="Twitter / X Profile Link" placeholder="https://twitter.com/..." {...register("socialLinks.twitter")} />
-              <Input label="YouTube Channel URL" placeholder="https://youtube.com/..." {...register("socialLinks.youtube")} />
-              <Input label="GitHub Organization Link" placeholder="https://github.com/..." {...register("socialLinks.github")} />
+              <Input
+                label="LinkedIn URL"
+                placeholder="https://linkedin.com/company/..."
+                {...register("socialLinks.linkedin")}
+              />
+              <Input
+                label="Instagram Page URL"
+                placeholder="https://instagram.com/..."
+                {...register("socialLinks.instagram")}
+              />
+              <Input
+                label="Facebook Business Link"
+                placeholder="https://facebook.com/..."
+                {...register("socialLinks.facebook")}
+              />
+              <Input
+                label="Twitter / X Profile Link"
+                placeholder="https://twitter.com/..."
+                {...register("socialLinks.twitter")}
+              />
+              <Input
+                label="YouTube Channel URL"
+                placeholder="https://youtube.com/..."
+                {...register("socialLinks.youtube")}
+              />
+              <Input
+                label="GitHub Organization Link"
+                placeholder="https://github.com/..."
+                {...register("socialLinks.github")}
+              />
             </div>
           </div>
 
           <hr className="border-white/[0.05]" />
 
           <div className="space-y-4">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">External Custom booklet URLs</span>
+            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+              External Custom booklet URLs
+            </span>
             <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-4">
               <div className="grid gap-4.5 sm:grid-cols-2">
-                <Input label="Link Label Title" value={newLink.title} onChange={(e) => setNewLink({ ...newLink, title: e.target.value })} placeholder="E.g., Read Our Brochure" />
-                <Input label="Destination URL" value={newLink.url} onChange={(e) => setNewLink({ ...newLink, url: e.target.value })} placeholder="E.g., https://brochure.com" />
+                <Input
+                  label="Link Label Title"
+                  value={newLink.title}
+                  onChange={(e) =>
+                    setNewLink({ ...newLink, title: e.target.value })
+                  }
+                  placeholder="E.g., Read Our Brochure"
+                />
+                <Input
+                  label="Destination URL"
+                  value={newLink.url}
+                  onChange={(e) =>
+                    setNewLink({ ...newLink, url: e.target.value })
+                  }
+                  placeholder="E.g., https://brochure.com"
+                />
               </div>
-              <Button type="button" variant="secondary" className="text-xs w-full" onClick={addCustomLink}>
+              <Button
+                type="button"
+                variant="secondary"
+                className="text-xs w-full"
+                onClick={addCustomLink}
+              >
                 Add Custom Link Node
               </Button>
             </div>
 
             <div className="space-y-2">
               {customLinks.map((l, i) => (
-                <div key={i} className="flex justify-between items-center p-3.5 rounded-xl bg-white/[0.01] border border-white/[0.04] text-xs">
+                <div
+                  key={i}
+                  className="flex justify-between items-center p-3.5 rounded-xl bg-white/[0.01] border border-white/[0.04] text-xs"
+                >
                   <div className="truncate min-w-0">
-                    <span className="font-bold text-white block">{l.title}</span>
-                    <span className="text-3xs text-slate-500 truncate block mt-0.5">{l.url}</span>
+                    <span className="font-bold text-white block">
+                      {l.title}
+                    </span>
+                    <span className="text-3xs text-slate-500 truncate block mt-0.5">
+                      {l.url}
+                    </span>
                   </div>
-                  <button type="button" onClick={() => removeCustomLink(i)} className="h-7 w-7 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center text-xs shrink-0">✕</button>
+                  <button
+                    type="button"
+                    onClick={() => removeCustomLink(i)}
+                    className="h-7 w-7 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center text-xs shrink-0"
+                  >
+                    ✕
+                  </button>
                 </div>
               ))}
             </div>
@@ -330,18 +522,37 @@ export function BusinessProfileForm({ form, activeTab }) {
           <hr className="border-white/[0.05]" />
 
           <div className="space-y-4">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">Weekly Operating Working Hours</span>
+            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+              Weekly Operating Working Hours
+            </span>
             <div className="space-y-3.5">
               {days.map((day) => (
-                <div key={day} className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] text-xs">
+                <div
+                  key={day}
+                  className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] text-xs"
+                >
                   <label className="flex items-center gap-2.5 font-semibold text-white capitalize select-none cursor-pointer">
-                    <input type="checkbox" {...register(`workingHours.${day}.enabled`)} className="rounded bg-white/5 border-white/10 text-brand-500" />
+                    <input
+                      type="checkbox"
+                      {...register(`workingHours.${day}.enabled`)}
+                      className="rounded bg-white/5 border-white/10 text-brand-500"
+                    />
                     {day}
                   </label>
                   <div className="flex items-center gap-2">
-                    <input type="text" placeholder="09:00" {...register(`workingHours.${day}.open`)} className="w-16 h-8 text-center rounded-lg bg-white/5 border border-white/10 text-xs text-white" />
+                    <input
+                      type="text"
+                      placeholder="09:00"
+                      {...register(`workingHours.${day}.open`)}
+                      className="w-16 h-8 text-center rounded-lg bg-white/5 border border-white/10 text-xs text-white"
+                    />
                     <span className="text-slate-500">to</span>
-                    <input type="text" placeholder="17:00" {...register(`workingHours.${day}.close`)} className="w-16 h-8 text-center rounded-lg bg-white/5 border border-white/10 text-xs text-white" />
+                    <input
+                      type="text"
+                      placeholder="17:00"
+                      {...register(`workingHours.${day}.close`)}
+                      className="w-16 h-8 text-center rounded-lg bg-white/5 border border-white/10 text-xs text-white"
+                    />
                   </div>
                 </div>
               ))}
@@ -354,8 +565,12 @@ export function BusinessProfileForm({ form, activeTab }) {
         <div className="space-y-6 animate-fadeUp">
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">Privacy & Visibility</h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Configure search engine visibility and accessibility</p>
+              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+                Privacy & Visibility
+              </h3>
+              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+                Configure search engine visibility and accessibility
+              </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
@@ -363,18 +578,28 @@ export function BusinessProfileForm({ form, activeTab }) {
                 <button
                   key={mode}
                   type="button"
-                  onClick={() => setValue("visibility", mode, { shouldDirty: true })}
+                  onClick={() =>
+                    setValue("visibility", mode, { shouldDirty: true })
+                  }
                   className={`rounded-2xl border p-4 text-left transition select-none active:scale-[0.98] ${
-                    visibility === mode 
-                      ? "border-brand-500/40 bg-brand-500/[0.03] shadow-sm" 
+                    visibility === mode
+                      ? "border-brand-500/40 bg-brand-500/[0.03] shadow-sm"
                       : "border-white/[0.06] bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/[0.12]"
                   }`}
                 >
-                  <div className="font-bold text-white text-xs capitalize">{mode}</div>
+                  <div className="font-bold text-white text-xs capitalize">
+                    {mode}
+                  </div>
                   <p className="text-3xs text-slate-400 mt-1 leading-normal">
-                    {mode === "public" ? "Indexed by search engines & visible to all." : ""}
-                    {mode === "unlisted" ? "Visible to users with slug link, hidden from search." : ""}
-                    {mode === "private" ? "Only visible to you. Disabled for public viewers." : ""}
+                    {mode === "public"
+                      ? "Indexed by search engines & visible to all."
+                      : ""}
+                    {mode === "unlisted"
+                      ? "Visible to users with slug link, hidden from search."
+                      : ""}
+                    {mode === "private"
+                      ? "Only visible to you. Disabled for public viewers."
+                      : ""}
                   </p>
                 </button>
               ))}
@@ -385,8 +610,12 @@ export function BusinessProfileForm({ form, activeTab }) {
 
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">Custom Profile URL</h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Claim your unique URL handle link</p>
+              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+                Custom Profile URL
+              </h3>
+              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+                Claim your unique URL handle link
+              </p>
             </div>
 
             <Input
@@ -402,8 +631,12 @@ export function BusinessProfileForm({ form, activeTab }) {
 
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">Search Engine Optimization (SEO)</h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Customize meta descriptors for Google Search indexes</p>
+              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+                Search Engine Optimization (SEO)
+              </h3>
+              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+                Customize meta descriptors for Google Search indexes
+              </p>
             </div>
 
             <Input

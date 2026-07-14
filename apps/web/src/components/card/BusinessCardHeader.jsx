@@ -2,9 +2,15 @@ import clsx from "clsx";
 
 export function BusinessCardHeader({ profile, st }) {
   const isProd = profile.profileType === "professional";
-  const name = isProd ? (profile.title || "Professional") : (profile.companyName || "Business");
-  const subtitle = isProd ? (profile.designation || profile.professionalCategory || "") : (profile.tagline || profile.businessCategory || "");
-  const avatar = isProd ? profile.avatarUrl : (profile.logoUrl || profile.avatarUrl);
+  const name = isProd
+    ? profile.title || "Professional"
+    : profile.companyName || "Business";
+  const subtitle = isProd
+    ? profile.designation || profile.professionalCategory || ""
+    : profile.tagline || profile.businessCategory || "";
+  const avatar = isProd
+    ? profile.avatarUrl
+    : profile.logoUrl || profile.avatarUrl;
 
   return (
     <div className="relative">
@@ -51,14 +57,22 @@ export function BusinessCardHeader({ profile, st }) {
                 {name}
               </h2>
               {subtitle && (
-                <p className={clsx("text-xs font-semibold leading-relaxed", st.brandText)}>
+                <p
+                  className={clsx(
+                    "text-xs font-semibold leading-relaxed",
+                    st.brandText,
+                  )}
+                >
                   {subtitle}
                 </p>
               )}
             </div>
             {/* Verification Badge */}
             {profile.isVerified && (
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#4F8CFF] bg-[#4F8CFF]/10 border border-[#4F8CFF]/20 px-2.5 py-0.5 rounded-full select-none" aria-label="Verified Profile">
+              <span
+                className="text-[10px] font-black uppercase tracking-widest text-[#4F8CFF] bg-[#4F8CFF]/10 border border-[#4F8CFF]/20 px-2.5 py-0.5 rounded-full select-none"
+                aria-label="Verified Profile"
+              >
                 Verified
               </span>
             )}

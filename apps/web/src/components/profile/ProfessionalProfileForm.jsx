@@ -378,7 +378,7 @@ export function ProfessionalProfileForm({ form, activeTab }) {
               />
               <Input
                 label="Physical Address / Office Location"
-                placeholder="123 Main St, San Francisco, CA"
+                placeholder="E.g., Mumbai, Maharashtra, India"
                 {...register("location.address")}
               />
               <Input

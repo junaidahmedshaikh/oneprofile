@@ -219,12 +219,12 @@ export function ContactTab({ register, watch, setValue, formState }) {
           </div>
           <Input
             label="City"
-            placeholder="San Francisco"
+            placeholder="Mumbai"
             {...register("location.city")}
           />
           <Input
             label="Country"
-            placeholder="United States"
+            placeholder="India"
             {...register("location.country")}
           />
           <div className="sm:col-span-2">

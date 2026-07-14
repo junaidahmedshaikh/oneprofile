@@ -1220,12 +1220,12 @@ export function OnboardingPage() {
 
                       <Input
                         label="City"
-                        placeholder="San Francisco"
+                        placeholder="Mumbai"
                         {...companyForm.register("city")}
                       />
                       <Input
                         label="Country"
-                        placeholder="United States"
+                        placeholder="India"
                         {...companyForm.register("country")}
                       />
                       <Input
@@ -1406,7 +1406,7 @@ export function OnboardingPage() {
                           />
                           <Input
                             label="Work Location (Optional)"
-                            placeholder="San Francisco, CA"
+                            placeholder="E.g., Remote, Mumbai, India"
                             {...contentForm.register(
                               "personalDetails.workLocation",
                             )}
@@ -1415,7 +1415,7 @@ export function OnboardingPage() {
                       ) : (
                         <>
                           <Input
-                            label="Practice / Brand Name (Optional)"
+                            label="Brand Name"
                             placeholder="Connor Consulting"
                             {...contentForm.register(
                               "personalDetails.practiceName",
@@ -1679,7 +1679,7 @@ export function OnboardingPage() {
                     />
                     <Input
                       label="Address"
-                      placeholder="123 Main St, San Francisco, CA"
+                      placeholder="Mumbai, Maharashtra, India"
                       {...contentForm.register("contactDetails.address")}
                     />
                     <Input

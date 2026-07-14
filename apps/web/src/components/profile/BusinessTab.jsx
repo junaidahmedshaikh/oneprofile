@@ -5,8 +5,12 @@ export function BusinessTab({ register, formState }) {
   return (
     <div className="space-y-5 animate-fadeUp">
       <div className="space-y-1">
-        <h3 className="font-display text-lg font-bold text-white tracking-tight">Business Details</h3>
-        <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">Configure your organization and company card parameters</p>
+        <h3 className="font-display text-lg font-bold text-white tracking-tight">
+          Business Details
+        </h3>
+        <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+          Configure your organization and company card parameters
+        </p>
       </div>
 
       <div className="grid gap-4.5 sm:grid-cols-2">
@@ -43,7 +47,9 @@ export function BusinessTab({ register, formState }) {
       <hr className="border-white/[0.05]" />
 
       <div className="space-y-4">
-        <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">Advanced Organization Credentials</span>
+        <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+          Advanced Organization Credentials
+        </span>
         <div className="grid gap-4.5 sm:grid-cols-2">
           <Input
             label="GST Identification Number (GSTIN) - Optional"
@@ -60,7 +66,7 @@ export function BusinessTab({ register, formState }) {
           <div className="sm:col-span-2">
             <Input
               label="Service Area / Geographical Coverage"
-              placeholder="E.g., North America, EMEA Region, or Local (San Francisco)"
+              placeholder="E.g., Mumbai, Maharashtra, India"
               {...register("serviceArea")}
               error={formState.errors.serviceArea?.message}
             />
