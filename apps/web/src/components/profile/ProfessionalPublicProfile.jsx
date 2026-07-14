@@ -92,9 +92,9 @@ Thank you.`;
                   <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#111827]">
                     {profile.title || "Professional Profile"}
                   </h1>
-                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-4xs font-bold uppercase tracking-wider text-emerald-700">
+                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-sm font-semibold uppercase tracking-wider text-emerald-700">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600/15" />{" "}
-                    <span className="text-emerald-600">Verified</span>
+                    Verified
                   </span>
                 </div>
 

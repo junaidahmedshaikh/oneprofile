@@ -2,10 +2,8 @@ import fs from "node:fs";
 import dotenv from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import dns from "node:dns";
 import { z } from "zod";
 
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
 const configDir = path.dirname(fileURLToPath(import.meta.url));
 const apiEnvPath = path.resolve(configDir, "../../.env");
 const rootEnvPath = path.resolve(configDir, "../../../../.env");

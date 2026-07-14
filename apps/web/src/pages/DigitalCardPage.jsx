@@ -7,7 +7,8 @@ import { Alert } from "../components/ui/Alert";
 import { BusinessCard } from "../components/card/BusinessCard";
 import { ShareDialog } from "../components/card/ShareDialog";
 import { QRCodeModal } from "../components/card/QRCodeModal";
-import clsx from "clsx";
+import { ArrowLeft, User, Briefcase } from "lucide-react";
+import React from "react";
 
 const themeStyles = {
   aurora: {
@@ -70,7 +71,7 @@ export function DigitalCardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#07080d] grid place-items-center">
+      <div className="min-h-screen bg-[#FCFCFD] grid place-items-center">
         <Spinner />
       </div>
     );
@@ -78,7 +79,7 @@ export function DigitalCardPage() {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-[#07080d] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#FCFCFD] flex items-center justify-center p-6">
         <div className="max-w-md w-full">
           <Alert variant="error" title="Card Not Found">
             {error?.response?.data?.message || "The requested profile is private or not published yet."}
@@ -92,22 +93,23 @@ export function DigitalCardPage() {
   const st = themeStyles[themeKey] || themeStyles.aurora;
 
   return (
-    <div className={clsx("min-h-screen transition-colors duration-500 relative pb-16 overflow-hidden print:bg-white print:pb-0", st.bg, st.text)}>
-      {/* Background radial blobs */}
-      <div className={clsx("glow-blob w-[450px] h-[450px] top-[-10%] left-[-10%] print:hidden", st.accentGlow)} />
-      <div className={clsx("glow-blob w-[500px] h-[500px] bottom-[-15%] right-[-10%] print:hidden", st.accentGlow)} />
-
-      <div className="relative z-10 mx-auto max-w-md px-4 py-12 sm:px-6 space-y-6 print:hidden">
+    <div className="min-h-screen bg-[#FCFCFD] text-[#111827] relative pb-16 overflow-x-hidden font-sans">
+      <div className="relative z-10 mx-auto max-w-md px-4 py-12 space-y-6">
         {/* Top Back Actions Header */}
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate(`/p/${slug}`)}
-            className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition-colors select-none"
+            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#6B7280] hover:text-[#111827] transition-colors select-none"
           >
-            ← View Profile
+            <ArrowLeft className="w-3.5 h-3.5" /> View Profile
           </button>
           
-          <span className={clsx("text-4xs font-extrabold px-3 py-1 rounded-full uppercase tracking-widest border", st.capsule)}>
+          <span className="flex items-center gap-1 text-3xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider border border-[#2563EB]/20 bg-[#2563EB]/5 text-[#2563EB]">
+            {profile.profileType === "professional" ? (
+              <User className="w-3 h-3" />
+            ) : (
+              <Briefcase className="w-3 h-3" />
+            )}
             {profile.profileType === "professional" ? "Professional" : "Business"} Card
           </span>
         </div>
@@ -125,7 +127,6 @@ export function DigitalCardPage() {
           isOpen={isShareOpen}
           onClose={() => setIsShareOpen(false)}
           profile={profile}
-          st={st}
         />
 
         {/* Modal QR Scanner overlays */}
@@ -133,7 +134,6 @@ export function DigitalCardPage() {
           isOpen={isQrOpen}
           onClose={() => setIsQrOpen(false)}
           profile={profile}
-          st={st}
         />
       </div>
     </div>
