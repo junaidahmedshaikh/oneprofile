@@ -68,6 +68,7 @@ export const register = asyncHandler(async (req, res) => {
     data: {
       user: result.user,
       accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
       requiresEmailVerification: result.requiresEmailVerification
     },
     statusCode: 201
@@ -82,7 +83,7 @@ export const login = asyncHandler(async (req, res) => {
     device: readDevice(req)
   });
   setAuthCookies(res, result);
-  return ok(res, { message: 'Login successful', data: { user: result.user, accessToken: result.accessToken } });
+  return ok(res, { message: 'Login successful', data: { user: result.user, accessToken: result.accessToken, refreshToken: result.refreshToken } });
 });
 
 export const otpLoginRequest = asyncHandler(async (req, res) => {
@@ -98,14 +99,14 @@ export const otpLoginVerify = asyncHandler(async (req, res) => {
     device: readDevice(req)
   });
   setAuthCookies(res, result);
-  return ok(res, { message: 'OTP verified', data: { user: result.user, accessToken: result.accessToken } });
+  return ok(res, { message: 'OTP verified', data: { user: result.user, accessToken: result.accessToken, refreshToken: result.refreshToken } });
 });
 
 export const refresh = asyncHandler(async (req, res) => {
   const refreshToken = req.body.refreshToken || req.cookies?.[env.REFRESH_TOKEN_COOKIE_NAME];
   const result = await refreshSession(refreshToken);
   setAuthCookies(res, result);
-  return ok(res, { message: 'Session refreshed', data: { user: result.user, accessToken: result.accessToken } });
+  return ok(res, { message: 'Session refreshed', data: { user: result.user, accessToken: result.accessToken, refreshToken: result.refreshToken } });
 });
 
 export const logout = asyncHandler(async (req, res) => {
@@ -173,5 +174,5 @@ export const googleCallback = asyncHandler(async (req, res) => {
   const profile = code ? await exchangeGoogleCode(code, redirectUri) : await verifyGoogleIdToken(req.body.idToken || req.query.id_token);
   const result = await loginWithGoogleProfile(profile, req.headers['user-agent'] || '', req.ip, readDevice(req));
   setAuthCookies(res, result);
-  return res.redirect(`${runtimeEnv.CLIENT_URL}/dashboard`);
+  return res.redirect(`${runtimeEnv.CLIENT_URL}/dashboard?token=${result.accessToken}&refreshToken=${result.refreshToken}`);
 });

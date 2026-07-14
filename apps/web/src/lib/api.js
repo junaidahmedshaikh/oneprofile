@@ -33,7 +33,8 @@ let refreshPromise = null;
 
 export function executeRefresh() {
   if (!refreshPromise) {
-    refreshPromise = api.post('/auth/refresh', {}).finally(() => {
+    const fallbackToken = localStorage.getItem("oneprofile_fallback_refresh_token");
+    refreshPromise = api.post('/auth/refresh', { refreshToken: fallbackToken || undefined }).finally(() => {
       refreshPromise = null;
     });
   }
@@ -62,13 +63,18 @@ api.interceptors.response.use(
       try {
         const refreshResponse = await executeRefresh();
         const newToken = refreshResponse.data?.data?.accessToken;
+        const newRefreshToken = refreshResponse.data?.data?.refreshToken;
         if (newToken) {
           setAccessToken(newToken);
+          if (newRefreshToken) {
+            localStorage.setItem("oneprofile_fallback_refresh_token", newRefreshToken);
+          }
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return api(originalRequest);
         }
       } catch (refreshError) {
         setAccessToken(null);
+        localStorage.removeItem("oneprofile_fallback_refresh_token");
         return Promise.reject(refreshError);
       }
     }

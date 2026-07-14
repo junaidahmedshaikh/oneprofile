@@ -39,6 +39,10 @@ export function SignupPage() {
     mutationFn: (values) => authApi.register(values),
     onSuccess: (response) => {
       dispatch(setCredentials(response.data.data));
+      const newRefreshToken = response.data?.data?.refreshToken;
+      if (newRefreshToken) {
+        localStorage.setItem("oneprofile_fallback_refresh_token", newRefreshToken);
+      }
       setInfo(
         "Account created. Please verify your email from the verification screen.",
       );

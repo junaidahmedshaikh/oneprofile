@@ -32,6 +32,10 @@ export function LoginPage() {
     mutationFn: (values) => authApi.login(values),
     onSuccess: (response) => {
       dispatch(setCredentials(response.data.data));
+      const newRefreshToken = response.data?.data?.refreshToken;
+      if (newRefreshToken) {
+        localStorage.setItem("oneprofile_fallback_refresh_token", newRefreshToken);
+      }
       setSuccessMessage("Welcome back. You are being redirected.");
       navigate("/dashboard");
     },

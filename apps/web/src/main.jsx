@@ -21,6 +21,30 @@ function Bootstrap() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.accessToken);
 
+  // Extract tokens from URL search parameters on initial mount (for Google OAuth redirects)
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlToken = params.get("token");
+    const urlRefreshToken = params.get("refreshToken");
+
+    if (urlToken) {
+      dispatch(setCredentials({
+        accessToken: urlToken,
+        user: null
+      }));
+
+      if (urlRefreshToken) {
+        localStorage.setItem("oneprofile_fallback_refresh_token", urlRefreshToken);
+      }
+
+      params.delete("token");
+      params.delete("refreshToken");
+      const newSearch = params.toString();
+      const newPath = window.location.pathname + (newSearch ? `?${newSearch}` : "");
+      window.history.replaceState({}, document.title, newPath);
+    }
+  }, [dispatch]);
+
   // Global user query synchronizer to prevent Redux status desyncs
   const { data: userData } = useQuery({
     queryKey: ['auth', 'me'],
@@ -42,6 +66,10 @@ function Bootstrap() {
       authApi.refresh()
         .then((response) => {
           dispatch(setCredentials(response.data.data));
+          const newRefreshToken = response.data?.data?.refreshToken;
+          if (newRefreshToken) {
+            localStorage.setItem("oneprofile_fallback_refresh_token", newRefreshToken);
+          }
         })
         .catch(() => {})
         .finally(() => {
