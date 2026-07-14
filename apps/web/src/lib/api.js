@@ -45,7 +45,19 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const isRefreshRequest = originalRequest?.url?.includes('/auth/refresh');
-    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshRequest) {
+    
+    const publicAuthRoutes = [
+      '/auth/login',
+      '/auth/register',
+      '/auth/otp/request',
+      '/auth/otp/verify',
+      '/auth/forgot-password',
+      '/auth/reset-password',
+      '/auth/google',
+    ];
+    const isPublicAuthRoute = publicAuthRoutes.some(route => originalRequest?.url?.includes(route));
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshRequest && !isPublicAuthRoute) {
       originalRequest._retry = true;
       try {
         const refreshResponse = await executeRefresh();
