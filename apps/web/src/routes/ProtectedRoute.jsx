@@ -21,7 +21,7 @@ export function ProtectedRoute() {
     return <Navigate to="/verify" replace />;
   }
   const isOnboardingRoute = location.pathname.startsWith("/onboarding");
-  if (!isOnboardingRoute && user && user.onboardingStatus !== "published") {
+  if (!isOnboardingRoute && user && user.onboardingStatus === "not_started") {
     return <Navigate to="/onboarding" replace />;
   }
   return <Outlet />;

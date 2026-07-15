@@ -15,7 +15,7 @@ import {
   setOnboardingError,
   setSaving,
 } from "../store/onboardingSlice";
-import { setCredentials } from "../store/authSlice";
+import { setCredentials, setUser } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -601,6 +601,15 @@ export function OnboardingPage() {
     onSuccess: async (res) => {
       dispatch(setOnboardingError(null));
       await queryClient.invalidateQueries({ queryKey: ["onboarding", "me"] });
+      
+      // Sync Redux auth user onboardingStatus to prevent route redirection
+      dispatch(
+        setUser({
+          ...authUser,
+          onboardingStatus: "in_progress",
+        })
+      );
+
       const draft = res?.data?.data?.draft;
       if (draft) {
         setInitialCustomValues({
@@ -615,7 +624,10 @@ export function OnboardingPage() {
       companyForm.reset(companyForm.getValues());
       contentForm.reset(contentForm.getValues());
       setSuccessMessage("Onboarding draft saved successfully ✓");
-      setTimeout(() => setSuccessMessage(""), 3000);
+      setTimeout(() => {
+        setSuccessMessage("");
+        navigate("/dashboard");
+      }, 1500);
     },
     onError: (error) =>
       dispatch(
@@ -632,6 +644,15 @@ export function OnboardingPage() {
       dispatch(setOnboardingError(null));
       await queryClient.invalidateQueries({ queryKey: ["onboarding", "me"] });
       await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+      
+      // Sync Redux auth user onboardingStatus
+      dispatch(
+        setUser({
+          ...authUser,
+          onboardingStatus: variables?.step === "content" ? "published" : "in_progress",
+        })
+      );
+
       const draft = res?.data?.data?.draft;
       if (draft) {
         setInitialCustomValues({
@@ -754,25 +775,6 @@ export function OnboardingPage() {
   // navigate("/dashboard", { replace: true });
   // });
 
-  // Debounced Autosave effect
-  useEffect(() => {
-    if (!stateQuery.data || !isHydrated) return;
-    const timeout = window.setTimeout(() => {
-      saveDraft();
-    }, 1500);
-    return () => window.clearTimeout(timeout);
-  }, [
-    activeStep,
-    selectedProfileType,
-    companySnapshot,
-    contentSnapshot,
-    selectedCategory,
-    selectedProfessionalCategory,
-    selectedIndustry,
-    selectedTheme,
-    experienceList,
-    isHydrated,
-  ]);
 
   const addCustomLink = () => {
     setUrlError("");
@@ -990,8 +992,7 @@ export function OnboardingPage() {
             Get published in under 5 minutes.
           </h1>
           <p className="max-w-xl text-xs leading-relaxed text-slate-400">
-            Let's structure your digital business card and profile. Your steps
-            are saved automatically in real-time.
+            Let's structure your digital business card and profile. Click Save & Exit to preserve your progress.
           </p>
         </div>
 
@@ -1002,13 +1003,7 @@ export function OnboardingPage() {
             onClick={() => saveDraft()}
             className="rounded-xl h-8.5 min-h-[34px] px-3.5 text-3xs font-bold border-white/[0.08]"
           >
-            {saveMutation.isPending
-              ? "Saving..."
-              : companyForm.formState.isDirty ||
-                  contentForm.formState.isDirty ||
-                  isCustomDirty
-                ? "Unsaved changes"
-                : "Saved ✓"}
+            {saveMutation.isPending ? "Saving..." : "Save & Exit"}
           </Button>
           <Button
             loading={publishMutation.isPending}
