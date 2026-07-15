@@ -3,6 +3,7 @@ import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import { Button } from "../ui/Button";
 import { CoverImageUpload } from "./CoverImageUpload";
+import { LogoImageUpload } from "./LogoImageUpload";
 
 export function BusinessProfileForm({ form, activeTab }) {
   const { register, watch, setValue, formState } = form;
@@ -83,20 +84,20 @@ export function BusinessProfileForm({ form, activeTab }) {
             </p>
           </div>
 
-          <div className="grid gap-4.5 sm:grid-cols-2">
+          <div className="grid gap-4.5 sm:grid-cols-1">
             <Input
               label="Company / Brand Name *"
               placeholder="E.g., Connor Security Consultants"
               {...register("companyName")}
               error={formState.errors.companyName?.message}
             />
-            <Input
-              label="Company Logo Image URL"
-              placeholder="https://cloudinary.com/logo.jpg"
-              {...register("logoUrl")}
-              error={formState.errors.logoUrl?.message}
-            />
           </div>
+          <LogoImageUpload
+            value={watch("logoUrl")}
+            onChange={(val) =>
+              setValue("logoUrl", val, { shouldDirty: true })
+            }
+          />
 
           <CoverImageUpload
             value={watch("coverImageUrl")}

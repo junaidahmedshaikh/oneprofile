@@ -63,6 +63,8 @@ const envSchema = z.object({
     .string()
     .optional()
     .default("oneprofile/onboarding"),
+  RESEND_API_KEY: z.string().optional().default(""),
+  RESEND_FROM: z.string().optional().default("OneProfile <onboarding@resend.dev>"),
 });
 
 export const env = envSchema.parse(process.env);

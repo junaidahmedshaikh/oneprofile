@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
+import { parseCustomLink, renderCustomLinkIcon } from "../lib/customLinkHelper";
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -284,7 +285,10 @@ export function OnboardingPage() {
     current: false,
     description: "",
   });
-  const [newLink, setNewLink] = useState({ title: "", url: "" });
+  const [newLink, setNewLink] = useState({ title: "", url: "", icon: "" });
+  const [successMessage, setSuccessMessage] = useState("");
+  const [showLinkFields, setShowLinkFields] = useState(false);
+  const [urlError, setUrlError] = useState("");
 
   const isCustomDirty =
     selectedProfileType !== initialCustomValues.profileType ||
@@ -610,6 +614,8 @@ export function OnboardingPage() {
       }
       companyForm.reset(companyForm.getValues());
       contentForm.reset(contentForm.getValues());
+      setSuccessMessage("Onboarding draft saved successfully ✓");
+      setTimeout(() => setSuccessMessage(""), 3000);
     },
     onError: (error) =>
       dispatch(
@@ -769,9 +775,22 @@ export function OnboardingPage() {
   ]);
 
   const addCustomLink = () => {
-    if (!newLink.title || !newLink.url) return;
-    contentForm.setValue("socialLinks.customLinks", [...customLinks, newLink]);
-    setNewLink({ title: "", url: "" });
+    setUrlError("");
+    if (!newLink.title || !newLink.url) {
+      setUrlError("Please enter both title and URL.");
+      return;
+    }
+    try {
+      const urlWithProtocol = newLink.url.match(/^https?:\/\//i) ? newLink.url : `https://${newLink.url}`;
+      new URL(urlWithProtocol); // validates URL
+
+      const titleWithIcon = newLink.icon ? `[${newLink.icon}] ${newLink.title}` : newLink.title;
+      contentForm.setValue("socialLinks.customLinks", [...customLinks, { title: titleWithIcon, url: urlWithProtocol }]);
+      setNewLink({ title: "", url: "", icon: "" });
+      setShowLinkFields(false);
+    } catch (e) {
+      setUrlError("Please enter a valid URL (e.g., https://example.com).");
+    }
   };
 
   const removeCustomLink = (idx) => {
@@ -880,22 +899,24 @@ export function OnboardingPage() {
         contactDetails: contentValues.contactDetails,
         socialLinks: contentValues.socialLinks,
       });
+      if (step === "content") {
+        const valid = await contentForm.trigger();
+        if (!valid) return;
+        setSuccessMessage("Onboarding completed successfully!");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1500);
+        return;
+      }
+
+      const nextIndex = currentStepOrder.indexOf(step) + 1;
+      const nextStep =
+        currentStepOrder[Math.min(nextIndex, currentStepOrder.length - 1)];
+      setLocalStep(nextStep);
+      dispatch(setActiveStep(nextStep));
     } catch (err) {
       console.error("Step complete save failed:", err);
     }
-
-    if (step === "content") {
-      const valid = await contentForm.trigger();
-      if (!valid) return;
-      navigate("/dashboard");
-      return;
-    }
-
-    const nextIndex = currentStepOrder.indexOf(step) + 1;
-    const nextStep =
-      currentStepOrder[Math.min(nextIndex, currentStepOrder.length - 1)];
-    setLocalStep(nextStep);
-    dispatch(setActiveStep(nextStep));
   };
 
   const skipCurrent = async () => {
@@ -958,6 +979,7 @@ export function OnboardingPage() {
         <Alert variant="error">{onboardingState.error}</Alert>
       ) : null}
       {resumeMessage ? <Alert variant="success">{resumeMessage}</Alert> : null}
+      {successMessage ? <Alert variant="success">{successMessage}</Alert> : null}
 
       <div className="flex flex-col gap-4.5 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-1 select-none">
@@ -1721,59 +1743,112 @@ export function OnboardingPage() {
                   </div>
 
                   <span className="text-3xs font-bold uppercase tracking-wider text-brand-400 block border-b border-white/[0.05] pb-2 mt-4">
-                    Add Custom Link Nodes
+                    Custom Links
                   </span>
-                  <div className="p-3.5 rounded-xl bg-white/[0.01] border border-white/[0.04] space-y-3">
-                    <div className="grid gap-3.5 sm:grid-cols-2">
-                      <Input
-                        label="Link Title"
-                        value={newLink.title}
-                        onChange={(e) =>
-                          setNewLink({ ...newLink, title: e.target.value })
-                        }
-                        placeholder="E.g., Read My Portfolio Booklet"
-                      />
-                      <Input
-                        label="Destination URL"
-                        value={newLink.url}
-                        onChange={(e) =>
-                          setNewLink({ ...newLink, url: e.target.value })
-                        }
-                        placeholder="E.g., https://my-portfolio.com"
-                      />
-                    </div>
+                  
+                  {!showLinkFields ? (
                     <Button
                       variant="secondary"
-                      className="rounded-xl h-8.5 min-h-[34px] px-3.5 text-3xs font-bold w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
-                      onClick={addCustomLink}
+                      className="rounded-xl h-9 px-4 text-3xs font-bold w-full bg-white/5 border border-white/10 text-white"
+                      onClick={() => setShowLinkFields(true)}
                     >
-                      Add Link Node to Onboarding
+                      + Add Custom Link
                     </Button>
-                  </div>
-
-                  <div className="space-y-2">
-                    {customLinks.map((link, idx) => (
-                      <div
-                        key={idx}
-                        className="flex justify-between items-center p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04]"
-                      >
-                        <div>
-                          <h4 className="text-xs font-bold text-white">
-                            {link.title}
-                          </h4>
-                          <span className="text-3xs text-slate-500 block truncate max-w-[200px]">
-                            {link.url}
-                          </span>
+                  ) : (
+                    <div className="p-3.5 rounded-xl bg-white/[0.01] border border-white/[0.04] space-y-3">
+                      <div className="grid gap-3.5 sm:grid-cols-3">
+                        <Input
+                          label="Link Title *"
+                          value={newLink.title}
+                          onChange={(e) =>
+                            setNewLink({ ...newLink, title: e.target.value })
+                          }
+                          placeholder="E.g., Portfolio"
+                        />
+                        <Input
+                          label="Destination URL *"
+                          value={newLink.url}
+                          onChange={(e) =>
+                            setNewLink({ ...newLink, url: e.target.value })
+                          }
+                          placeholder="E.g., https://example.com"
+                        />
+                        <div className="flex flex-col space-y-1">
+                          <label className="text-3xs font-bold text-slate-400 uppercase tracking-wider">
+                            Optional Icon
+                          </label>
+                          <select
+                            value={newLink.icon}
+                            onChange={(e) =>
+                              setNewLink({ ...newLink, icon: e.target.value })
+                            }
+                            className="h-10 rounded-xl bg-oneprofile-900 border border-white/[0.08] text-xs text-white px-3 focus:outline-none focus:border-primary/50"
+                          >
+                            <option value="">None</option>
+                            <option value="globe">Globe</option>
+                            <option value="link">Link</option>
+                            <option value="book">Book</option>
+                            <option value="star">Star</option>
+                            <option value="mail">Mail</option>
+                            <option value="phone">Phone</option>
+                          </select>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => removeCustomLink(idx)}
-                          className="h-6.5 w-6.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center text-xs"
-                        >
-                          ✕
-                        </button>
                       </div>
-                    ))}
+                      {urlError && (
+                        <p className="text-3xs font-semibold text-red-400">
+                          {urlError}
+                        </p>
+                      )}
+                      <div className="flex gap-2">
+                        <Button
+                          variant="secondary"
+                          className="flex-1 rounded-xl h-8.5 text-3xs font-bold"
+                          onClick={() => {
+                            setShowLinkFields(false);
+                            setUrlError("");
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          className="flex-1 rounded-xl h-8.5 text-3xs font-bold text-slate-900 bg-brand-400 hover:bg-brand-500"
+                          onClick={addCustomLink}
+                        >
+                          Save Link
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-2 mt-3">
+                    {customLinks.map((link, idx) => {
+                      const parsed = parseCustomLink(link.title);
+                      return (
+                        <div
+                          key={idx}
+                          className="flex justify-between items-center p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04]"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              {renderCustomLinkIcon(parsed.icon)}
+                              <h4 className="text-xs font-bold text-white truncate">
+                                {parsed.title}
+                              </h4>
+                            </div>
+                            <span className="text-3xs text-slate-500 block truncate max-w-[200px] mt-1">
+                              {link.url}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeCustomLink(idx)}
+                            className="h-6.5 w-6.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center text-xs shrink-0 ml-2"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </motion.div>

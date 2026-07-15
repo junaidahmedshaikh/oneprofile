@@ -46,7 +46,7 @@ export function SignupPage() {
       setInfo(
         "Account created. Please verify your email from the verification screen.",
       );
-      navigate("/verify");
+      navigate("/verify", { state: { justRegistered: true } });
     },
   });
 

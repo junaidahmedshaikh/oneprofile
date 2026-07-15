@@ -16,7 +16,13 @@ import {
   requestPhoneVerification,
   confirmPhoneVerification,
   googleStart,
-  googleCallback
+  googleCallback,
+  verifyRegistration,
+  resendRegistration,
+  requestForgotPassword,
+  verifyForgotPassword,
+  requestChangeEmail,
+  confirmChangeEmailVerify
 } from '../controllers/auth.controller.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { validate } from '../middleware/validate.js';
@@ -29,7 +35,12 @@ import {
   resetPasswordSchema,
   refreshSchema,
   emailVerifySchema,
-  phoneVerifySchema
+  phoneVerifySchema,
+  verifyRegistrationSchema,
+  resendRegistrationSchema,
+  forgotPasswordVerifySchema,
+  changeEmailRequestSchema,
+  changeEmailConfirmSchema
 } from '../validators/auth.validators.js';
 
 const router = Router();
@@ -51,5 +62,13 @@ router.post('/verify-phone/request', authenticate, validate(phoneVerifySchema.om
 router.post('/verify-phone/confirm', validate(phoneVerifySchema), confirmPhoneVerification);
 router.get('/google', googleStart);
 router.get('/google/callback', googleCallback);
+
+// New Email OTP verification endpoints
+router.post('/verify-registration/confirm', validate(verifyRegistrationSchema), verifyRegistration);
+router.post('/verify-registration/resend', validate(resendRegistrationSchema), resendRegistration);
+router.post('/forgot-password/request', validate(forgotPasswordSchema), requestForgotPassword);
+router.post('/forgot-password/verify', validate(forgotPasswordVerifySchema), verifyForgotPassword);
+router.post('/change-email/request', authenticate, validate(changeEmailRequestSchema), requestChangeEmail);
+router.post('/change-email/confirm', authenticate, validate(changeEmailConfirmSchema), confirmChangeEmailVerify);
 
 export default router;

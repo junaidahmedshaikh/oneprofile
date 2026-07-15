@@ -17,6 +17,21 @@ import { BusinessPreview } from "../components/profile/BusinessPreview";
 import { ProfessionalPreview } from "../components/profile/ProfessionalPreview";
 import { BillingTab } from "../components/profile/BillingTab";
 import { SecurityTab } from "../components/profile/SecurityTab";
+import {
+  User,
+  Briefcase,
+  Link2,
+  Settings,
+  Building2,
+  Tag,
+  Globe,
+  Lock,
+  QrCode,
+  MessageSquare,
+  Linkedin,
+  Mail,
+  Download,
+} from "lucide-react";
 
 const schema = z.object({
   slug: z.string().optional().or(z.literal("")),
@@ -124,16 +139,48 @@ export function IdentityPage() {
   const currentTabList = useMemo(() => {
     return profile?.profileType === "professional"
       ? [
-          { id: "personal", label: "Personal Info", icon: "👤" },
-          { id: "experience", label: "Experience", icon: "💼" },
-          { id: "contact", label: "Hours & Links", icon: "🔗" },
-          { id: "seo", label: "SEO & Privacy", icon: "⚙️" },
+          {
+            id: "personal",
+            label: "Personal Info",
+            icon: <User className="w-4 h-4 text-indigo-400" />,
+          },
+          {
+            id: "experience",
+            label: "Experience",
+            icon: <Briefcase className="w-4 h-4 text-purple-400" />,
+          },
+          {
+            id: "contact",
+            label: "Hours & Links",
+            icon: <Link2 className="w-4 h-4 text-[#2563EB]" />,
+          },
+          {
+            id: "seo",
+            label: "SEO & Privacy",
+            icon: <Settings className="w-4 h-4 text-[#6B7280]" />,
+          },
         ]
       : [
-          { id: "business", label: "Business Details", icon: "🏢" },
-          { id: "offerings", label: "Offerings & Pricing", icon: "🏷️" },
-          { id: "contact", label: "Hours & Links", icon: "🔗" },
-          { id: "seo", label: "SEO & Privacy", icon: "⚙️" },
+          {
+            id: "business",
+            label: "Business Details",
+            icon: <Building2 className="w-4 h-4 text-blue-400" />,
+          },
+          {
+            id: "offerings",
+            label: "Offerings & Pricing",
+            icon: <Tag className="w-4 h-4 text-amber-400" />,
+          },
+          {
+            id: "contact",
+            label: "Hours & Links",
+            icon: <Link2 className="w-4 h-4 text-[#2563EB]" />,
+          },
+          {
+            id: "seo",
+            label: "SEO & Privacy",
+            icon: <Settings className="w-4 h-4 text-[#6B7280]" />,
+          },
         ];
   }, [profile?.profileType]);
 
@@ -502,9 +549,16 @@ export function IdentityPage() {
                 : "bg-white/5 border-white/10 text-slate-400"
             }`}
           >
-            {watchedValues.visibility === "public"
-              ? "🌐 Published Live"
-              : "🔒 Private Draft"}
+            {watchedValues.visibility === "public" ? (
+              <>
+                <Globe className="w-3.5 h-3.5 text-emerald-400" /> Published
+                Live
+              </>
+            ) : (
+              <>
+                <Lock className="w-3.5 h-3.5 text-slate-400" /> Private Draft
+              </>
+            )}
           </button>
 
           {profile?.slug ? (
@@ -523,7 +577,7 @@ export function IdentityPage() {
                 rel="noreferrer"
                 className="inline-flex h-10 items-center justify-center gap-1.5 rounded-ds-btn bg-primary/10  border border-oneprofile-700 hover:bg-primary/20 px-4 text-xs font-bold text-primary transition-all select-none"
               >
-                Digital Card 🎴
+                <QrCode className="w-3.5 h-3.5" /> Digital Card
               </a>
             </>
           ) : null}
@@ -617,8 +671,8 @@ export function IdentityPage() {
                     rel="noreferrer"
                     className="flex gap-2 items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
                   >
-                    <span className="text-xs">💬</span>
-                    <span className="text-xs font-bold text-slate-400 mt-1">
+                    <MessageSquare className="w-4 h-4 text-emerald-500" />
+                    <span className="text-2xs font-bold text-slate-400 mt-0.5">
                       WhatsApp
                     </span>
                   </a>
@@ -628,8 +682,8 @@ export function IdentityPage() {
                     rel="noreferrer"
                     className="flex gap-2 items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
                   >
-                    <span className="text-xs">💼</span>
-                    <span className="text-xs font-bold text-slate-400 mt-1">
+                    <Linkedin className="w-4 h-4 text-[#0077B5]" />
+                    <span className="text-2xs font-bold text-slate-400 mt-0.5">
                       LinkedIn
                     </span>
                   </a>
@@ -637,18 +691,19 @@ export function IdentityPage() {
                     href={`mailto:?subject=${encodeURIComponent("Digital Business Profile")}&body=${encodeURIComponent("Here is my digital business card: " + publicUrl)}`}
                     className="flex gap-2  items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
                   >
-                    <span className="text-xs">✉️</span>
-                    <span className="text-xs font-bold text-slate-400">
+                    <Mail className="w-4 h-4 text-[#2563EB]" />
+                    <span className="text-2xs font-bold text-slate-400 mt-0.5">
                       Email
                     </span>
                   </a>
                   {/* QR Code toggle action */}
                   <Button
                     variant="secondary"
-                    className="w-full text-xs"
+                    className="w-full text-xs [display:ruby] items-center justify-center gap-1.5"
                     onClick={() => setShowQr((prev) => !prev)}
                   >
-                    {showQr ? "Hide QR Code ✕" : "Generate QR Code 📱"}
+                    <QrCode className="w-4 h-4" />{" "}
+                    <span>{showQr ? "Hide QR Code" : "Generate QR Code"}</span>
                   </Button>
                 </div>
 
@@ -670,9 +725,9 @@ export function IdentityPage() {
                         download="oneprofile-qr-code.png"
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex min-h-9 h-9 items-center justify-center rounded-xl bg-slate-900 text-white px-4 text-3xs font-bold hover:bg-slate-800"
+                        className="inline-flex min-h-9 h-9 items-center justify-center rounded-xl bg-slate-900 text-white px-4 text-3xs font-bold hover:bg-slate-800 gap-1.5"
                       >
-                        Download QR Code PNG 💾
+                        <Download className="w-3.5 h-3.5" /> Download QR Code
                       </a>
                     </motion.div>
                   ) : null}
@@ -764,7 +819,7 @@ export function IdentityPage() {
                   </Button>
                 ) : (
                   <Button
-                    type="submit"
+                    type="button"
                     onClick={handleNextTab}
                     className="text-xs"
                   >

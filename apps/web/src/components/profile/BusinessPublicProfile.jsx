@@ -11,10 +11,16 @@ import {
   ExternalLink,
   Mail,
   CheckCircle2,
+  X,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import { parseCustomLink, renderCustomLinkIcon, getSafeMapUrl } from "../../lib/customLinkHelper";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "../ui/Button";
 
 export function BusinessPublicProfile({ profile, leadForm }) {
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItemType, setSelectedItemType] = useState(null);
   const days = [
     "monday",
     "tuesday",
@@ -109,9 +115,9 @@ Thank you.`;
         <div className="-mt-16 sm:-mt-20 mx-4 sm:mx-8 relative z-10 bg-white border border-[#E5E7EB] shadow-[0_10px_30px_rgba(0,0,0,0.04)] rounded-[24px] p-6 sm:p-8">
           <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-              {profile.logoUrl ? (
+              {profile.logoUrl || profile.avatarUrl ? (
                 <img
-                  src={profile.logoUrl}
+                  src={profile.logoUrl || profile.avatarUrl}
                   alt={profile.companyName}
                   className="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl object-cover border border-[#E5E7EB] bg-white shadow-sm shrink-0 animate-floating"
                 />
@@ -137,17 +143,8 @@ Thank you.`;
                     "Trusted Professional Services & Quality Offerings"}
                 </p>
 
-                {/* Rating & Social Proof Header */}
+                {/* Social Proof Header */}
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-[#6B7280]">
-                  <div className="flex items-center gap-1 text-[#F59E0B] font-bold">
-                    <Star className="w-4 h-4 fill-current" />
-                    <Star className="w-4 h-4 fill-current" />
-                    <Star className="w-4 h-4 fill-current" />
-                    <Star className="w-4 h-4 fill-current" />
-                    <Star className="w-4 h-4 fill-current" />
-                    <span className="text-[#111827] ml-1">5.0</span>
-                  </div>
-                  <span>•</span>
                   {profile.businessCategory && (
                     <span className="font-semibold text-[#111827]">
                       {profile.businessCategory}
@@ -155,7 +152,7 @@ Thank you.`;
                   )}
                   {profile.location?.city && (
                     <>
-                      <span>•</span>
+                      {profile.businessCategory && <span>•</span>}
                       <span className="flex items-center gap-1 font-semibold text-[#111827]">
                         <MapPin className="w-3.5 h-3.5 text-red-500" />{" "}
                         {profile.location.city}
@@ -274,14 +271,18 @@ Thank you.`;
             {profile.services.map((srv, idx) => (
               <div
                 key={idx}
-                className="bg-slate-50 border border-[#E5E7EB] hover:border-[#2563EB]/20 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 flex flex-col justify-between"
+                onClick={() => {
+                  setSelectedItem(srv);
+                  setSelectedItemType("service");
+                }}
+                className="cursor-pointer bg-slate-50 border border-[#E5E7EB] hover:border-[#2563EB]/20 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 flex flex-col justify-between select-none"
               >
                 <div className="space-y-2">
                   <h3 className="text-sm font-bold text-[#111827] tracking-tight leading-snug">
                     {srv.title}
                   </h3>
                   {srv.description && (
-                    <p className="text-xs text-[#6B7280] leading-relaxed">
+                    <p className="text-xs text-[#6B7280] leading-relaxed line-clamp-3">
                       {srv.description}
                     </p>
                   )}
@@ -297,8 +298,13 @@ Thank you.`;
                     </span>
                   </div>
                   <button
-                    onClick={() => handleInquiry(srv, "service")}
-                    className="h-8 px-3.5 rounded-full font-semibold bg-white border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-sm tracking-wider transition-all"
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedItem(srv);
+                      setSelectedItemType("service");
+                    }}
+                    className="h-8 px-3.5 rounded-full font-semibold bg-white border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs tracking-wider transition-all"
                   >
                     Inquire
                   </button>
@@ -328,7 +334,11 @@ Thank you.`;
             {profile.products.map((prod, idx) => (
               <div
                 key={idx}
-                className="group bg-slate-50 border border-[#E5E7EB] rounded-2xl overflow-hidden transition-all duration-300 flex flex-col"
+                onClick={() => {
+                  setSelectedItem(prod);
+                  setSelectedItemType("product");
+                }}
+                className="cursor-pointer group bg-slate-50 border border-[#E5E7EB] rounded-2xl overflow-hidden transition-all duration-300 flex flex-col select-none"
               >
                 <div className="overflow-hidden bg-white relative aspect-[4/3] border-b border-[#E5E7EB]">
                   {prod.imageUrl ? (
@@ -366,8 +376,13 @@ Thank you.`;
                       </span>
                     </div>
                     <button
-                      onClick={() => handleInquiry(prod, "product")}
-                      className="h-8 px-3.5 rounded-full bg-white border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-sm font-semibold tracking-wider"
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedItem(prod);
+                        setSelectedItemType("product");
+                      }}
+                      className="h-8 px-3.5 rounded-full bg-white border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-semibold tracking-wider"
                     >
                       Order
                     </button>
@@ -449,7 +464,7 @@ Thank you.`;
                   <div className="h-40 w-full rounded-2xl overflow-hidden border border-[#E5E7EB] mt-2 bg-slate-50">
                     <iframe
                       title="Location Map"
-                      src={profile.location.mapsEmbedUrl}
+                      src={getSafeMapUrl(profile.location.mapsEmbedUrl)}
                       className="w-full h-full border-0 grayscale opacity-80"
                       allowFullScreen=""
                       loading="lazy"
@@ -502,23 +517,154 @@ Thank you.`;
                 </h4>
               </div>
               <div className="space-y-2">
-                {profile.socialLinks.customLinks.map((link, idx) => (
-                  <a
-                    key={idx}
-                    href={link.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-[#E5E7EB] hover:bg-slate-100 transition-all text-xs font-bold text-[#111827]"
-                  >
-                    <span>{link.title}</span>
-                    <span className="text-[#2563EB]">➔</span>
-                  </a>
-                ))}
+                {profile.socialLinks.customLinks.map((link, idx) => {
+                  const parsed = parseCustomLink(link.title);
+                  return (
+                    <a
+                      key={idx}
+                      href={link.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-[#E5E7EB] hover:bg-slate-100 transition-all text-xs font-bold text-[#111827] gap-3"
+                    >
+                      <div className="flex items-center gap-2">
+                        {renderCustomLinkIcon(parsed.icon)}
+                        <span>{parsed.title}</span>
+                      </div>
+                      <span className="text-[#2563EB]">➔</span>
+                    </a>
+                  );
+                })}
               </div>
             </div>
           ) : null}
         </div>
       </section>
+
+      <AnimatePresence>
+        {selectedItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => {
+                setSelectedItem(null);
+                setSelectedItemType(null);
+              }}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+
+            {/* Modal Body */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", duration: 0.4 }}
+              className="relative w-full max-w-lg bg-white border border-[#E5E7EB] shadow-2xl rounded-3xl overflow-hidden flex flex-col z-10"
+              role="dialog"
+              aria-modal="true"
+            >
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedItem(null);
+                  setSelectedItemType(null);
+                }}
+                className="absolute top-4 right-4 z-10 h-8 w-8 rounded-full bg-slate-100/80 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              {/* Image Header if Product and Image exists */}
+              {selectedItemType === "product" && selectedItem.imageUrl ? (
+                <div className="w-full h-56 bg-slate-100 relative overflow-hidden border-b border-[#E5E7EB]">
+                  <img
+                    src={selectedItem.imageUrl}
+                    alt={selectedItem.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-4 bg-gradient-to-r from-blue-500 to-indigo-500" />
+              )}
+
+              {/* Content area */}
+              <div className="p-6 sm:p-8 space-y-5">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-3xs uppercase tracking-widest bg-blue-500/10 text-blue-700 px-2 py-0.5 rounded-full font-bold">
+                      {selectedItemType}
+                    </span>
+                    {selectedItem.category && (
+                      <span className="text-3xs uppercase tracking-widest bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">
+                        {selectedItem.category}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-lg font-black text-[#111827] leading-snug pt-1">
+                    {selectedItem.title}
+                  </h3>
+                </div>
+
+                {/* Description */}
+                {selectedItem.description && (
+                  <div className="space-y-1.5">
+                    <h4 className="text-3xs font-bold text-slate-400 uppercase tracking-widest">
+                      Description
+                    </h4>
+                    <p className="text-xs text-slate-600 leading-relaxed max-h-36 overflow-y-auto pr-1">
+                      {selectedItem.description}
+                    </p>
+                  </div>
+                )}
+
+                {/* Features list (if any exist) */}
+                {selectedItem.features && Array.isArray(selectedItem.features) && selectedItem.features.length > 0 && (
+                  <div className="space-y-1.5">
+                    <h4 className="text-3xs font-bold text-slate-400 uppercase tracking-widest">
+                      Key Features
+                    </h4>
+                    <ul className="grid gap-1.5 sm:grid-cols-2 text-xs text-slate-600">
+                      {selectedItem.features.map((feature, fIdx) => (
+                        <li key={fIdx} className="flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-blue-500 shrink-0" />
+                          <span className="truncate">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Price Display */}
+                <div className="pt-4 border-t border-[#E5E7EB] flex items-center justify-between gap-4">
+                  <div>
+                    <span className="text-3xs font-bold text-slate-400 uppercase tracking-widest block">
+                      Pricing / Rate
+                    </span>
+                    <span className="text-base font-extrabold text-[#2563EB]">
+                      {selectedItem.price || "Contact for Quote"}
+                    </span>
+                  </div>
+
+                  <Button
+                    onClick={() => {
+                      handleInquiry(selectedItem, selectedItemType);
+                      setSelectedItem(null);
+                      setSelectedItemType(null);
+                    }}
+                    className="rounded-full px-5 py-2.5 text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1d4ed8]"
+                  >
+                    Inquire Now
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

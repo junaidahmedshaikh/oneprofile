@@ -17,6 +17,9 @@ export function ProtectedRoute() {
   if (!accessToken) {
     return <Navigate to="/login" replace />;
   }
+  if (user && !user.emailVerified) {
+    return <Navigate to="/verify" replace />;
+  }
   const isOnboardingRoute = location.pathname.startsWith("/onboarding");
   if (!isOnboardingRoute && user && user.onboardingStatus !== "published") {
     return <Navigate to="/onboarding" replace />;

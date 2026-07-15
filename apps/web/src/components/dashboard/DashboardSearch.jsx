@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { BarChart2, Settings, Shield } from "lucide-react";
+import React from "react";
 
 const commandItems = [
   {
@@ -8,21 +10,21 @@ const commandItems = [
     title: "Go to Dashboard",
     category: "Navigation",
     path: "/dashboard",
-    icon: "📊",
+    icon: <BarChart2 className="w-4 h-4 text-indigo-400" />,
   },
   {
     id: "ident",
     title: "Edit Identity Settings",
     category: "Navigation",
     path: "/identity",
-    icon: "⚙️",
+    icon: <Settings className="w-4 h-4 text-slate-400" />,
   },
   {
     id: "ver",
     title: "Verify Email & Phone",
     category: "Security",
     path: "/verify",
-    icon: "🛡️",
+    icon: <Shield className="w-4 h-4 text-emerald-400" />,
   },
 ];
 
@@ -151,7 +153,7 @@ export function DashboardSearch() {
                             : "text-slate-400 hover:text-white border border-transparent"
                         }`}
                       >
-                        <span className="text-md">{item.icon}</span>
+                        <span>{item.icon}</span>
                         <div className="flex-1">
                           <div>{item.title}</div>
                           <div className="text-3xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">

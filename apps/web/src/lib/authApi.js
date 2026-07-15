@@ -17,5 +17,13 @@ export const authApi = {
   sessions: () => api.get('/auth/sessions'),
   logoutAll: () => api.post('/auth/logout-all', {}),
   googleStart: () => api.get('/auth/google'),
-  googleCallback: (payload) => api.post('/auth/google/callback', payload)
+  googleCallback: (payload) => api.post('/auth/google/callback', payload),
+  
+  // New Email OTP Endpoints
+  verifyRegistrationConfirm: (payload) => api.post('/auth/verify-registration/confirm', payload),
+  verifyRegistrationResend: (payload) => api.post('/auth/verify-registration/resend', payload),
+  forgotPasswordRequest: (payload) => api.post('/auth/forgot-password/request', payload),
+  forgotPasswordVerify: (payload) => api.post('/auth/forgot-password/verify', payload),
+  changeEmailRequest: (payload) => api.post('/auth/change-email/request', payload),
+  changeEmailConfirm: (payload) => api.post('/auth/change-email/confirm', payload)
 };

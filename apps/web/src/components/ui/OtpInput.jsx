@@ -11,6 +11,11 @@ export function OtpInput({ length = 6, value = "", onChange, error }) {
     setCells(Array.from({ length }, (_, i) => value[i] || ""));
   }, [length, value]);
 
+  useEffect(() => {
+    // Auto focus first input on mount
+    refs.current[0]?.focus();
+  }, []);
+
   const updateCell = (index, next) => {
     const copy = [...cells];
     copy[index] = next;
@@ -21,11 +26,26 @@ export function OtpInput({ length = 6, value = "", onChange, error }) {
     }
   };
 
+  const handlePaste = (event) => {
+    event.preventDefault();
+    const pastedData = event.clipboardData
+      .getData("text")
+      .replace(/[^0-9]/g, "")
+      .trim();
+    if (pastedData) {
+      const pasteValues = pastedData.slice(0, length).split("");
+      const nextCells = Array.from({ length }, (_, i) => pasteValues[i] || "");
+      setCells(nextCells);
+      onChange?.(nextCells.join(""));
+      const focusIndex = Math.min(pastedData.length, length - 1);
+      refs.current[focusIndex]?.focus();
+    }
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex gap-2.5 sm:gap-3.5">
         {cells.map((cell, index) => {
-          const isFocused = refs.current[index] === document.activeElement;
           return (
             <input
               key={index}
@@ -33,25 +53,37 @@ export function OtpInput({ length = 6, value = "", onChange, error }) {
                 refs.current[index] = node;
               }}
               value={cell}
+              onPaste={handlePaste}
               onChange={(event) =>
                 updateCell(
                   index,
-                  event.target.value.replace(/[^0-9a-zA-Z]/g, "").slice(-1),
+                  event.target.value.replace(/[^0-9]/g, "").slice(-1),
                 )
               }
               onKeyDown={(event) => {
-                if (event.key === "Backspace" && !cell && index > 0) {
+                if (event.key === "Backspace") {
+                  event.preventDefault();
                   const copy = [...cells];
-                  copy[index - 1] = "";
-                  setCells(copy);
-                  onChange?.(copy.join(""));
+                  if (cell) {
+                    copy[index] = "";
+                    setCells(copy);
+                    onChange?.(copy.join(""));
+                  } else if (index > 0) {
+                    copy[index - 1] = "";
+                    setCells(copy);
+                    onChange?.(copy.join(""));
+                    refs.current[index - 1]?.focus();
+                  }
+                } else if (event.key === "ArrowLeft" && index > 0) {
                   refs.current[index - 1]?.focus();
+                } else if (event.key === "ArrowRight" && index < length - 1) {
+                  refs.current[index + 1]?.focus();
                 }
               }}
               inputMode="numeric"
               maxLength={1}
               className={clsx(
-                "h-12 w-12 sm:h-14 sm:w-14 rounded-xl border border-oneprofile-700 bg-oneprofile-900/40 text-center text-lg font-bold text-slate-300 dark:text-white transition-all duration-150 focus:border-primary focus:bg-white/[0.04] focus:outline-none focus:ring-4 focus:ring-primary/10 hover:border-white/[0.15]",
+                "h-12 w-12 sm:h-14 sm:w-14 rounded-xl border border-oneprofile-700 bg-oneprofile-900 text-center text-lg font-bold text-slate-300 dark:text-white transition-all duration-150 focus:border-primary focus:bg-white/[0.04] focus:outline-none focus:ring-4 focus:ring-primary/10 hover:border-white/[0.15]",
                 cell && "border-primary/30 bg-primary/[0.02]",
                 error &&
                   "border-red-500/50 focus:border-red-500/40 focus:ring-red-500/10",

@@ -17,7 +17,13 @@ import {
   verifyEmail,
   requestPhoneVerification as requestPhoneVerificationService,
   verifyPhone,
-  loginWithGoogleProfile
+  loginWithGoogleProfile,
+  resendRegistrationOtp,
+  confirmRegistrationOtp,
+  sendForgotPasswordOtp,
+  verifyForgotPasswordOtp,
+  sendChangeEmailOtp,
+  confirmChangeEmail
 } from '../services/auth.service.js';
 import { getGoogleAuthUrl, exchangeGoogleCode, verifyGoogleIdToken } from '../services/google.service.js';
 import { env as runtimeEnv } from '../config/env.js';
@@ -175,4 +181,34 @@ export const googleCallback = asyncHandler(async (req, res) => {
   const result = await loginWithGoogleProfile(profile, req.headers['user-agent'] || '', req.ip, readDevice(req));
   setAuthCookies(res, result);
   return res.redirect(`${runtimeEnv.CLIENT_URL}/dashboard?token=${result.accessToken}&refreshToken=${result.refreshToken}`);
+});
+
+export const verifyRegistration = asyncHandler(async (req, res) => {
+  const data = await confirmRegistrationOtp(req.body);
+  return ok(res, { message: 'Registration email verified successfully', data });
+});
+
+export const resendRegistration = asyncHandler(async (req, res) => {
+  const data = await resendRegistrationOtp(req.body);
+  return ok(res, { message: 'Verification code resent successfully', data });
+});
+
+export const requestForgotPassword = asyncHandler(async (req, res) => {
+  const data = await sendForgotPasswordOtp({ email: req.body.email });
+  return ok(res, { message: 'Password reset code sent successfully', data });
+});
+
+export const verifyForgotPassword = asyncHandler(async (req, res) => {
+  const data = await verifyForgotPasswordOtp(req.body);
+  return ok(res, { message: 'Password reset code verified successfully', data });
+});
+
+export const requestChangeEmail = asyncHandler(async (req, res) => {
+  const data = await sendChangeEmailOtp({ userId: req.auth.sub, newEmail: req.body.newEmail });
+  return ok(res, { message: 'Change email verification code sent successfully', data });
+});
+
+export const confirmChangeEmailVerify = asyncHandler(async (req, res) => {
+  const data = await confirmChangeEmail({ userId: req.auth.sub, newEmail: req.body.newEmail, otp: req.body.otp });
+  return ok(res, { message: 'Email address updated successfully', data });
 });

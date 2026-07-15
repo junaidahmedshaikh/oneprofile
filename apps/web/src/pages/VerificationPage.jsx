@@ -1,74 +1,111 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Alert } from "../components/ui/Alert";
+import { OtpInput } from "../components/ui/OtpInput";
 import { authApi } from "../lib/authApi";
-
-const schema = z.object({
-  email: z.string().email("Enter a valid email").optional().or(z.literal("")),
-  phone: z.string().optional().or(z.literal("")),
-  otp: z.string().optional().or(z.literal("")),
-});
+import { setUser } from "../store/authSlice";
+import { Mail, CheckCircle2, AlertCircle, ArrowLeft } from "lucide-react";
 
 export function VerificationPage() {
-  const [mode, setMode] = useState("email");
-  const [done, setDone] = useState("");
-  const form = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: { email: "", phone: "", otp: "" },
-  });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  const requestMutation = useMutation({
-    mutationFn: (values) =>
-      mode === "email"
-        ? authApi.verifyEmailRequest({ email: values.email })
-        : authApi.verifyPhoneRequest({ phone: values.phone }),
-    onSuccess: () =>
-      setDone(
-        `${mode === "email" ? "Email" : "Phone"} verification code sent.`,
-      ),
-  });
+  const location = useLocation();
+  const justRegistered = location.state?.justRegistered || false;
 
-  const confirmMutation = useMutation({
-    mutationFn: (values) =>
-      mode === "email"
-        ? authApi.verifyEmailConfirm({ email: values.email, otp: values.otp })
-        : authApi.verifyPhoneConfirm({ phone: values.phone, otp: values.otp }),
-    onSuccess: () =>
-      setDone(`${mode === "email" ? "Email" : "Phone"} verified successfully.`),
-  });
+  // Get current authenticated user's email if available, or check query params
+  const { user } = useSelector((state) => state.auth);
+  const initialEmail = user?.email || searchParams.get("email") || "";
 
-  const requestCode = async () => {
-    const field = mode === "email" ? "email" : "phone";
-    const valid = await form.trigger(field);
-    if (!valid) return;
-    const values = form.getValues();
-    if (!values[field]) {
-      form.setError(field, {
-        type: "manual",
-        message: `${mode === "email" ? "Email" : "Phone"} is required`,
-      });
-      return;
+  const [email, setEmail] = useState(initialEmail);
+  const [otp, setOtp] = useState("");
+  const [cooldown, setCooldown] = useState(0);
+  const [status, setStatus] = useState("idle"); // 'idle' | 'loading' | 'success' | 'error'
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [infoMessage, setInfoMessage] = useState("");
+  const [isResending, setIsResending] = useState(false);
+
+  // Set initial countdown and success state if they just registered
+  useEffect(() => {
+    if (justRegistered) {
+      setCooldown(60);
+      setSuccessMessage("Account created successfully! A 6-digit verification code has been sent to your email.");
     }
-    requestMutation.mutate(values);
+  }, [justRegistered]);
+
+  // Cooldown countdown timer effect
+  useEffect(() => {
+    if (cooldown === 0) return;
+    const interval = setInterval(() => {
+      setCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [cooldown]);
+
+  const handleResendCode = async () => {
+    if (!email) return;
+    setIsResending(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+    setInfoMessage("");
+    try {
+      await authApi.verifyRegistrationResend({ email });
+      setCooldown(60);
+      setSuccessMessage("A fresh 6-digit verification code has been sent to your email.");
+      setStatus("idle");
+    } catch (err) {
+      const code = err.response?.data?.code;
+      const msg = err.response?.data?.message || "Failed to send verification code. Please try again.";
+      if (code === "AUTH_OTP_COOLDOWN") {
+        setCooldown(60);
+        setInfoMessage("A verification code was recently sent. Please check your inbox or try again in a minute.");
+        setStatus("idle");
+      } else {
+        setErrorMessage(msg);
+        setStatus("error");
+      }
+    } finally {
+      setIsResending(false);
+    }
   };
 
-  const confirmCode = async () => {
-    const valid = await form.trigger(
-      mode === "email" ? ["email", "otp"] : ["phone", "otp"],
-    );
-    if (!valid) return;
-    const values = form.getValues();
-    if (!values.otp) {
-      form.setError("otp", { type: "manual", message: "OTP is required" });
-      return;
+  const handleVerify = async (e) => {
+    e?.preventDefault();
+    if (!email || otp.length !== 6) return;
+    setStatus("loading");
+    setErrorMessage("");
+    setSuccessMessage("");
+    setInfoMessage("");
+    try {
+      const response = await authApi.verifyRegistrationConfirm({ email, otp });
+      setStatus("success");
+      setSuccessMessage("Your email address has been verified successfully!");
+      
+      // Update Redux state with verified user
+      if (response.data?.data?.user) {
+        dispatch(setUser(response.data.data.user));
+      } else {
+        // Fallback: fetch current authenticated user
+        const meResponse = await authApi.me();
+        dispatch(setUser(meResponse.data.data));
+      }
+
+      // Smooth redirect after 1.5 seconds so user can see success state
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1500);
+    } catch (err) {
+      setErrorMessage(
+        err.response?.data?.message || "Invalid or expired verification code."
+      );
+      setStatus("error");
     }
-    confirmMutation.mutate(values);
   };
 
   return (
@@ -76,84 +113,106 @@ export function VerificationPage() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="space-y-6"
+      className="space-y-6 max-w-md mx-auto"
     >
-      <div className="space-y-2">
+      <div className="space-y-2 text-center">
+        <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 text-primary mb-2">
+          <Mail className="w-6 h-6 text-[#2563EB]" />
+        </div>
         <h2 className="font-display text-2.5xl font-extrabold text-slate-300 dark:text-white tracking-tight">
-          Verification center
+          Verify your email
         </h2>
-        <p className="text-xs text-oneprofile-600 font-semibold">
-          Verify your email or phone to complete account activation.
+        <p className="text-xs text-oneprofile-600 font-semibold leading-relaxed">
+          We sent a 6-digit verification code to <span className="text-slate-300 font-bold">{email || "your email address"}</span>.
         </p>
       </div>
 
-      {done ? <Alert variant="success">{done}</Alert> : null}
+      {successMessage && (
+        <Alert variant="success" className="flex items-start gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+          <span>{successMessage}</span>
+        </Alert>
+      )}
 
-      <div className="flex gap-2 p-1 rounded-2xl bg-oneprofile-900/60 border border-oneprofile-700">
-        <button
-          type="button"
-          onClick={() => setMode("email")}
-          className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${mode === "email" ? "bg-primary/10 text-slate-300 dark:text-white border border-primary/20" : "text-oneprofile-600 hover:text-slate-300 dark:hover:text-white"}`}
-        >
-          Email verification
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("phone")}
-          className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${mode === "phone" ? "bg-primary/10 text-slate-300 dark:text-white border border-primary/20" : "text-oneprofile-600 hover:text-slate-300 dark:hover:text-white"}`}
-        >
-          Phone verification
-        </button>
-      </div>
+      {infoMessage && (
+        <Alert variant="info" className="flex items-start gap-2">
+          <span>{infoMessage}</span>
+        </Alert>
+      )}
 
-      <div className="space-y-4">
-        {mode === "email" ? (
+      {errorMessage && (
+        <Alert variant="error" className="flex items-start gap-2">
+          <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+          <span>{errorMessage}</span>
+        </Alert>
+      )}
+
+      {!email ? (
+        <div className="space-y-4">
           <Input
             label="Email address"
             placeholder="name@company.com"
-            {...form.register("email")}
-            error={form.formState.errors.email?.message}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-        ) : (
-          <Input
-            label="Phone number"
-            placeholder="+91 9223047765"
-            {...form.register("phone")}
-            error={form.formState.errors.phone?.message}
-          />
-        )}
-
-        <Input
-          label="Verification code"
-          placeholder="Enter 6-digit code"
-          {...form.register("otp")}
-          error={form.formState.errors.otp?.message}
-        />
-
-        <div className="grid gap-3 sm:grid-cols-2 pt-2">
           <Button
             type="button"
-            variant="secondary"
-            loading={requestMutation.isPending}
-            onClick={requestCode}
+            className="w-full h-12 rounded-2xl"
+            onClick={handleResendCode}
+            disabled={!email || isResending}
           >
-            Request Code
-          </Button>
-          <Button
-            type="button"
-            loading={confirmMutation.isPending}
-            onClick={confirmCode}
-          >
-            Verify Code
+            {isResending ? "Sending..." : "Send Verification Code"}
           </Button>
         </div>
-      </div>
+      ) : (
+        <form onSubmit={handleVerify} className="space-y-6">
+          <div className="flex flex-col items-center justify-center space-y-4 py-2">
+            <OtpInput
+              length={6}
+              value={otp}
+              onChange={setOtp}
+              error={status === "error" ? errorMessage : ""}
+            />
+          </div>
 
-      {requestMutation.isError || confirmMutation.isError ? (
-        <Alert variant="error">
-          Verification failed. Check the code and try again.
-        </Alert>
-      ) : null}
+          <div className="space-y-3">
+            <Button
+              type="submit"
+              className="w-full h-12 rounded-2xl text-xs font-bold"
+              loading={status === "loading"}
+              disabled={otp.length !== 6 || status === "success"}
+            >
+              Verify Code
+            </Button>
+
+            <div className="flex items-center justify-between text-xs font-semibold px-1">
+              <button
+                type="button"
+                onClick={handleResendCode}
+                disabled={cooldown > 0 || isResending}
+                className="text-primary hover:text-primary-hover disabled:text-oneprofile-600 transition-colors"
+              >
+                {isResending ? "Resending..." : "Resend Code"}
+              </button>
+              {cooldown > 0 && (
+                <span className="text-oneprofile-600">
+                  Resend in {cooldown}s
+                </span>
+              )}
+            </div>
+          </div>
+        </form>
+      )}
+
+      <div className="pt-3 border-t border-oneprofile-700 text-xs font-semibold text-center">
+        <button
+          type="button"
+          onClick={() => navigate("/login")}
+          className="text-oneprofile-600 hover:text-slate-300 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 mx-auto"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to login
+        </button>
+      </div>
     </motion.div>
   );
 }

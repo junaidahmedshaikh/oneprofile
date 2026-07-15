@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { User } from "../models/User.js";
 import { OAuthAccount } from "../models/OAuthAccount.js";
 import { PasswordResetToken } from "../models/PasswordResetToken.js";
@@ -6,7 +7,7 @@ import { env } from "../config/env.js";
 import { comparePassword, hashPassword } from "../utils/password.js";
 import { ApiError } from "../utils/apiError.js";
 import { generateSecureToken, sha256 } from "../utils/crypto.js";
-import { issueOtp, verifyOtp } from "./otp.service.js";
+import { issueOtp, verifyOtp, generateEmailOtp, verifyEmailOtp } from "./otp.service.js";
 import {
   createOrUpdateDevice,
   createSession,
@@ -28,6 +29,20 @@ function sanitizeUser(user) {
 }
 
 async function ensureDefaultRoles() {
+  if (mongoose.connection.readyState !== 1) {
+    if (mongoose.connection.readyState === 2) {
+      await new Promise((resolve) => {
+        mongoose.connection.once("connected", resolve);
+        setTimeout(resolve, 5000);
+      });
+    }
+  }
+
+  if (mongoose.connection.readyState !== 1) {
+    console.warn("Database connection is not ready. Skipping role verification.");
+    return;
+  }
+
   const defaults = [
     {
       name: "user",
@@ -109,16 +124,16 @@ export async function registerUser({
   const verificationTasks = [];
   if (email) {
     verificationTasks.push(
-      issueOtp({
-        identifier: email.toLowerCase(),
-        identifierType: "email",
-        purpose: "email_verification",
+      generateEmailOtp({
         userId: user._id,
+        email: email.toLowerCase(),
+        purpose: "registration",
       }).then(async (otpResponse) => {
         await sendMail({
           to: email,
-          subject: "Verify your oneprofile email",
-          text: `Your verification code is ${otpResponse.otp}. It expires in ${env.OTP_TTL_MINUTES} minutes.`,
+          subject: "Confirm your OneProfile registration",
+          text: `Your OneProfile verification code is ${otpResponse.otp}. It expires in 5 minutes.`,
+          html: `<p>Your OneProfile verification code is <strong>${otpResponse.otp}</strong>. It expires in 5 minutes.</p>`
         });
         return otpResponse;
       }),
@@ -165,10 +180,9 @@ export async function registerUser({
     user: sanitizeUser(user),
     accessToken,
     refreshToken,
-    requiresEmailVerification: Boolean(email && !user.emailVerifiedAt),
+    requiresEmailVerification: Boolean(email && !user.emailVerified),
     requiresPhoneVerification: Boolean(phone && !user.phoneVerifiedAt),
-    otpChallenge:
-      emailOtpResponse?.challenge || phoneOtpResponse?.challenge || null,
+    otpChallenge: null,
   };
 }
 
@@ -605,4 +619,196 @@ export async function loginWithGoogleProfile(
   await session.save();
 
   return { user: sanitizeUser(user), ...tokens };
+}
+
+function handleVerifyResult(result) {
+  if (!result.valid) {
+    if (result.reason === "max_attempts_exceeded") {
+      throw new ApiError(
+        400,
+        "Maximum verification attempts exceeded. Please request a new code.",
+        "AUTH_OTP_MAX_ATTEMPTS"
+      );
+    }
+    if (result.reason === "incorrect_otp") {
+      throw new ApiError(
+        400,
+        "Incorrect verification code.",
+        "AUTH_OTP_INCORRECT"
+      );
+    }
+    throw new ApiError(
+      400,
+      "Invalid or expired verification code.",
+      "AUTH_OTP_INVALID"
+    );
+  }
+}
+
+export async function resendRegistrationOtp({ email }) {
+  try {
+    const user = await User.findOne({ email: email.toLowerCase() });
+    const { otp } = await generateEmailOtp({
+      userId: user ? user._id : null,
+      email,
+      purpose: "registration",
+    });
+
+    await sendMail({
+      to: email,
+      subject: "Confirm your OneProfile registration",
+      text: `Your OneProfile verification code is ${otp}. It expires in 5 minutes.`,
+      html: `<p>Your OneProfile verification code is <strong>${otp}</strong>. It expires in 5 minutes.</p>`,
+    });
+
+    return { ok: true };
+  } catch (err) {
+    if (err.code === "COOLDOWN") {
+      throw new ApiError(429, err.message, "AUTH_OTP_COOLDOWN");
+    }
+    throw err;
+  }
+}
+
+export async function confirmRegistrationOtp({ email, otp }) {
+  const result = await verifyEmailOtp({
+    email,
+    purpose: "registration",
+    otp,
+  });
+
+  handleVerifyResult(result);
+
+  const user = await User.findOne({ email: email.toLowerCase() });
+  if (!user) {
+    throw new ApiError(404, "Account not found", "AUTH_ACCOUNT_NOT_FOUND");
+  }
+
+  user.emailVerified = true;
+  user.emailVerifiedAt = new Date();
+  user.status = "active";
+  await user.save();
+
+  return { ok: true, user: sanitizeUser(user) };
+}
+
+export async function sendForgotPasswordOtp({ email }) {
+  const user = await User.findOne({ email: email.toLowerCase() });
+  if (!user) {
+    throw new ApiError(404, "No account found with this email address.", "AUTH_ACCOUNT_NOT_FOUND");
+  }
+
+  try {
+    const { otp } = await generateEmailOtp({
+      userId: user._id,
+      email,
+      purpose: "forgot-password",
+    });
+
+    await sendMail({
+      to: email,
+      subject: "Reset your OneProfile password",
+      text: `Your OneProfile password reset code is ${otp}. It expires in 5 minutes.`,
+      html: `<p>Your OneProfile password reset code is <strong>${otp}</strong>. It expires in 5 minutes.</p>`,
+    });
+
+    return { ok: true };
+  } catch (err) {
+    if (err.code === "COOLDOWN") {
+      throw new ApiError(429, err.message, "AUTH_OTP_COOLDOWN");
+    }
+    throw err;
+  }
+}
+
+export async function verifyForgotPasswordOtp({ email, otp }) {
+  const user = await User.findOne({ email: email.toLowerCase() });
+  if (!user) {
+    throw new ApiError(404, "No account found with this email address.", "AUTH_ACCOUNT_NOT_FOUND");
+  }
+
+  const result = await verifyEmailOtp({
+    email,
+    purpose: "forgot-password",
+    otp,
+  });
+
+  handleVerifyResult(result);
+
+  const rawToken = generateSecureToken(32);
+  const tokenHash = sha256(rawToken);
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+
+  await PasswordResetToken.deleteMany({ userId: user._id, usedAt: null });
+  await PasswordResetToken.create({ userId: user._id, tokenHash, expiresAt });
+
+  return { ok: true, resetToken: rawToken };
+}
+
+export async function sendChangeEmailOtp({ userId, newEmail }) {
+  const existing = await User.findOne({ email: newEmail.toLowerCase() });
+  if (existing) {
+    throw new ApiError(409, "Email address is already in use by another account.", "AUTH_EMAIL_IN_USE");
+  }
+
+  try {
+    const { otp } = await generateEmailOtp({
+      userId,
+      email: newEmail,
+      purpose: "change-email",
+    });
+
+    await sendMail({
+      to: newEmail,
+      subject: "Verify your new OneProfile email",
+      text: `Your OneProfile email verification code is ${otp}. It expires in 5 minutes.`,
+      html: `<p>Your OneProfile email verification code is <strong>${otp}</strong>. It expires in 5 minutes.</p>`,
+    });
+
+    return { ok: true };
+  } catch (err) {
+    if (err.code === "COOLDOWN") {
+      throw new ApiError(429, err.message, "AUTH_OTP_COOLDOWN");
+    }
+    throw err;
+  }
+}
+
+export async function confirmChangeEmail({ userId, newEmail, otp }) {
+  const existing = await User.findOne({ email: newEmail.toLowerCase() });
+  if (existing) {
+    throw new ApiError(409, "Email address is already in use by another account.", "AUTH_EMAIL_IN_USE");
+  }
+
+  const result = await verifyEmailOtp({
+    email: newEmail,
+    purpose: "change-email",
+    otp,
+  });
+
+  handleVerifyResult(result);
+
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(404, "Account not found", "AUTH_ACCOUNT_NOT_FOUND");
+  }
+
+  user.email = newEmail.toLowerCase().trim();
+  user.emailVerified = true;
+  user.emailVerifiedAt = new Date();
+  await user.save();
+
+  try {
+    const { Profile } = await import("../models/Profile.js");
+    const profile = await Profile.findOne({ userId });
+    if (profile) {
+      if (!profile.contactDetails) profile.contactDetails = {};
+      profile.contactDetails.email = user.email;
+      await profile.save();
+    }
+  } catch (profileErr) {
+    console.error("Failed to update profile email during change email:", profileErr);
+  }
+
+  return { ok: true, user: sanitizeUser(user) };
 }

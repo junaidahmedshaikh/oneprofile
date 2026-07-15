@@ -11,6 +11,16 @@ import { ActivityTimeline } from "../components/dashboard/ActivityTimeline";
 import { AppointmentList } from "../components/dashboard/AppointmentList";
 import { TaskChecklist } from "../components/dashboard/TaskChecklist";
 import { ShareModal } from "../components/dashboard/ShareModal";
+import {
+  Eye,
+  Share2,
+  Award,
+  Briefcase,
+  Tag,
+  Box,
+  Lightbulb,
+  Zap,
+} from "lucide-react";
 
 export function DashboardPage() {
   const navigate = useNavigate();
@@ -115,7 +125,6 @@ export function DashboardPage() {
     todayInsights = {},
   } = summary;
 
-  // Dynamic statistics rendering array based on profileType
   const statsList =
     user.profileType === "professional"
       ? [
@@ -123,25 +132,25 @@ export function DashboardPage() {
             label: "Profile Views",
             value: statistics.profileViews || 0,
             trend: "Total traffic",
-            icon: "👁️",
+            icon: <Eye className="w-5 h-5 text-indigo-400" />,
           },
           {
             label: "Card Shares",
             value: statistics.cardShares || 0,
             trend: "Total shares",
-            icon: "🔗",
+            icon: <Share2 className="w-5 h-5 text-emerald-400" />,
           },
           {
             label: "Expertise Skills",
             value: statistics.skillsCount || 0,
             trend: "Core skills",
-            icon: "👤",
+            icon: <Award className="w-5 h-5 text-blue-400" />,
           },
           {
             label: "Experience Nodes",
             value: statistics.experienceCount || 0,
             trend: "Work history",
-            icon: "💼",
+            icon: <Briefcase className="w-5 h-5 text-purple-400" />,
           },
         ]
       : [
@@ -149,25 +158,25 @@ export function DashboardPage() {
             label: "Profile Views",
             value: statistics.profileViews || 0,
             trend: "Total traffic",
-            icon: "👁️",
+            icon: <Eye className="w-5 h-5 text-indigo-400" />,
           },
           {
             label: "Card Shares",
             value: statistics.cardShares || 0,
             trend: "Total shares",
-            icon: "🔗",
+            icon: <Share2 className="w-5 h-5 text-emerald-400" />,
           },
           {
             label: "Services",
             value: statistics.servicesCount || 0,
             trend: "Booking packages",
-            icon: "🏷️",
+            icon: <Tag className="w-5 h-5 text-amber-400" />,
           },
           {
             label: "Products",
             value: statistics.productsCount || 0,
             trend: "Catalog items",
-            icon: "📦",
+            icon: <Box className="w-5 h-5 text-cyan-400" />,
           },
         ];
 
@@ -195,7 +204,7 @@ export function DashboardPage() {
 
         {/* Today's quick insight tag */}
         <div className="px-4 py-2.5 rounded-2xl bg-brand-500/[0.02] border border-brand-500/15 flex items-center gap-2 max-w-xs shrink-0 select-none">
-          <span className="text-md">💡</span>
+          <Lightbulb className="w-4 h-4 text-amber-400 shrink-0" />
           <span className="text-3xs font-semibold text-slate-300 leading-snug">
             {todayInsights.summaryText}
           </span>
@@ -215,7 +224,7 @@ export function DashboardPage() {
               <span className="text-3xs font-bold uppercase tracking-wider text-slate-400">
                 {stat.label}
               </span>
-              <span className="text-md">{stat.icon}</span>
+              <span>{stat.icon}</span>
             </div>
             <div className="text-3xl font-extrabold text-white mt-4 font-display tracking-tight">
               {stat.value}
@@ -230,7 +239,7 @@ export function DashboardPage() {
       {/* Quick Actions Panel */}
       <Card className="p-5.5 space-y-4" hoverEffect={false}>
         <div className="flex items-center gap-2">
-          <span className="text-md">⚡</span>
+          <Zap className="w-4 h-4 text-amber-400 shrink-0" />
           <h4 className="text-xs font-bold text-slate-300 dark:text-white uppercase tracking-wider">
             Quick Actions
           </h4>
@@ -270,7 +279,7 @@ export function DashboardPage() {
                 onClick={() => setIsShareOpen(true)}
                 className="text-xs font-bold w-full"
               >
-                Share Card 🎴
+                Share Card
               </Button>
             </>
           ) : (
@@ -307,7 +316,7 @@ export function DashboardPage() {
                 onClick={() => setIsShareOpen(true)}
                 className="text-xs font-bold w-full"
               >
-                Share Card 🎴
+                Share Card
               </Button>
             </>
           )}

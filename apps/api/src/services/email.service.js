@@ -21,16 +21,45 @@ function createTransport() {
 const transport = createTransport();
 
 export async function sendMail({ to, subject, text, html }) {
+  if (env.RESEND_API_KEY) {
+    try {
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: env.RESEND_FROM || 'OneProfile <onboarding@resend.dev>',
+          to: Array.isArray(to) ? to : [to],
+          subject,
+          text,
+          html
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        logger.error({ data }, 'Resend API returned an error');
+        throw new Error(data.message || 'Resend error');
+      }
+      return data;
+    } catch (err) {
+      logger.error({ err }, 'Failed to send email via Resend');
+      if (!transport) throw err;
+    }
+  }
+
   if (!transport) {
-    logger.info({ to, subject, preview: text }, 'SMTP not configured, email skipped');
+    logger.info({ to, subject, preview: text }, 'SMTP / Resend not configured, email skipped');
     return { skipped: true };
   }
 
   return transport.sendMail({
-    from: env.SMTP_FROM,
+    from: env.SMTP_FROM || 'oneprofile <no-reply@oneprofile.com>',
     to,
     subject,
     text,
     html
   });
 }
+

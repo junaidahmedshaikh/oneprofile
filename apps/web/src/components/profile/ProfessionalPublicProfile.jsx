@@ -12,6 +12,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import React from "react";
+import { parseCustomLink, renderCustomLinkIcon } from "../../lib/customLinkHelper";
 
 export function ProfessionalPublicProfile({ profile, leadForm }) {
   const days = [
@@ -471,18 +472,24 @@ Thank you.`;
                 </h4>
               </div>
               <div className="space-y-2">
-                {profile.socialLinks.customLinks.map((link, idx) => (
-                  <a
-                    key={idx}
-                    href={link.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-[#E5E7EB] hover:bg-slate-100 transition-all text-xs font-bold text-[#111827]"
-                  >
-                    <span>{link.title}</span>
-                    <span className="text-[#2563EB]">➔</span>
-                  </a>
-                ))}
+                {profile.socialLinks.customLinks.map((link, idx) => {
+                  const parsed = parseCustomLink(link.title);
+                  return (
+                    <a
+                      key={idx}
+                      href={link.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-[#E5E7EB] hover:bg-slate-100 transition-all text-xs font-bold text-[#111827] gap-3"
+                    >
+                      <div className="flex items-center gap-2">
+                        {renderCustomLinkIcon(parsed.icon)}
+                        <span>{parsed.title}</span>
+                      </div>
+                      <span className="text-[#2563EB]">➔</span>
+                    </a>
+                  );
+                })}
               </div>
             </div>
           ) : null}

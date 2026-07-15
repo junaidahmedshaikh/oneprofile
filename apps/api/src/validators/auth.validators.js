@@ -81,3 +81,27 @@ export const phoneVerifySchema = z.object({
 export const refreshSchema = z.object({
   refreshToken: z.string().optional(),
 });
+
+export const verifyRegistrationSchema = z.object({
+  email: z.string().email(),
+  otp: z.string().length(6, "OTP must be exactly 6 digits"),
+});
+
+export const resendRegistrationSchema = z.object({
+  email: z.string().email(),
+});
+
+export const forgotPasswordVerifySchema = z.object({
+  email: z.string().email(),
+  otp: z.string().length(6, "OTP must be exactly 6 digits"),
+});
+
+export const changeEmailRequestSchema = z.object({
+  newEmail: z.string().email(),
+});
+
+export const changeEmailConfirmSchema = z.object({
+  newEmail: z.string().email(),
+  otp: z.string().length(6, "OTP must be exactly 6 digits"),
+});
+

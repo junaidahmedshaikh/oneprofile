@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
+import { parseCustomLink, renderCustomLinkIcon } from "../../lib/customLinkHelper";
 
 const daysList = [
   { key: "monday", label: "Monday" },
@@ -15,18 +16,31 @@ const daysList = [
 export function ContactTab({ register, watch, setValue, formState }) {
   const workingHours = watch("workingHours") || {};
   const customLinks = watch("socialLinks.customLinks") || [];
-  const [newLink, setNewLink] = useState({ title: "", url: "" });
+  const [newLink, setNewLink] = useState({ title: "", url: "", icon: "" });
+  const [urlError, setUrlError] = useState("");
 
   const handleWorkingHourToggle = (dayKey, checked) => {
     setValue(`workingHours.${dayKey}.enabled`, checked, { shouldDirty: true });
   };
 
   const addCustomLink = () => {
-    if (!newLink.title || !newLink.url) return;
-    setValue("socialLinks.customLinks", [...customLinks, newLink], {
-      shouldDirty: true,
-    });
-    setNewLink({ title: "", url: "" });
+    setUrlError("");
+    if (!newLink.title || !newLink.url) {
+      setUrlError("Please enter both title and URL.");
+      return;
+    }
+    try {
+      const urlWithProtocol = newLink.url.match(/^https?:\/\//i) ? newLink.url : `https://${newLink.url}`;
+      new URL(urlWithProtocol); // validate format
+
+      const titleWithIcon = newLink.icon ? `[${newLink.icon}] ${newLink.title}` : newLink.title;
+      setValue("socialLinks.customLinks", [...customLinks, { title: titleWithIcon, url: urlWithProtocol }], {
+        shouldDirty: true,
+      });
+      setNewLink({ title: "", url: "", icon: "" });
+    } catch (e) {
+      setUrlError("Please enter a valid URL (e.g., https://example.com).");
+    }
   };
 
   const removeCustomLink = (index) => {
@@ -139,7 +153,7 @@ export function ContactTab({ register, watch, setValue, formState }) {
           <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
             Add custom URL node
           </span>
-          <div className="grid gap-4.5 sm:grid-cols-2">
+          <div className="grid gap-4.5 sm:grid-cols-3">
             <Input
               label="Link Title *"
               value={newLink.title}
@@ -154,10 +168,35 @@ export function ContactTab({ register, watch, setValue, formState }) {
               onChange={(e) => setNewLink({ ...newLink, url: e.target.value })}
               placeholder="E.g., https://my-portfolio.com"
             />
+            <div className="flex flex-col space-y-1">
+              <label className="text-3xs font-bold text-slate-400 uppercase tracking-wider">
+                Optional Icon
+              </label>
+              <select
+                value={newLink.icon}
+                onChange={(e) =>
+                  setNewLink({ ...newLink, icon: e.target.value })
+                }
+                className="h-10 rounded-xl bg-oneprofile-900 border border-white/[0.08] text-xs text-white px-3 focus:outline-none focus:border-primary/50"
+              >
+                <option value="">None</option>
+                <option value="globe">Globe</option>
+                <option value="link">Link</option>
+                <option value="book">Book</option>
+                <option value="star">Star</option>
+                <option value="mail">Mail</option>
+                <option value="phone">Phone</option>
+              </select>
+            </div>
           </div>
+          {urlError && (
+            <p className="text-3xs font-semibold text-red-400">
+              {urlError}
+            </p>
+          )}
           <Button
             variant="secondary"
-            className="text-xs w-full"
+            className="text-xs w-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20"
             onClick={addCustomLink}
           >
             Add Custom Link Node
@@ -171,11 +210,14 @@ export function ContactTab({ register, watch, setValue, formState }) {
                 key={idx}
                 className="flex justify-between items-center gap-4 p-4.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] hover:border-white/[0.08] transition-all"
               >
-                <div>
-                  <h4 className="text-xs font-bold text-white leading-snug">
-                    {link.title}
-                  </h4>
-                  <span className="text-3xs text-slate-500 font-bold select-all truncate block max-w-[250px] mt-0.5">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    {renderCustomLinkIcon(parseCustomLink(link.title).icon)}
+                    <h4 className="text-xs font-bold text-white leading-snug truncate">
+                      {parseCustomLink(link.title).title}
+                    </h4>
+                  </div>
+                  <span className="text-3xs text-slate-500 font-bold select-all truncate block max-w-[250px] mt-1">
                     {link.url}
                   </span>
                 </div>

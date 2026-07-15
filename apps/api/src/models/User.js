@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema(
       enum: ['pending', 'active', 'suspended', 'deleted'],
       default: 'pending'
     },
+    emailVerified: { type: Boolean, default: false },
     emailVerifiedAt: { type: Date, default: null },
     phoneVerifiedAt: { type: Date, default: null },
     lastLoginAt: { type: Date, default: null },
