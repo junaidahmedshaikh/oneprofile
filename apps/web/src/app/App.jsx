@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { AuthShell } from "../components/layout/AuthShell";
 import { AppShell } from "../components/layout/AppShell";
 import { ProtectedRoute } from "../routes/ProtectedRoute";
@@ -18,7 +19,8 @@ import { DigitalCardPage } from "../pages/DigitalCardPage";
 
 export function App() {
   return (
-    <Routes>
+    <>
+      <Routes>
       <Route element={<PublicOnlyRoute />}>
         <Route
           element={
@@ -65,6 +67,8 @@ export function App() {
 
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
+      </Routes>
+      <Analytics />
+    </>
   );
 }
