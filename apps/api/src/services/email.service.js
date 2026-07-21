@@ -21,12 +21,13 @@ function createTransport() {
 const transport = createTransport();
 
 export async function sendMail({ to, subject, text, html }) {
-  if (env.RESEND_API_KEY) {
+  const resendKey = env.RESEND_API_KEY || env.RESEND_KEY;
+  if (resendKey) {
     try {
       const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          'Authorization': `Bearer ${resendKey}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
