@@ -1,0 +1,39 @@
+name: Keep Render Backend Awake
+
+on:
+  schedule:
+    # Run every 14 minutes (Render spins down after 15 minutes of inactivity)
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+
+env:
+  BACKEND_API: ${{ secrets.BACKEND_API }}
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Health Endpoint
+        run: |
+          if [ -z "$BACKEND_API" ]; then
+            echo "WARNING: BACKEND_API environment variable/secret is not set."
+            echo "Please add a secret named BACKEND_API in your repository settings."
+            exit 1
+          fi
+          
+          # Append /health if not already present
+          URL="$BACKEND_API"
+          if [[ "$URL" != */health ]]; then
+            URL="${URL%/}/health"
+          fi
+          
+          echo "Pinging $URL..."
+          response=$(curl -s -w "%{http_code}" -o /dev/null "$URL")
+          echo "Response code: $response"
+          
+          if [ "$response" -eq 200 ]; then
+            echo "Render backend is awake and healthy!"
+          else
+            echo "Warning: Received HTTP status code $response"
+            exit 1
+          fi
