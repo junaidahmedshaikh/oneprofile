@@ -129,12 +129,16 @@ export async function registerUser({
         email: email.toLowerCase(),
         purpose: "registration",
       }).then(async (otpResponse) => {
-        await sendMail({
-          to: email,
-          subject: "Confirm your OneProfile registration",
-          text: `Your OneProfile verification code is ${otpResponse.otp}. It expires in 5 minutes.`,
-          html: `<p>Your OneProfile verification code is <strong>${otpResponse.otp}</strong>. It expires in 5 minutes.</p>`
-        });
+        try {
+          await sendMail({
+            to: email,
+            subject: "Confirm your OneProfile registration",
+            text: `Your OneProfile verification code is ${otpResponse.otp}. It expires in 5 minutes.`,
+            html: `<p>Your OneProfile verification code is <strong>${otpResponse.otp}</strong>. It expires in 5 minutes.</p>`
+          });
+        } catch (mailError) {
+          logger.error({ mailError, email }, "Error sending registration verification email");
+        }
         return otpResponse;
       }),
     );

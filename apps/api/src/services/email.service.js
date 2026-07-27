@@ -14,13 +14,16 @@ function createTransport() {
     auth: {
       user: env.SMTP_USER,
       pass: env.SMTP_PASS
-    }
+    },
+    connectionTimeout: 5000,
+    greetingTimeout: 5000,
+    socketTimeout: 5000
   });
 }
 
 const transport = createTransport();
 
-export async function sendMail({ to, subject, text, html }) {
+async function sendMailInternal({ to, subject, text, html }) {
   if (env.MAILJET_API_KEY && env.MAILJET_SECRET_KEY) {
     try {
       const auth = Buffer.from(`${env.MAILJET_API_KEY}:${env.MAILJET_SECRET_KEY}`).toString('base64');
@@ -71,12 +74,12 @@ export async function sendMail({ to, subject, text, html }) {
       return data;
     } catch (err) {
       logger.error({ err }, 'Failed to send email via Mailjet');
-      if (!transport) throw err;
+      if (!transport) return { skipped: true, error: err.message };
     }
   }
 
   if (!transport) {
-    logger.info({ to, subject, preview: text }, 'SMTP / Resend not configured, email skipped');
+    logger.info({ to, subject, preview: text }, 'SMTP / Mailjet not configured, email skipped');
     return { skipped: true };
   }
 
@@ -89,3 +92,19 @@ export async function sendMail({ to, subject, text, html }) {
   });
 }
 
+export async function sendMail({ to, subject, text, html }) {
+  const timeoutMs = 6000;
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Email dispatch timed out')), timeoutMs)
+  );
+
+  try {
+    return await Promise.race([
+      sendMailInternal({ to, subject, text, html }),
+      timeoutPromise
+    ]);
+  } catch (err) {
+    logger.error({ err, to }, 'sendMail failed or timed out');
+    return { skipped: true, error: err.message };
+  }
+}
