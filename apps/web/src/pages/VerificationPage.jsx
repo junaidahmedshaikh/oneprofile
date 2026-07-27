@@ -7,7 +7,7 @@ import { Input } from "../components/ui/Input";
 import { Alert } from "../components/ui/Alert";
 import { OtpInput } from "../components/ui/OtpInput";
 import { authApi } from "../lib/authApi";
-import { setUser } from "../store/authSlice";
+import { setUser, clearAuth } from "../store/authSlice";
 import { Mail, CheckCircle2, AlertCircle, ArrowLeft } from "lucide-react";
 
 export function VerificationPage() {
@@ -47,6 +47,18 @@ export function VerificationPage() {
     }, 1000);
     return () => clearInterval(interval);
   }, [cooldown]);
+
+  const handleBackToLogin = async () => {
+    try {
+      await authApi.logout();
+    } catch (err) {
+      // Ignore network errors to ensure user is logged out locally
+    } finally {
+      dispatch(clearAuth());
+      localStorage.removeItem("oneprofile_fallback_refresh_token");
+      navigate("/login", { replace: true });
+    }
+  };
 
   const handleResendCode = async () => {
     if (!email) return;
@@ -207,7 +219,7 @@ export function VerificationPage() {
       <div className="pt-3 border-t border-oneprofile-700 text-xs font-semibold text-center">
         <button
           type="button"
-          onClick={() => navigate("/login")}
+          onClick={handleBackToLogin}
           className="text-oneprofile-600 hover:text-slate-300 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 mx-auto"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to login

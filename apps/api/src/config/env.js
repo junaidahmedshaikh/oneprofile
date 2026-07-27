@@ -63,9 +63,9 @@ const envSchema = z.object({
     .string()
     .optional()
     .default("oneprofile/onboarding"),
-  RESEND_API_KEY: z.string().optional().default(""),
-  RESEND_KEY: z.string().optional().default(""),
-  RESEND_FROM: z.string().optional().default("OneProfile <onboarding@resend.dev>"),
+  MAILJET_API_KEY: z.string().optional().default(""),
+  MAILJET_SECRET_KEY: z.string().optional().default(""),
+  MAILJET_SENDER: z.string().optional().default("OneProfile <junaid.shaikh0708@gmail.com>"),
 });
 
 export const env = envSchema.parse(process.env);

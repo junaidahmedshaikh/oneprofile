@@ -580,8 +580,23 @@ export async function loginWithGoogleProfile(
       avatarUrl: profile.picture || "",
       roles: ["user"],
       status: "active",
-      emailVerifiedAt: profile.email_verified ? new Date() : null,
+      emailVerified: true,
+      emailVerifiedAt: new Date(),
     });
+  } else {
+    let updated = false;
+    if (!user.emailVerified) {
+      user.emailVerified = true;
+      user.emailVerifiedAt = user.emailVerifiedAt || new Date();
+      updated = true;
+    }
+    if (user.status === "pending") {
+      user.status = "active";
+      updated = true;
+    }
+    if (updated) {
+      await user.save();
+    }
   }
 
   await linkGoogleAccount({

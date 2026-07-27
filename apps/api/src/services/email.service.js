@@ -21,31 +21,56 @@ function createTransport() {
 const transport = createTransport();
 
 export async function sendMail({ to, subject, text, html }) {
-  const resendKey = env.RESEND_API_KEY || env.RESEND_KEY;
-  if (resendKey) {
+  if (env.MAILJET_API_KEY && env.MAILJET_SECRET_KEY) {
     try {
-      const response = await fetch('https://api.resend.com/emails', {
+      const auth = Buffer.from(`${env.MAILJET_API_KEY}:${env.MAILJET_SECRET_KEY}`).toString('base64');
+      
+      let senderEmail = 'junaid.shaikh0708@gmail.com';
+      let senderName = 'OneProfile';
+      
+      const senderMatch = env.MAILJET_SENDER.match(/^(.*?)\s*<(.*?)>$/);
+      if (senderMatch) {
+        senderName = senderMatch[1].trim();
+        senderEmail = senderMatch[2].trim();
+      } else if (env.MAILJET_SENDER) {
+        senderEmail = env.MAILJET_SENDER.trim();
+      }
+
+      const response = await fetch('https://api.mailjet.com/v3.1/send', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${resendKey}`,
+          'Authorization': `Basic ${auth}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: env.RESEND_FROM || 'OneProfile <onboarding@resend.dev>',
-          to: Array.isArray(to) ? to : [to],
-          subject,
-          text,
-          html
+          Messages: [
+            {
+              From: {
+                Email: senderEmail,
+                Name: senderName
+              },
+              To: [
+                {
+                  Email: to,
+                  Name: to.split('@')[0]
+                }
+              ],
+              Subject: subject,
+              TextPart: text,
+              HTMLPart: html
+            }
+          ]
         })
       });
+
       const data = await response.json();
       if (!response.ok) {
-        logger.error({ data }, 'Resend API returned an error');
-        throw new Error(data.message || 'Resend error');
+        logger.error({ data }, 'Mailjet API returned an error');
+        throw new Error(data.ErrorMessage || 'Mailjet error');
       }
       return data;
     } catch (err) {
-      logger.error({ err }, 'Failed to send email via Resend');
+      logger.error({ err }, 'Failed to send email via Mailjet');
       if (!transport) throw err;
     }
   }
