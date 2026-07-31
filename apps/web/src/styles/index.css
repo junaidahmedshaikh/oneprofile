@@ -51,6 +51,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+img {
+  image-rendering: -webkit-optimize-contrast;
+}
+
 h1,
 h2,
 h3,

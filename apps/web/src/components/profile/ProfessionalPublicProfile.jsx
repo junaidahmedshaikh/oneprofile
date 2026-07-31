@@ -10,9 +10,14 @@ import {
   MessageSquare,
   Mail,
   CheckCircle2,
+  Download,
 } from "lucide-react";
 import React from "react";
-import { parseCustomLink, renderCustomLinkIcon } from "../../lib/customLinkHelper";
+import {
+  parseCustomLink,
+  renderCustomLinkIcon,
+} from "../../lib/customLinkHelper";
+import { downloadVCardFile } from "../../lib/vcardHelper";
 
 export function ProfessionalPublicProfile({ profile, leadForm }) {
   const days = [
@@ -69,7 +74,6 @@ Thank you.`;
               OneProfile Premium Professional Identity
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
         </div>
 
         {/* Floating Identity Card */}
@@ -93,9 +97,9 @@ Thank you.`;
                   <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#111827]">
                     {profile.title || "Professional Profile"}
                   </h1>
-                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-sm font-semibold uppercase tracking-wider text-emerald-700">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600/15" />{" "}
-                    Verified
+                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs sm:text-sm font-semibold uppercase tracking-wider text-emerald-700">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600/15" />
+                    <span className="hidden sm:inline">Verified</span>
                   </span>
                 </div>
 
@@ -103,49 +107,26 @@ Thank you.`;
                   {profile.designation || "Independent Professional"}
                   {profile.companyName ? ` @ ${profile.companyName}` : ""}
                 </p>
-
-                {/* Rating & Social Proof Header */}
-                {/* <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-[#6B7280]">
-                  <div className="flex items-center gap-1 text-[#F59E0B] font-bold">
-                    <Star className="w-4 h-4 fill-current" />
-                    <Star className="w-4 h-4 fill-current" />
-                    <Star className="w-4 h-4 fill-current" />
-                    <Star className="w-4 h-4 fill-current" />
-                    <Star className="w-4 h-4 fill-current" />
-                    <span className="text-[#111827] ml-1">5.0</span>
-                  </div>
-                  <span>•</span>
-                  {profile.professionalCategory && (
-                    <span className="font-semibold text-[#111827]">
-                      {profile.professionalCategory}
-                    </span>
-                  )}
-                  {profile.location?.city && (
-                    <>
-                      <span>•</span>
-                      <span className="flex items-center gap-1 font-semibold text-[#111827]">
-                        <MapPin className="w-3.5 h-3.5 text-red-500" />{" "}
-                        {profile.location.city}
-                      </span>
-                    </>
-                  )}
-                </div> */}
               </div>
             </div>
 
             {/* Quick conversion CTA buttons */}
-            <div className="flex flex-wrap justify-center lg:justify-end gap-3 shrink-0">
+            <div className="flex flex-wrap items-center justify-center lg:justify-end gap-2 sm:gap-3 shrink-0 w-full lg:w-auto">
               {profile.contactDetails?.phone && (
                 <a
-                  href={`tel:${profile.contactDetails.phone}`}
-                  className="h-12 px-6 rounded-full border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-bold flex items-center gap-2 transition-all active:scale-[0.98]"
+                  href={`tel:${profile.contactDetails.phone.replace(/[\s\(\)-]/g, "")}`}
+                  className="h-11 sm:h-12 px-3.5 sm:px-6 rounded-full border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-bold flex items-center gap-1.5 sm:gap-2 transition-all active:scale-[0.98]"
+                  title="Call Phone"
                 >
-                  <Phone className="w-4 h-4 text-[#2563EB]" /> Call Now
+                  <Phone className="w-4 h-4 text-[#2563EB]" />
+                  <span className="sm:hidden">Call</span>
+                  <span className="hidden sm:inline">Call Now</span>
                 </a>
               )}
               <button
+                type="button"
                 onClick={handleScrollToContact}
-                className="h-12 px-6 rounded-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-xs font-bold flex items-center gap-2 transition-all active:scale-[0.98] shadow-sm shadow-[#2563EB]/10"
+                className="h-11 sm:h-12 px-5 sm:px-6 rounded-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-xs font-bold flex items-center gap-2 transition-all active:scale-[0.98] shadow-sm shadow-[#2563EB]/10"
               >
                 Connect Online ➔
               </button>
@@ -173,7 +154,7 @@ Thank you.`;
 
         {/* Credentials and highlights */}
         <div className="bg-slate-50 border border-[#E5E7EB] rounded-2xl p-6 space-y-4">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-[#111827] flex items-center gap-2">
+          <h4 className="text-xs font-bold tracking-wider text-[#111827] flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-[#2563EB]" /> Verified
             Background
           </h4>

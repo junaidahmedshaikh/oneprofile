@@ -4,7 +4,7 @@ import { User } from '../models/User.js';
 import { ProfileView } from '../models/ProfileView.js';
 import { Activity } from '../models/Activity.js';
 import { ApiError } from '../utils/apiError.js';
-import { uploadLogoDataUri } from "./storage/cloudinary.service.js";
+import { uploadLogoDataUri, uploadCoverDataUri } from "./storage/cloudinary.service.js";
 import { env } from "../config/env.js";
 import QRCode from "qrcode";
 
@@ -213,7 +213,7 @@ export async function uploadProfileCover(userId, dataUri) {
   if (!profile) {
     throw new ApiError(404, 'Profile not found');
   }
-  const result = await uploadLogoDataUri(dataUri);
+  const result = await uploadCoverDataUri(dataUri);
   profile.coverImageUrl = result.secure_url;
   await profile.save();
   return populateShareAssets(profile);

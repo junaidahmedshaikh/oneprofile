@@ -1229,7 +1229,7 @@ export function OnboardingPage() {
                         error={companyForm.formState.errors.email?.message}
                       />
                       <Input
-                        label="Phone Number"
+                        label="Business Phone Number"
                         placeholder="+91 9223047765"
                         {...companyForm.register("phone")}
                         error={companyForm.formState.errors.phone?.message}
@@ -1674,12 +1674,12 @@ export function OnboardingPage() {
                   </span>
                   <div className="grid gap-3.5 sm:grid-cols-2">
                     <Input
-                      label="Email Channel"
+                      label={profileType === "business" ? "Business Email" : "Personal Email"}
                       placeholder="sarah@connor.com"
                       {...contentForm.register("contactDetails.email")}
                     />
                     <Input
-                      label="Phone Contact"
+                      label={profileType === "business" ? "Business Phone Number" : "Personal Phone Number"}
                       placeholder="+15551234"
                       {...contentForm.register("contactDetails.phone")}
                     />
@@ -1690,7 +1690,7 @@ export function OnboardingPage() {
                       hint="Includes country code, digits only"
                     />
                     <Input
-                      label="Personal Website URL"
+                      label={profileType === "business" ? "Company Website URL" : "Personal Website URL"}
                       placeholder="https://mywebsite.com"
                       {...contentForm.register("socialLinks.website")}
                     />

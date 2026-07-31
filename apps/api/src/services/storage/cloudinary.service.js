@@ -65,3 +65,45 @@ export async function uploadLogoDataUri(
     ],
   });
 }
+
+export async function uploadCoverDataUri(
+  dataUri,
+  folder = env.CLOUDINARY_UPLOAD_FOLDER || "oneprofile/covers",
+) {
+  if (!dataUri || typeof dataUri !== "string") {
+    throw new ApiError(
+      400,
+      "Cover banner payload is required",
+      "COVER_IMAGE_REQUIRED",
+    );
+  }
+
+  if (!dataUri.startsWith("data:image/")) {
+    throw new ApiError(
+      400,
+      "Cover banner must be an image data URI",
+      "COVER_IMAGE_INVALID",
+    );
+  }
+
+  if (!hasCloudinaryConfig) {
+    return {
+      secure_url: dataUri,
+      public_id: "",
+      provider: "inline",
+    };
+  }
+
+  return cloudinary.uploader.upload(dataUri, {
+    folder,
+    resource_type: "image",
+    transformation: [
+      {
+        width: 1920,
+        height: 1080,
+        crop: "limit",
+        quality: "auto:best",
+      },
+    ],
+  });
+}

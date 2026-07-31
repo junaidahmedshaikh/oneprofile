@@ -11,7 +11,7 @@ export function BillingTab() {
   const plans = [
     {
       name: "Free Plan",
-      price: "$0",
+      price: "₹0",
       period: "forever",
       desc: "For personal digital identity cards.",
       features: [
@@ -24,7 +24,7 @@ export function BillingTab() {
     },
     {
       name: "Pro Professional",
-      price: "$9",
+      price: "₹749",
       period: "month",
       desc: "For freelancers and active practitioners.",
       features: [
@@ -38,7 +38,7 @@ export function BillingTab() {
     },
     {
       name: "Enterprise Brand",
-      price: "$29",
+      price: "₹2,499",
       period: "month",
       desc: "For company directories and teams.",
       features: [
@@ -53,8 +53,8 @@ export function BillingTab() {
   ];
 
   const invoices = [
-    { id: "INV-8890", date: "2026-07-01", amount: "$0.00", status: "Paid" },
-    { id: "INV-8742", date: "2026-06-01", amount: "$0.00", status: "Paid" },
+    { id: "INV-8890", date: "2026-07-01", amount: "₹0", status: "Paid" },
+    { id: "INV-8742", date: "2026-06-01", amount: "₹0", status: "Paid" },
   ];
 
   return (

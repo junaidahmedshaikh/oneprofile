@@ -324,24 +324,7 @@ export function DashboardPage() {
       </Card>
 
       {/* Main split content area */}
-      <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] items-start">
-        {/* LEFT COLUMN: Charts, Timelines */}
-        <div className="space-y-8 min-w-0">
-          {/* Recent Activity Timeline Widget */}
-          <Card className="space-y-5" hoverEffect={false}>
-            <div>
-              <h3 className="font-display text-md font-bold text-white tracking-tight">
-                Recent Workspace Activity
-              </h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider mt-0.5">
-                Timeline track of system operations
-              </p>
-            </div>
-            <div className="pt-2">
-              <ActivityTimeline activities={activities} />
-            </div>
-          </Card>
-        </div>
+      <div className="grid gap-8 lg:grid-cols-1 items-start">
 
         {/* RIGHT COLUMN: Business Health, AI tips, Bookings, Checklist */}
         <div className="space-y-8 shrink-0">

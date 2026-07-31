@@ -25,9 +25,6 @@ export function BusinessCardHeader({ profile, st }) {
         ) : (
           <div className="h-full w-full bg-gradient-to-r from-brand-900 via-indigo-950 to-slate-900" />
         )}
-        {/* Soft glass overlay */}
-        <div className="absolute inset-0 bg-[#000000]/15 backdrop-blur-[1px]" />
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#07080d]/80 to-transparent" />
       </div>
 
       {/* Profile Details Container */}
@@ -70,7 +67,7 @@ export function BusinessCardHeader({ profile, st }) {
             {/* Verification Badge */}
             {profile.isVerified && (
               <span
-                className="text-[10px] font-black uppercase tracking-widest text-[#4F8CFF] bg-[#4F8CFF]/10 border border-[#4F8CFF]/20 px-2.5 py-0.5 rounded-full select-none"
+                className="text-[10px] font-black tracking-widest text-[#4F8CFF] bg-[#4F8CFF]/10 border border-[#4F8CFF]/20 px-2.5 py-0.5 rounded-full select-none"
                 aria-label="Verified Profile"
               >
                 Verified

@@ -6,8 +6,9 @@ import { Spinner } from "../components/ui/Spinner";
 import { Alert } from "../components/ui/Alert";
 import { BusinessPublicProfile } from "../components/profile/BusinessPublicProfile";
 import { ProfessionalPublicProfile } from "../components/profile/ProfessionalPublicProfile";
-import { ShieldCheck, MessageSquare, Phone, Mail } from "lucide-react";
+import { ShieldCheck, MessageSquare, Phone, Mail, Download } from "lucide-react";
 import React from "react";
+import { downloadVCardFile } from "../lib/vcardHelper";
 
 export function PublicProfilePage() {
   const { slug } = useParams();
@@ -88,7 +89,7 @@ Thank you.`;
         </p>
       </div>
 
-      <div className="flex gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
         {profile.contactDetails?.email && (
           <a
             href={`mailto:${profile.contactDetails.email}`}
@@ -100,10 +101,10 @@ Thank you.`;
 
         {profile.contactDetails?.phone && (
           <a
-            href={`tel:${profile.contactDetails.phone}`}
+            href={`tel:${profile.contactDetails.phone.replace(/[\s\(\)-]/g, "")}`}
             className="w-full h-12 rounded-full text-xs font-bold bg-white border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           >
-            <Phone className="w-3.5 h-3.5" /> Call
+            <Phone className="w-3.5 h-3.5 text-[#2563EB]" /> Call
           </a>
         )}
 
@@ -114,9 +115,21 @@ Thank you.`;
             rel="noreferrer"
             className="w-full h-12 rounded-full text-xs font-bold bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/20 text-[#128C7E] flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           >
-            <MessageSquare className="w-3.5 h-3.5" /> WhatsApp
+            <MessageSquare className="w-3.5 h-3.5 text-[#128C7E]" />
+            <span className="sm:hidden">WA</span>
+            <span className="hidden sm:inline">WhatsApp</span>
           </a>
         )}
+
+        <button
+          type="button"
+          onClick={() => downloadVCardFile(profile)}
+          className="w-full h-12 rounded-full text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span className="sm:hidden">vCard</span>
+          <span className="hidden sm:inline">Save Contact</span>
+        </button>
       </div>
     </div>
   );
@@ -136,7 +149,7 @@ Thank you.`;
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-[#E5E7EB] flex gap-3 z-30 md:hidden shadow-[0_-4px_16px_rgba(0,0,0,0.04)]">
         {profile.contactDetails?.phone && (
           <a
-            href={`tel:${profile.contactDetails.phone}`}
+            href={`tel:${profile.contactDetails.phone.replace(/[\s\(\)-]/g, "")}`}
             className="flex-1 h-12 rounded-full text-xs font-bold bg-white border border-[#E5E7EB] text-[#111827] flex items-center justify-center gap-2 active:scale-[0.98]"
           >
             <Phone className="w-4 h-4" /> Call
@@ -149,7 +162,9 @@ Thank you.`;
             rel="noreferrer"
             className="flex-1 h-12 rounded-full text-xs font-bold bg-[#25D366] text-white flex items-center justify-center gap-2 active:scale-[0.98]"
           >
-            <MessageSquare className="w-4 h-4" /> WhatsApp
+            <MessageSquare className="w-4 h-4" />
+            <span className="sm:hidden">WA</span>
+            <span className="hidden sm:inline">WhatsApp</span>
           </a>
         )}
       </div>

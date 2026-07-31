@@ -1,6 +1,18 @@
 import clsx from "clsx";
-import { ShieldCheck, Phone, Mail, Globe, MessageSquare, Share2, QrCode, Download, MapPin, Linkedin } from "lucide-react";
+import {
+  ShieldCheck,
+  Phone,
+  Mail,
+  Globe,
+  MessageSquare,
+  Share2,
+  QrCode,
+  Download,
+  MapPin,
+  Linkedin,
+} from "lucide-react";
 import React from "react";
+import { downloadVCardFile } from "../../lib/vcardHelper";
 
 export function BusinessCard({ profile, st, onOpenShare, onOpenQr }) {
   const isProfessional = profile.profileType === "professional";
@@ -8,7 +20,9 @@ export function BusinessCard({ profile, st, onOpenShare, onOpenQr }) {
     ? profile.title || "Professional"
     : profile.companyName || "Business";
   const subtitle = isProfessional
-    ? profile.designation || profile.professionalCategory || "Independent Professional"
+    ? profile.designation ||
+      profile.professionalCategory ||
+      "Independent Professional"
     : profile.tagline || profile.businessCategory || "Premium Services";
   const avatar = isProfessional
     ? profile.avatarUrl
@@ -17,7 +31,10 @@ export function BusinessCard({ profile, st, onOpenShare, onOpenQr }) {
   const whatsAppNumber = profile.contactDetails?.whatsAppNumber;
   const phoneNumber = profile.contactDetails?.phone;
   const email = profile.contactDetails?.email;
-  const website = profile.socialLinks?.website;
+  const rawWebsite = profile.socialLinks?.website || profile.contactDetails?.website || profile.website;
+  const websiteTarget = rawWebsite
+    ? (rawWebsite.startsWith("http") ? rawWebsite : `https://${rawWebsite}`)
+    : `/p/${profile.slug}`;
   const linkedin = profile.socialLinks?.linkedin;
 
   const vcardUrl = `/api/v1/profiles/public/${profile.slug}/vcard`;
@@ -35,7 +52,10 @@ Thank you.`;
     if (whatsAppNumber) {
       const cleanWhatsApp = whatsAppNumber.replace(/[^0-9]/g, "");
       const encodedMessage = encodeURIComponent(message);
-      window.open(`https://wa.me/${cleanWhatsApp}?text=${encodedMessage}`, "_blank");
+      window.open(
+        `https://wa.me/${cleanWhatsApp}?text=${encodedMessage}`,
+        "_blank",
+      );
     } else if (phoneNumber) {
       window.location.href = `tel:${phoneNumber}`;
     }
@@ -56,8 +76,6 @@ Thank you.`;
           ) : (
             <div className="h-full w-full bg-gradient-to-tr from-slate-100 to-slate-50" />
           )}
-          {/* Subtle gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent pointer-events-none" />
         </div>
 
         {/* Profile Avatar / Logo overlapping cover */}
@@ -85,23 +103,25 @@ Thank you.`;
                 {name}
               </h2>
               {profile.isVerified && (
-                <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-4xs font-bold uppercase tracking-wider text-emerald-700">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> Verified
+                <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-4xs font-bold  tracking-wider text-emerald-700">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                  <span className="hidden sm:inline">Verified</span>
                 </span>
               )}
             </div>
 
-            <p className="text-sm font-semibold text-[#2563EB]">
-              {subtitle}
-            </p>
+            <p className="text-sm font-semibold text-[#2563EB]">{subtitle}</p>
 
             <div className="flex flex-wrap gap-x-3 gap-y-1 text-3xs text-[#6B7280] font-medium pt-1">
               {isProfessional && profile.companyName && (
-                <span className="flex items-center gap-1">🏢 {profile.companyName}</span>
+                <span className="flex items-center gap-1">
+                  🏢 {profile.companyName}
+                </span>
               )}
               {profile.location?.city && (
                 <span className="flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-red-500" /> {profile.location.city}
+                  <MapPin className="w-3.5 h-3.5 text-red-500" />{" "}
+                  {profile.location.city}
                 </span>
               )}
             </div>
@@ -112,14 +132,17 @@ Thank you.`;
             {/* Phone */}
             {phoneNumber ? (
               <a
-                href={`tel:${phoneNumber}`}
+                href={`tel:${phoneNumber.replace(/[\s\(\)-]/g, "")}`}
                 className="h-11 w-11 rounded-full bg-[#FCFCFD] border border-[#E5E7EB] hover:bg-slate-50 flex items-center justify-center text-[#111827] transition-all hover:scale-105 active:scale-95"
                 title="Call phone"
               >
                 <Phone className="w-4 h-4 text-[#2563EB]" />
               </a>
             ) : (
-              <div className="h-11 w-11 rounded-full bg-slate-50 border border-slate-100 opacity-20 flex items-center justify-center" aria-hidden="true">
+              <div
+                className="h-11 w-11 rounded-full bg-slate-50 border border-slate-100 opacity-20 flex items-center justify-center"
+                aria-hidden="true"
+              >
                 <Phone className="w-4 h-4 text-[#6B7280]" />
               </div>
             )}
@@ -134,27 +157,24 @@ Thank you.`;
                 <Mail className="w-4 h-4 text-[#2563EB]" />
               </a>
             ) : (
-              <div className="h-11 w-11 rounded-full bg-slate-50 border border-slate-100 opacity-20 flex items-center justify-center" aria-hidden="true">
+              <div
+                className="h-11 w-11 rounded-full bg-slate-50 border border-slate-100 opacity-20 flex items-center justify-center"
+                aria-hidden="true"
+              >
                 <Mail className="w-4 h-4 text-[#6B7280]" />
               </div>
             )}
 
-            {/* Website */}
-            {website ? (
-              <a
-                href={website}
-                target="_blank"
-                rel="noreferrer"
-                className="h-11 w-11 rounded-full bg-[#FCFCFD] border border-[#E5E7EB] hover:bg-slate-50 flex items-center justify-center text-[#111827] transition-all hover:scale-105 active:scale-95"
-                title="Visit website"
-              >
-                <Globe className="w-4 h-4 text-[#2563EB]" />
-              </a>
-            ) : (
-              <div className="h-11 w-11 rounded-full bg-slate-50 border border-slate-100 opacity-20 flex items-center justify-center" aria-hidden="true">
-                <Globe className="w-4 h-4 text-[#6B7280]" />
-              </div>
-            )}
+            {/* Website or Public Profile Link */}
+            <a
+              href={websiteTarget}
+              target={rawWebsite ? "_blank" : "_self"}
+              rel="noreferrer"
+              className="h-11 w-11 rounded-full bg-[#FCFCFD] border border-[#E5E7EB] hover:bg-slate-50 flex items-center justify-center text-[#111827] transition-all hover:scale-105 active:scale-95"
+              title={rawWebsite ? "Visit website" : "View profile page"}
+            >
+              <Globe className="w-4 h-4 text-[#2563EB]" />
+            </a>
 
             {/* LinkedIn (Optional fallback for Professionals) */}
             {linkedin ? (
@@ -168,7 +188,10 @@ Thank you.`;
                 <Linkedin className="w-4 h-4 text-[#2563EB]" />
               </a>
             ) : (
-              <div className="h-11 w-11 rounded-full bg-slate-50 border border-slate-100 opacity-20 flex items-center justify-center text-3xs font-bold text-[#6B7280]" aria-hidden="true">
+              <div
+                className="h-11 w-11 rounded-full bg-slate-50 border border-slate-100 opacity-20 flex items-center justify-center text-3xs font-bold text-[#6B7280]"
+                aria-hidden="true"
+              >
                 <Linkedin className="w-4 h-4 text-[#6B7280]" />
               </div>
             )}
@@ -180,19 +203,21 @@ Thank you.`;
               onClick={handleWhatsApp}
               className="h-12 w-full rounded-ds-btn text-xs font-bold bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-[#128C7E] flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
             >
-              <MessageSquare className="w-4 h-4 text-[#128C7E]" /> WhatsApp Chat
+              <MessageSquare className="w-4 h-4 text-[#128C7E]" />
+              <span className="sm:hidden">WA Chat</span>
+              <span className="hidden sm:inline">WhatsApp Chat</span>
             </button>
 
-            <a
-              href={vcardUrl}
-              download
+            <button
+              type="button"
+              onClick={() => downloadVCardFile(profile)}
               className={clsx(
                 "h-12 w-full rounded-ds-btn text-xs font-extrabold flex items-center justify-center gap-2 select-none active:scale-[0.98] transition-all hover:scale-[1.01] hover:shadow-lg shadow-ds-card",
-                st?.primaryBtn || "bg-[#2563EB] hover:bg-[#1d4ed8] text-white"
+                st?.primaryBtn || "bg-[#2563EB] hover:bg-[#1d4ed8] text-white",
               )}
             >
               <Download className="w-4 h-4" /> Save Contact
-            </a>
+            </button>
 
             <div className="grid grid-cols-2 gap-3">
               <button

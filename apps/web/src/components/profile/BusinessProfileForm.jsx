@@ -194,12 +194,12 @@ export function BusinessProfileForm({ form, activeTab }) {
                   placeholder="E.g., 1-on-1 Consultation"
                 />
                 <Input
-                  label="Pricing (E.g., $150 / hr)"
+                  label="Pricing (E.g., ₹1,500 / hr)"
                   value={newService.price}
                   onChange={(e) =>
                     setNewService({ ...newService, price: e.target.value })
                   }
-                  placeholder="E.g., Free or $99"
+                  placeholder="E.g., Free or ₹999"
                 />
               </div>
               <Textarea
@@ -287,12 +287,12 @@ export function BusinessProfileForm({ form, activeTab }) {
                   placeholder="E.g., Masterclass Video Course"
                 />
                 <Input
-                  label="Price (E.g., $49)"
+                  label="Price (E.g., ₹1,499)"
                   value={newProduct.price}
                   onChange={(e) =>
                     setNewProduct({ ...newProduct, price: e.target.value })
                   }
-                  placeholder="E.g., $19.99"
+                  placeholder="E.g., ₹1,999"
                 />
                 <div className="sm:col-span-2">
                   <Input
@@ -390,7 +390,7 @@ export function BusinessProfileForm({ form, activeTab }) {
                 error={formState.errors.contactDetails?.email?.message}
               />
               <Input
-                label="Direct Phone Number"
+                label="Business Phone Number"
                 placeholder="+15551234"
                 {...register("contactDetails.phone")}
                 error={formState.errors.contactDetails?.phone?.message}

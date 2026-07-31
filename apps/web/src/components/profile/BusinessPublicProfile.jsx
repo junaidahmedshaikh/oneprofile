@@ -12,9 +12,16 @@ import {
   Mail,
   CheckCircle2,
   X,
+  Download,
 } from "lucide-react";
 import React, { useState } from "react";
-import { parseCustomLink, renderCustomLinkIcon, getSafeMapUrl } from "../../lib/customLinkHelper";
+import {
+  parseCustomLink,
+  renderCustomLinkIcon,
+  getSafeMapUrl,
+} from "../../lib/customLinkHelper";
+import { downloadVCardFile } from "../../lib/vcardHelper";
+import { formatINR } from "../../lib/formatCurrency";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../ui/Button";
 
@@ -108,7 +115,6 @@ Thank you.`;
               OneProfile Premium Business Identity
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
         </div>
 
         {/* Floating Identity & Call-to-Action Card */}
@@ -132,9 +138,9 @@ Thank you.`;
                   <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#111827]">
                     {profile.companyName || "Business Profile"}
                   </h1>
-                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-sm font-semibold uppercase tracking-wider text-emerald-700">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600/15" />{" "}
-                    Verified
+                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs sm:text-sm font-semibold  tracking-wider text-emerald-700">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600/15" />
+                    <span className="hidden sm:inline">Verified</span>
                   </span>
                 </div>
 
@@ -164,18 +170,22 @@ Thank you.`;
             </div>
 
             {/* Quick conversion CTA buttons */}
-            <div className="flex flex-wrap justify-center lg:justify-end gap-3 shrink-0">
+            <div className="flex flex-wrap items-center justify-center lg:justify-end gap-2 sm:gap-3 shrink-0 w-full lg:w-auto">
               {profile.contactDetails?.phone && (
                 <a
-                  href={`tel:${profile.contactDetails.phone}`}
-                  className="h-12 px-6 rounded-full border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-bold flex items-center gap-2 transition-all active:scale-[0.98]"
+                  href={`tel:${profile.contactDetails.phone.replace(/[\s\(\)-]/g, "")}`}
+                  className="h-11 sm:h-12 px-3.5 sm:px-6 rounded-full border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-bold flex items-center gap-1.5 sm:gap-2 transition-all active:scale-[0.98]"
+                  title="Call Phone"
                 >
-                  <Phone className="w-4 h-4 text-[#2563EB]" /> Call Now
+                  <Phone className="w-4 h-4 text-[#2563EB]" />
+                  <span className="sm:hidden">Call</span>
+                  <span className="hidden sm:inline">Call Now</span>
                 </a>
               )}
               <button
+                type="button"
                 onClick={handleScrollToContact}
-                className="h-12 px-6 rounded-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-xs font-bold flex items-center gap-2 transition-all active:scale-[0.98] shadow-sm shadow-[#2563EB]/10"
+                className="h-11 sm:h-12 px-5 sm:px-6 rounded-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-xs font-bold flex items-center gap-2 transition-all active:scale-[0.98] shadow-sm shadow-[#2563EB]/10"
               >
                 Inquire Online ➔
               </button>
@@ -294,19 +304,18 @@ Thank you.`;
                       Price
                     </span>
                     <span className="text-xs font-black text-[#2563EB]">
-                      {srv.price || "Contact Us"}
+                      {srv.price ? formatINR(srv.price) : "Contact Us"}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSelectedItem(srv);
-                      setSelectedItemType("service");
+                      handleInquiry(srv, "service");
                     }}
-                    className="h-8 px-3.5 rounded-full font-semibold bg-white border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs tracking-wider transition-all"
+                    className="h-8 px-3.5 rounded-full font-semibold bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-xs tracking-wider transition-all shadow-sm"
                   >
-                    Inquire
+                    Inquire ➔
                   </button>
                 </div>
               </div>
@@ -326,7 +335,7 @@ Thank you.`;
               Product Gallery & Catalog
             </h2>
             <p className="text-xs text-[#6B7280]">
-              Click inquire to request quotes, features, or shipping details.
+              Click card to view details or click order to message on WhatsApp.
             </p>
           </div>
 
@@ -372,19 +381,18 @@ Thank you.`;
                         Rate
                       </span>
                       <span className="text-sm font-extrabold text-[#2563EB]">
-                        {prod.price || "Inquire"}
+                        {prod.price ? formatINR(prod.price) : "Inquire"}
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelectedItem(prod);
-                        setSelectedItemType("product");
+                        handleInquiry(prod, "product");
                       }}
-                      className="h-8 px-3.5 rounded-full bg-white border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-semibold tracking-wider"
+                      className="h-8 px-3.5 rounded-full hover:bg-[#2563EB]/20 bg-[#2563EB] text-white text-xs font-bold tracking-wider transition-all shadow-sm flex items-center gap-1"
                     >
-                      Order
+                      Order ➔
                     </button>
                   </div>
                 </div>
@@ -622,21 +630,23 @@ Thank you.`;
                 )}
 
                 {/* Features list (if any exist) */}
-                {selectedItem.features && Array.isArray(selectedItem.features) && selectedItem.features.length > 0 && (
-                  <div className="space-y-1.5">
-                    <h4 className="text-3xs font-bold text-slate-400 uppercase tracking-widest">
-                      Key Features
-                    </h4>
-                    <ul className="grid gap-1.5 sm:grid-cols-2 text-xs text-slate-600">
-                      {selectedItem.features.map((feature, fIdx) => (
-                        <li key={fIdx} className="flex items-center gap-1.5">
-                          <span className="h-1.5 w-1.5 rounded-full bg-blue-500 shrink-0" />
-                          <span className="truncate">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {selectedItem.features &&
+                  Array.isArray(selectedItem.features) &&
+                  selectedItem.features.length > 0 && (
+                    <div className="space-y-1.5">
+                      <h4 className="text-3xs font-bold text-slate-400 uppercase tracking-widest">
+                        Key Features
+                      </h4>
+                      <ul className="grid gap-1.5 sm:grid-cols-2 text-xs text-slate-600">
+                        {selectedItem.features.map((feature, fIdx) => (
+                          <li key={fIdx} className="flex items-center gap-1.5">
+                            <span className="h-1.5 w-1.5 rounded-full bg-blue-500 shrink-0" />
+                            <span className="truncate">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                 {/* Price Display */}
                 <div className="pt-4 border-t border-[#E5E7EB] flex items-center justify-between gap-4">
@@ -645,7 +655,9 @@ Thank you.`;
                       Pricing / Rate
                     </span>
                     <span className="text-base font-extrabold text-[#2563EB]">
-                      {selectedItem.price || "Contact for Quote"}
+                      {selectedItem.price
+                        ? formatINR(selectedItem.price)
+                        : "Contact for Quote"}
                     </span>
                   </div>
 
