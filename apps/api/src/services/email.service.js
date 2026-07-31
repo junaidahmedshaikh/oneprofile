@@ -24,6 +24,7 @@ function createTransport() {
 const transport = createTransport();
 
 async function sendMailInternal({ to, subject, text, html }) {
+  // 1. Try Mailjet HTTP API
   if (env.MAILJET_API_KEY && env.MAILJET_SECRET_KEY) {
     try {
       const auth = Buffer.from(`${env.MAILJET_API_KEY}:${env.MAILJET_SECRET_KEY}`).toString('base64');
@@ -48,16 +49,8 @@ async function sendMailInternal({ to, subject, text, html }) {
         body: JSON.stringify({
           Messages: [
             {
-              From: {
-                Email: senderEmail,
-                Name: senderName
-              },
-              To: [
-                {
-                  Email: to,
-                  Name: to.split('@')[0]
-                }
-              ],
+              From: { Email: senderEmail, Name: senderName },
+              To: [{ Email: to, Name: to.split('@')[0] }],
               Subject: subject,
               TextPart: text,
               HTMLPart: html
@@ -74,12 +67,72 @@ async function sendMailInternal({ to, subject, text, html }) {
       return data;
     } catch (err) {
       logger.error({ err }, 'Failed to send email via Mailjet');
-      if (!transport) return { skipped: true, error: err.message };
     }
   }
 
+  // 2. Try Resend HTTP API
+  const resendKey = env.RESEND_API_KEY || env.RESEND_KEY;
+  if (resendKey) {
+    try {
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: env.RESEND_FROM || 'OneProfile <onboarding@resend.dev>',
+          to: Array.isArray(to) ? to : [to],
+          subject,
+          text,
+          html
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        logger.error({ data }, 'Resend API returned an error');
+        throw new Error(data.message || 'Resend error');
+      }
+      return data;
+    } catch (err) {
+      logger.error({ err }, 'Failed to send email via Resend');
+    }
+  }
+
+  // 3. Try Brevo HTTP API
+  if (env.BREVO_API_KEY) {
+    try {
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': env.BREVO_API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: {
+            name: 'OneProfile',
+            email: env.SMTP_USER || 'junaid.shaikh0708@gmail.com'
+          },
+          to: [{ email: to }],
+          subject,
+          textContent: text,
+          htmlContent: html
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        logger.error({ data }, 'Brevo API returned an error');
+        throw new Error(data.message || 'Brevo error');
+      }
+      return data;
+    } catch (err) {
+      logger.error({ err }, 'Failed to send email via Brevo');
+    }
+  }
+
+  // 4. Fallback to Nodemailer SMTP
   if (!transport) {
-    logger.info({ to, subject, preview: text }, 'SMTP / Mailjet not configured, email skipped');
+    logger.info({ to, subject, preview: text }, 'No HTTP Email API or SMTP configured, email skipped');
     return { skipped: true };
   }
 

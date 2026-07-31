@@ -90,15 +90,28 @@ export async function registerUser({
 }) {
   await ensureDefaultRoles();
 
-  const existing = await User.findOne({
-    $or: [
-      email ? { email: email.toLowerCase() } : null,
-      phone ? { phone } : null,
-    ].filter(Boolean),
-  });
+  const cleanEmail = email?.trim().toLowerCase();
+  const cleanPhone = phone?.trim();
 
-  if (existing) {
-    throw new ApiError(409, "Account already exists", "AUTH_ACCOUNT_EXISTS");
+  const clauses = [];
+  if (cleanEmail) clauses.push({ email: cleanEmail });
+  if (cleanPhone) clauses.push({ phone: cleanPhone });
+
+  if (clauses.length > 0) {
+    const existing = await User.findOne({ $or: clauses });
+    if (existing) {
+      const isEmailConflict = cleanEmail && existing.email === cleanEmail;
+      const isPhoneConflict = cleanPhone && existing.phone === cleanPhone;
+      let message = "Account already exists";
+      if (isEmailConflict && isPhoneConflict) {
+        message = "An account with this email address and phone number already exists.";
+      } else if (isEmailConflict) {
+        message = "An account with this email address already exists.";
+      } else if (isPhoneConflict) {
+        message = "An account with this phone number already exists.";
+      }
+      throw new ApiError(409, message, "AUTH_ACCOUNT_EXISTS");
+    }
   }
 
   const user = await User.create({

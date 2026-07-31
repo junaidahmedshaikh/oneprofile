@@ -39,6 +39,13 @@ export function VerificationPage() {
     }
   }, [justRegistered]);
 
+  // Sync email state when Redux user resolves asynchronously
+  useEffect(() => {
+    if (user?.email && !email) {
+      setEmail(user.email);
+    }
+  }, [user?.email, email]);
+
   // Cooldown countdown timer effect
   useEffect(() => {
     if (cooldown === 0) return;

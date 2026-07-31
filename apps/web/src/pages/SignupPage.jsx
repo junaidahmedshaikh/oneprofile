@@ -46,7 +46,8 @@ export function SignupPage() {
       setInfo(
         "Account created. Please verify your email from the verification screen.",
       );
-      navigate("/verify", { state: { justRegistered: true } });
+      const registeredEmail = response.data?.data?.user?.email || form.getValues("email") || "";
+      navigate(`/verify?email=${encodeURIComponent(registeredEmail)}`, { state: { justRegistered: true } });
     },
   });
 
