@@ -6,8 +6,8 @@ export function BusinessCardHeader({ profile, st }) {
     ? profile.title || "Professional"
     : profile.companyName || "Business";
   const subtitle = isProd
-    ? profile.designation || profile.professionalCategory || ""
-    : profile.tagline || profile.businessCategory || "";
+    ? profile.designation || profile.headline || profile.tagline || profile.professionalCategory || ""
+    : profile.tagline || profile.headline || profile.businessCategory || "";
   const avatar = isProd
     ? profile.avatarUrl
     : profile.logoUrl || profile.avatarUrl;

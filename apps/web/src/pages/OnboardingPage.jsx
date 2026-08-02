@@ -14,6 +14,8 @@ import {
   setActiveStep,
   setOnboardingError,
   setSaving,
+  setProfileType,
+  updateOnboardingData,
 } from "../store/onboardingSlice";
 import { setCredentials, setUser } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -355,7 +357,6 @@ export function OnboardingPage() {
         languagesRaw: "",
         skillsRaw: "",
         certificationsRaw: "",
-        employmentType: "self_employed",
         designation: "",
         yearsOfExperience: "",
         practiceName: "",
@@ -429,22 +430,25 @@ export function OnboardingPage() {
       experienceCount: (stateQuery.data.experience || []).length,
     });
 
+    const remoteCompany = stateQuery.data.companyDetails || {};
+    const currentCompany = companyForm.getValues();
+
     companyForm.reset({
-      companyName: stateQuery.data.companyDetails?.companyName || "",
-      legalName: stateQuery.data.companyDetails?.legalName || "",
-      website: stateQuery.data.companyDetails?.website || "",
-      email: stateQuery.data.companyDetails?.email || "",
-      phone: stateQuery.data.companyDetails?.phone || "",
-      city: stateQuery.data.companyDetails?.city || "",
-      country: stateQuery.data.companyDetails?.country || "",
-      tagline: stateQuery.data.companyDetails?.tagline || "",
-      description: stateQuery.data.companyDetails?.description || "",
-      gstNumber: stateQuery.data.companyDetails?.gstNumber || "",
+      companyName: currentCompany.companyName || remoteCompany.companyName || "",
+      legalName: currentCompany.legalName || remoteCompany.legalName || "",
+      website: currentCompany.website || remoteCompany.website || "",
+      email: currentCompany.email || remoteCompany.email || "",
+      phone: currentCompany.phone || remoteCompany.phone || "",
+      city: currentCompany.city || remoteCompany.city || "",
+      country: currentCompany.country || remoteCompany.country || "",
+      tagline: currentCompany.tagline || remoteCompany.tagline || "",
+      description: currentCompany.description || remoteCompany.description || "",
+      gstNumber: currentCompany.gstNumber || remoteCompany.gstNumber || "",
       registrationDetails:
-        stateQuery.data.companyDetails?.registrationDetails || "",
-      serviceArea: stateQuery.data.companyDetails?.serviceArea || "",
-      foundedYear: stateQuery.data.companyDetails?.foundedYear || null,
-      teamSize: stateQuery.data.companyDetails?.teamSize || null,
+        currentCompany.registrationDetails || remoteCompany.registrationDetails || "",
+      serviceArea: currentCompany.serviceArea || remoteCompany.serviceArea || "",
+      foundedYear: currentCompany.foundedYear || remoteCompany.foundedYear || null,
+      teamSize: currentCompany.teamSize || remoteCompany.teamSize || null,
     });
 
     contentForm.reset({
@@ -463,8 +467,6 @@ export function OnboardingPage() {
         certificationsRaw: (
           stateQuery.data.personalDetails?.certifications || []
         ).join(", "),
-        employmentType:
-          stateQuery.data.personalDetails?.employmentType || "self_employed",
         designation: stateQuery.data.personalDetails?.designation || "",
         yearsOfExperience:
           stateQuery.data.personalDetails?.yearsOfExperience || "",
@@ -531,9 +533,31 @@ export function OnboardingPage() {
     );
   }, [professionalCategories, selectedProfessionalCategory]);
 
+  const getMergedCompanyDetails = () => {
+    const currentFormValues = companyForm.getValues();
+    const reduxValues = onboardingState.companyDetails || {};
+    return {
+      companyName: currentFormValues.companyName || reduxValues.companyName || "",
+      legalName: currentFormValues.legalName || reduxValues.legalName || "",
+      website: currentFormValues.website || reduxValues.website || "",
+      email: currentFormValues.email || reduxValues.email || "",
+      phone: currentFormValues.phone || reduxValues.phone || "",
+      city: currentFormValues.city || reduxValues.city || "",
+      country: currentFormValues.country || reduxValues.country || "",
+      tagline: currentFormValues.tagline || reduxValues.tagline || "",
+      description: currentFormValues.description || reduxValues.description || "",
+      gstNumber: currentFormValues.gstNumber || reduxValues.gstNumber || "",
+      registrationDetails:
+        currentFormValues.registrationDetails || reduxValues.registrationDetails || "",
+      serviceArea: currentFormValues.serviceArea || reduxValues.serviceArea || "",
+      foundedYear: currentFormValues.foundedYear || reduxValues.foundedYear || null,
+      teamSize: currentFormValues.teamSize || reduxValues.teamSize || null,
+    };
+  };
+
   // Manual/Autosave draft helper
   const saveDraft = async () => {
-    const companyValues = companyForm.getValues();
+    const companyValues = getMergedCompanyDetails();
     const contentValues = contentForm.getValues();
 
     await saveMutation.mutateAsync({
@@ -551,7 +575,10 @@ export function OnboardingPage() {
             label: selectedProfessionalCategoryLabel,
           }
         : undefined,
-      companyDetails: companyValues,
+      companyDetails: {
+        ...companyValues,
+        tagline: selectedProfileType === "professional" ? (contentValues.headline || companyValues.tagline || "") : (companyValues.tagline || ""),
+      },
       theme: selectedTheme,
       completedSteps: onboardingState.completedSteps,
       skippedSteps: onboardingState.skippedSteps,
@@ -578,8 +605,6 @@ export function OnboardingPage() {
           .split(",")
           .map((s) => s.trim())
           .filter(Boolean),
-        employmentType:
-          contentValues.personalDetails?.employmentType || "self_employed",
         designation: contentValues.personalDetails?.designation || "",
         yearsOfExperience: contentValues.personalDetails?.yearsOfExperience
           ? Number(contentValues.personalDetails.yearsOfExperience)
@@ -680,7 +705,7 @@ export function OnboardingPage() {
 
   const publishMutation = useMutation({
     mutationFn: async () => {
-      const companyValues = companyForm.getValues();
+      const companyValues = getMergedCompanyDetails();
       const contentValues = contentForm.getValues();
       await onboardingApi.save({
         currentStep: activeStep,
@@ -697,15 +722,18 @@ export function OnboardingPage() {
               label: selectedProfessionalCategoryLabel,
             }
           : undefined,
-        companyDetails: companyValues,
+        companyDetails: {
+          ...companyValues,
+          tagline: selectedProfileType === "professional" ? (contentValues.headline || companyValues.tagline || "") : (companyValues.tagline || ""),
+        },
         theme: selectedTheme,
         completedSteps: onboardingState.completedSteps,
         skippedSteps: onboardingState.skippedSteps,
         experience: experienceList,
         aiContent: {
-          headline: contentValues.headline,
-          summary: contentValues.summary,
-          ctaLabel: contentValues.ctaLabel,
+          headline: contentValues.headline || "",
+          summary: contentValues.summary || "",
+          ctaLabel: contentValues.ctaLabel || "",
         },
         personalDetails: {
           title: contentValues.personalDetails?.title,
@@ -726,8 +754,6 @@ export function OnboardingPage() {
             .split(",")
             .map((s) => s.trim())
             .filter(Boolean),
-          employmentType:
-            contentValues.personalDetails?.employmentType || "self_employed",
           designation: contentValues.personalDetails?.designation || "",
           yearsOfExperience: contentValues.personalDetails?.yearsOfExperience
             ? Number(contentValues.personalDetails.yearsOfExperience)
@@ -841,12 +867,16 @@ export function OnboardingPage() {
     }
     if (step === "theme" && !selectedTheme) return;
 
-    const companyValues = companyForm.getValues();
+    const companyValues = getMergedCompanyDetails();
     const contentValues = contentForm.getValues();
 
-    try {
-      await completeMutation.mutateAsync({
-        step,
+    const updatedCompleted = onboardingState.completedSteps.includes(step)
+      ? onboardingState.completedSteps
+      : [...onboardingState.completedSteps, step];
+
+    // Store state in Redux (Single source of truth locally)
+    dispatch(
+      updateOnboardingData({
         profileType: selectedProfileType,
         industry: selectedIndustry
           ? { key: selectedIndustry, label: selectedIndustryLabel }
@@ -873,26 +903,11 @@ export function OnboardingPage() {
           bio: contentValues.personalDetails?.bio,
           avatarUrl: contentValues.personalDetails?.avatarUrl,
           coverImageUrl: contentValues.personalDetails?.coverImageUrl,
-          languages: (contentValues.personalDetails?.languagesRaw || "")
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean),
-          skills: (contentValues.personalDetails?.skillsRaw || "")
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean),
-          certifications: (
-            contentValues.personalDetails?.certificationsRaw || ""
-          )
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean),
-          employmentType:
-            contentValues.personalDetails?.employmentType || "self_employed",
+          languagesRaw: contentValues.personalDetails?.languagesRaw,
+          skillsRaw: contentValues.personalDetails?.skillsRaw,
+          certificationsRaw: contentValues.personalDetails?.certificationsRaw,
           designation: contentValues.personalDetails?.designation || "",
-          yearsOfExperience: contentValues.personalDetails?.yearsOfExperience
-            ? Number(contentValues.personalDetails.yearsOfExperience)
-            : null,
+          yearsOfExperience: contentValues.personalDetails?.yearsOfExperience || "",
           practiceName: contentValues.personalDetails?.practiceName || "",
           department: contentValues.personalDetails?.department || "",
           workLocation: contentValues.personalDetails?.workLocation || "",
@@ -900,29 +915,31 @@ export function OnboardingPage() {
         },
         contactDetails: contentValues.contactDetails,
         socialLinks: contentValues.socialLinks,
-      });
-      if (step === "content") {
-        const valid = await contentForm.trigger();
-        if (!valid) return;
-        setSuccessMessage("Onboarding completed successfully!");
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1500);
-        return;
-      }
+        completedSteps: updatedCompleted,
+      })
+    );
 
-      const nextIndex = currentStepOrder.indexOf(step) + 1;
-      const nextStep =
-        currentStepOrder[Math.min(nextIndex, currentStepOrder.length - 1)];
-      setLocalStep(nextStep);
-      dispatch(setActiveStep(nextStep));
-    } catch (err) {
-      console.error("Step complete save failed:", err);
+    if (step === "content") {
+      const valid = await contentForm.trigger();
+      if (!valid) return;
+      // Single API Call on completion
+      publishMutation.mutate();
+      return;
     }
+
+    const nextIndex = currentStepOrder.indexOf(step) + 1;
+    const nextStep =
+      currentStepOrder[Math.min(nextIndex, currentStepOrder.length - 1)];
+    setLocalStep(nextStep);
+    dispatch(setActiveStep(nextStep));
   };
 
-  const skipCurrent = async () => {
-    await skipMutation.mutateAsync({ step: activeStep });
+  const skipCurrent = () => {
+    const updatedSkipped = onboardingState.skippedSteps.includes(activeStep)
+      ? onboardingState.skippedSteps
+      : [...onboardingState.skippedSteps, activeStep];
+    dispatch(updateOnboardingData({ skippedSteps: updatedSkipped }));
+
     const nextIndex = currentStepOrder.indexOf(activeStep) + 1;
     const nextStep =
       currentStepOrder[Math.min(nextIndex, currentStepOrder.length - 1)];
@@ -1044,7 +1061,10 @@ export function OnboardingPage() {
                 <div className="grid gap-4.5 sm:grid-cols-2">
                   <button
                     type="button"
-                    onClick={() => setSelectedProfileType("business")}
+                    onClick={() => {
+                      setSelectedProfileType("business");
+                      dispatch(setProfileType("business"));
+                    }}
                     className={`flex flex-col gap-2 rounded-2xl p-5 text-left transition-all duration-300 border ${
                       selectedProfileType === "business"
                         ? "bg-primary/10 border-primary/30 text-slate-300 dark:text-white shadow-ds-card"
@@ -1061,7 +1081,10 @@ export function OnboardingPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setSelectedProfileType("professional")}
+                    onClick={() => {
+                      setSelectedProfileType("professional");
+                      dispatch(setProfileType("professional"));
+                    }}
                     className={`flex flex-col gap-2 rounded-2xl p-5 text-left transition-all duration-300 border ${
                       selectedProfileType === "professional"
                         ? "bg-primary/10 border-primary/30 text-slate-300 dark:text-white shadow-ds-card"
@@ -1246,7 +1269,7 @@ export function OnboardingPage() {
                         {...companyForm.register("country")}
                       />
                       <Input
-                        label="Tagline"
+                        label="Headline"
                         placeholder="Securing infrastructure pipelines"
                         {...companyForm.register("tagline")}
                       />
@@ -1353,100 +1376,27 @@ export function OnboardingPage() {
                         )}
                       />
 
-                      <div className="sm:col-span-2 space-y-1.5">
-                        <label className="text-3xs font-semibold uppercase tracking-[0.2em] text-slate-400 block select-none">
-                          Employment Status
-                        </label>
-                        <div className="flex gap-4">
-                          <label className="flex items-center gap-2 cursor-pointer text-xs text-white">
-                            <input
-                              type="radio"
-                              value="self_employed"
-                              checked={
-                                watchedContent.personalDetails
-                                  ?.employmentType === "self_employed"
-                              }
-                              onChange={() =>
-                                contentForm.setValue(
-                                  "personalDetails.employmentType",
-                                  "self_employed",
-                                )
-                              }
-                              className="text-brand-500 bg-white/5 border-white/10"
-                            />
-                            Self-Employed / Freelance
-                          </label>
-                          <label className="flex items-center gap-2 cursor-pointer text-xs text-white">
-                            <input
-                              type="radio"
-                              value="employed"
-                              checked={
-                                watchedContent.personalDetails
-                                  ?.employmentType === "employed"
-                              }
-                              onChange={() =>
-                                contentForm.setValue(
-                                  "personalDetails.employmentType",
-                                  "employed",
-                                )
-                              }
-                              className="text-brand-500 bg-white/5 border-white/10"
-                            />
-                            Employed
-                          </label>
-                        </div>
-                      </div>
-
-                      {watchedContent.personalDetails?.employmentType ===
-                      "employed" ? (
-                        <>
-                          <Input
-                            label="Company / Organization Name *"
-                            placeholder="Connor Inc."
-                            {...contentForm.register(
-                              "personalDetails.practiceName",
-                            )}
-                          />
-                          <Input
-                            label="Designation / Job Title *"
-                            placeholder="Senior Consultant"
-                            {...contentForm.register(
-                              "personalDetails.designation",
-                            )}
-                          />
-                          <Input
-                            label="Department (Optional)"
-                            placeholder="Advisory"
-                            {...contentForm.register(
-                              "personalDetails.department",
-                            )}
-                          />
-                          <Input
-                            label="Work Location (Optional)"
-                            placeholder="E.g., Remote, Mumbai, India"
-                            {...contentForm.register(
-                              "personalDetails.workLocation",
-                            )}
-                          />
-                        </>
-                      ) : (
-                        <>
-                          <Input
-                            label="Brand Name"
-                            placeholder="Connor Consulting"
-                            {...contentForm.register(
-                              "personalDetails.practiceName",
-                            )}
-                          />
-                          <Input
-                            label="Service Area"
-                            placeholder="E.g., Worldwide or Local"
-                            {...contentForm.register(
-                              "personalDetails.workLocation",
-                            )}
-                          />
-                        </>
-                      )}
+                      <Input
+                        label="Designation / Job Title"
+                        placeholder="Senior Consultant"
+                        {...contentForm.register(
+                          "personalDetails.designation",
+                        )}
+                      />
+                      <Input
+                        label="Department (Optional)"
+                        placeholder="Advisory"
+                        {...contentForm.register(
+                          "personalDetails.department",
+                        )}
+                      />
+                      <Input
+                        label="Work Location / Service Area (Optional)"
+                        placeholder="E.g., Remote, Mumbai, India"
+                        {...contentForm.register(
+                          "personalDetails.workLocation",
+                        )}
+                      />
 
                       <Input
                         label="Languages (comma separated)"
@@ -1657,11 +1607,6 @@ export function OnboardingPage() {
                       placeholder="E.g., Empowering businesses with software development"
                       {...contentForm.register("headline")}
                     />
-                    <Textarea
-                      label="Summary Paragraph"
-                      placeholder="Provide a summary paragraph..."
-                      {...contentForm.register("summary")}
-                    />
                     <Input
                       label="Primary Button Link Label"
                       placeholder="Connect Profile"
@@ -1674,12 +1619,12 @@ export function OnboardingPage() {
                   </span>
                   <div className="grid gap-3.5 sm:grid-cols-2">
                     <Input
-                      label={profileType === "business" ? "Business Email" : "Personal Email"}
+                      label={selectedProfileType === "business" ? "Business Email" : "Personal Email"}
                       placeholder="sarah@connor.com"
                       {...contentForm.register("contactDetails.email")}
                     />
                     <Input
-                      label={profileType === "business" ? "Business Phone Number" : "Personal Phone Number"}
+                      label={selectedProfileType === "business" ? "Business Phone Number" : "Personal Phone Number"}
                       placeholder="+15551234"
                       {...contentForm.register("contactDetails.phone")}
                     />
@@ -1690,7 +1635,7 @@ export function OnboardingPage() {
                       hint="Includes country code, digits only"
                     />
                     <Input
-                      label={profileType === "business" ? "Company Website URL" : "Personal Website URL"}
+                      label={selectedProfileType === "business" ? "Company Website URL" : "Personal Website URL"}
                       placeholder="https://mywebsite.com"
                       {...contentForm.register("socialLinks.website")}
                     />

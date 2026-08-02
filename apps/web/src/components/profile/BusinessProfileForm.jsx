@@ -107,11 +107,19 @@ export function BusinessProfileForm({ form, activeTab }) {
           />
 
           <Input
-            label="Company Tagline"
+            label="Company Headline"
             placeholder="E.g., Securing the future of cloud computing pipelines"
-            {...register("tagline")}
-            error={formState.errors.tagline?.message}
-            hint="A concise one-line tagline showing your business specialty."
+            {...register("headline")}
+            error={formState.errors.headline?.message}
+            hint="A concise one-line headline showing your business specialty."
+          />
+
+          <Textarea
+            label="Business Bio"
+            placeholder="Share your business story, vision, and core operations background..."
+            {...register("bio")}
+            error={formState.errors.bio?.message}
+            hint="A detailed overview of your organization background."
           />
 
           <Textarea

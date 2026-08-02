@@ -31,7 +31,6 @@ const profileSchema = new mongoose.Schema(
     industry: { type: String, default: '' },
     businessCategory: { type: String, default: '' },
     professionalCategory: { type: String, default: '' },
-    employmentType: { type: String, enum: ['self_employed', 'employed'], default: 'self_employed' },
     designation: { type: String, default: '' },
     yearsOfExperience: { type: Number, default: null },
     practiceName: { type: String, default: '' },
@@ -47,6 +46,7 @@ const profileSchema = new mongoose.Schema(
 
     // Business Details
     companyName: { type: String, trim: true, default: '' },
+    headline: { type: String, trim: true, default: '' },
     tagline: { type: String, trim: true, default: '' },
     description: { type: String, trim: true, default: '' },
     logoUrl: { type: String, default: '' },

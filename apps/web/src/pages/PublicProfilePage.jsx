@@ -6,7 +6,7 @@ import { Spinner } from "../components/ui/Spinner";
 import { Alert } from "../components/ui/Alert";
 import { BusinessPublicProfile } from "../components/profile/BusinessPublicProfile";
 import { ProfessionalPublicProfile } from "../components/profile/ProfessionalPublicProfile";
-import { ShieldCheck, MessageSquare, Phone, Mail, Download } from "lucide-react";
+import { ShieldCheck, MessageSquare, Phone, Mail, Download, CheckCircle2 } from "lucide-react";
 import React from "react";
 import { downloadVCardFile } from "../lib/vcardHelper";
 
@@ -76,60 +76,71 @@ Thank you.`;
   };
 
   const leadForm = (
-    <div
-      id="contact-section"
-      className="bg-white border border-[#E5E7EB] shadow-[0_2px_8px_rgba(0,0,0,0.04)] rounded-[24px] p-6 sm:p-8 space-y-5 relative overflow-hidden transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
-    >
-      <div className="space-y-1 border-b border-[#E5E7EB] pb-4">
-        <h3 className="font-display text-md font-bold tracking-tight text-[#111827]">
+    <div className="bg-white border border-[#E5E7EB] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[24px] p-6 sm:p-8 space-y-6">
+      <div className="space-y-1">
+        <span className="text-3xs uppercase tracking-[0.25em] text-[#6B7280] font-bold block">
+          COMMUNICATE
+        </span>
+        <h2 className="text-lg sm:text-xl font-bold text-[#111827]">
           Get In Touch
-        </h3>
-        <p className="text-3xs text-[#6B7280] font-bold uppercase tracking-wider">
-          Connect directly via email, phone, or messaging
+        </h2>
+        <p className="text-xs text-[#6B7280] leading-relaxed">
+          Send a direct inquiry or reach out instantly using any of the quick contact channels below.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-        {profile.contactDetails?.email && (
-          <a
-            href={`mailto:${profile.contactDetails.email}`}
-            className="w-full h-12 rounded-full text-xs font-bold bg-[#2563EB] hover:bg-[#1d4ed8] text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm"
-          >
-            <Mail className="w-3.5 h-3.5" /> Email
-          </a>
-        )}
-
-        {profile.contactDetails?.phone && (
+      {/* Quick Direct Contact Action Buttons (Call, Email, WhatsApp, Save Contact) */}
+      <div className="flex flex-row flex-wrap items-center gap-2.5">
+        {profile?.contactDetails?.phone && (
           <a
             href={`tel:${profile.contactDetails.phone.replace(/[\s\(\)-]/g, "")}`}
-            className="w-full h-12 rounded-full text-xs font-bold bg-white border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            className="h-11 px-4 rounded-xl border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
+            title="Call Phone"
           >
-            <Phone className="w-3.5 h-3.5 text-[#2563EB]" /> Call
+            <Phone className="w-4 h-4 text-[#2563EB]" />
+            <span>Call</span>
           </a>
         )}
-
-        {profile.contactDetails?.whatsAppNumber && (
+        {profile?.contactDetails?.email && (
+          <a
+            href={`mailto:${profile.contactDetails.email}`}
+            className="h-11 px-4 rounded-xl border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
+            title="Send Email"
+          >
+            <Mail className="w-4 h-4 text-[#2563EB]" />
+            <span>Email</span>
+          </a>
+        )}
+        {profile?.contactDetails?.whatsAppNumber && (
           <a
             href={`https://wa.me/${profile.contactDetails.whatsAppNumber.replace(/[^0-9]/g, "")}`}
             target="_blank"
             rel="noreferrer"
-            className="w-full h-12 rounded-full text-xs font-bold bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/20 text-[#128C7E] flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            className="h-11 px-4 rounded-xl border border-emerald-500/30 bg-emerald-50/50 hover:bg-emerald-100/50 text-emerald-800 text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
+            title="Message on WhatsApp"
           >
-            <MessageSquare className="w-3.5 h-3.5 text-[#128C7E]" />
-            <span className="sm:hidden">WA</span>
-            <span className="hidden sm:inline">WhatsApp</span>
+            <MessageSquare className="w-4 h-4 text-emerald-600" />
+            <span>WhatsApp</span>
           </a>
         )}
-
         <button
           type="button"
           onClick={() => downloadVCardFile(profile)}
-          className="w-full h-12 rounded-full text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+          className="h-11 px-4 rounded-xl border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
+          title="Save Contact (vCard)"
         >
-          <Download className="w-3.5 h-3.5" />
-          <span className="sm:hidden">vCard</span>
-          <span className="hidden sm:inline">Save Contact</span>
+          <Download className="w-4 h-4 text-[#2563EB]" />
+          <span>Save Contact</span>
         </button>
+      </div>
+
+      <div className="pt-4 border-t border-slate-100 grid grid-cols-2 gap-4 text-3xs text-[#6B7280] font-bold uppercase tracking-wide">
+        <div className="flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Direct Response
+        </div>
+        <div className="flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Confidential Inquiry
+        </div>
       </div>
     </div>
   );

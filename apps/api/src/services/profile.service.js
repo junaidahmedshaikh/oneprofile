@@ -66,15 +66,16 @@ export async function getOrCreateProfile(userId) {
     industry: draft?.industry?.label || '',
     businessCategory: draft?.businessCategory?.label || '',
     professionalCategory: draft?.professionalCategory?.label || '',
-    employmentType: draft?.personalDetails?.employmentType || 'self_employed',
     designation: draft?.personalDetails?.designation || '',
     yearsOfExperience: draft?.personalDetails?.yearsOfExperience || null,
     practiceName: draft?.personalDetails?.practiceName || '',
     department: draft?.personalDetails?.department || '',
     workLocation: draft?.personalDetails?.workLocation || '',
 
-    title: draft?.personalDetails?.title || (user.firstName ? `${user.firstName} ${user.lastName}`.trim() : user.name),
-    bio: draft?.profileType === 'professional' ? draft?.personalDetails?.bio || '' : draft?.companyDetails?.description || '',
+    title: draft?.profileType === 'business'
+      ? draft?.companyDetails?.companyName || (user.firstName ? `${user.firstName} ${user.lastName}`.trim() : user.name)
+      : draft?.personalDetails?.title || (user.firstName ? `${user.firstName} ${user.lastName}`.trim() : user.name),
+    bio: draft?.companyDetails?.bio || draft?.companyDetails?.description || draft?.personalDetails?.bio || '',
     avatarUrl: draft?.profileType === 'professional' ? draft?.personalDetails?.avatarUrl || user.avatarUrl || '' : user.avatarUrl || '',
     coverImageUrl: draft?.profileType === 'professional' ? draft?.personalDetails?.coverImageUrl || '' : '',
     languages: draft?.personalDetails?.languages || [],
@@ -83,7 +84,8 @@ export async function getOrCreateProfile(userId) {
     experience: draft?.experience || [],
 
     companyName: draft?.companyDetails?.companyName || '',
-    tagline: draft?.companyDetails?.tagline || '',
+    headline: draft?.companyDetails?.tagline || draft?.aiContent?.headline || '',
+    tagline: draft?.companyDetails?.tagline || draft?.aiContent?.headline || '',
     description: draft?.companyDetails?.description || '',
     logoUrl: draft?.logo?.url || '',
     gstNumber: draft?.companyDetails?.gstNumber || '',
@@ -94,8 +96,8 @@ export async function getOrCreateProfile(userId) {
 
     theme: draft?.theme || { key: 'aurora', name: 'Aurora', primary: '#4F8CFF', accent: '#22D3EE', mode: 'dark' },
     contactDetails: {
-      email: draft?.contactDetails?.email || user.email || '',
-      phone: draft?.contactDetails?.phone || user.phone || '',
+      email: draft?.contactDetails?.email || draft?.companyDetails?.email || user.email || '',
+      phone: draft?.contactDetails?.phone || draft?.companyDetails?.phone || user.phone || '',
       whatsAppNumber: draft?.contactDetails?.whatsAppNumber || ''
     },
     socialLinks: draft?.socialLinks || {
@@ -109,10 +111,10 @@ export async function getOrCreateProfile(userId) {
       customLinks: []
     },
     location: {
-      address: '',
-      city: draft?.companyDetails?.city || '',
-      country: draft?.companyDetails?.country || '',
-      mapsEmbedUrl: ''
+      address: draft?.contactDetails?.address || '',
+      city: draft?.companyDetails?.city || draft?.contactDetails?.city || '',
+      country: draft?.companyDetails?.country || draft?.contactDetails?.country || '',
+      mapsEmbedUrl: draft?.contactDetails?.mapsEmbedUrl || ''
     }
   });
 

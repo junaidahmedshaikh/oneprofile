@@ -186,8 +186,8 @@ function normalizeCompanyDetails(input = {}) {
     gstNumber: input.gstNumber || "",
     registrationDetails: input.registrationDetails || "",
     serviceArea: input.serviceArea || "",
-    foundedYear: input.foundedYear || null,
-    teamSize: input.teamSize || null,
+    foundedYear: input.foundedYear && !isNaN(Number(input.foundedYear)) ? Number(input.foundedYear) : null,
+    teamSize: input.teamSize && !isNaN(Number(input.teamSize)) ? Number(input.teamSize) : null,
   };
 }
 
@@ -547,6 +547,10 @@ export async function publishOnboarding(userId) {
   await user.save();
 
   // Create or update live Profile database document
+  const companyDetails = draft.companyDetails || {};
+  const contactDetails = draft.contactDetails || {};
+  const personalDetails = draft.personalDetails || {};
+
   await Profile.findOneAndUpdate(
     { userId },
     {
@@ -562,38 +566,38 @@ export async function publishOnboarding(userId) {
         draft.profileType === "professional"
           ? draft.professionalCategory?.label || ""
           : "",
-      employmentType: draft.personalDetails?.employmentType || "self_employed",
-      designation: draft.personalDetails?.designation || "",
-      yearsOfExperience: draft.personalDetails?.yearsOfExperience || null,
-      practiceName: draft.personalDetails?.practiceName || "",
-      department: draft.personalDetails?.department || "",
-      workLocation: draft.personalDetails?.workLocation || "",
+      designation: personalDetails.designation || "",
+      yearsOfExperience: personalDetails.yearsOfExperience || null,
+      practiceName: personalDetails.practiceName || "",
+      department: personalDetails.department || "",
+      workLocation: personalDetails.workLocation || "",
 
       title:
-        draft.personalDetails?.title ||
-        (user.firstName
-          ? `${user.firstName} ${user.lastName}`.trim()
-          : user.name),
+        draft.profileType === "business"
+          ? companyDetails.companyName || (user.firstName ? `${user.firstName} ${user.lastName}`.trim() : user.name)
+          : personalDetails.title || (user.firstName ? `${user.firstName} ${user.lastName}`.trim() : user.name),
       bio:
-        draft.profileType === "professional"
-          ? draft.personalDetails?.bio || ""
-          : draft.companyDetails?.description || "",
-      avatarUrl: draft.personalDetails?.avatarUrl || user.avatarUrl || "",
-      coverImageUrl: draft.personalDetails?.coverImageUrl || "",
-      languages: draft.personalDetails?.languages || [],
-      skills: draft.personalDetails?.skills || [],
-      certifications: draft.personalDetails?.certifications || [],
+        companyDetails.bio ||
+        companyDetails.description ||
+        personalDetails.bio ||
+        "",
+      avatarUrl: personalDetails.avatarUrl || user.avatarUrl || "",
+      coverImageUrl: personalDetails.coverImageUrl || "",
+      languages: personalDetails.languages || [],
+      skills: personalDetails.skills || [],
+      certifications: personalDetails.certifications || [],
       experience: draft.experience || [],
 
-      companyName: draft.companyDetails?.companyName || "",
-      tagline: draft.companyDetails?.tagline || "",
-      description: draft.companyDetails?.description || "",
+      companyName: companyDetails.companyName || "",
+      headline: companyDetails.tagline || draft.aiContent?.headline || "",
+      tagline: companyDetails.tagline || draft.aiContent?.headline || "",
+      description: companyDetails.description || "",
       logoUrl: draft.logo?.url || "",
-      gstNumber: draft.companyDetails?.gstNumber || "",
-      registrationDetails: draft.companyDetails?.registrationDetails || "",
-      serviceArea: draft.companyDetails?.serviceArea || "",
-      foundedYear: draft.companyDetails?.foundedYear || null,
-      teamSize: draft.companyDetails?.teamSize || null,
+      gstNumber: companyDetails.gstNumber || "",
+      registrationDetails: companyDetails.registrationDetails || "",
+      serviceArea: companyDetails.serviceArea || "",
+      foundedYear: companyDetails.foundedYear || null,
+      teamSize: companyDetails.teamSize || null,
       theme: draft.theme || {
         key: "aurora",
         name: "Aurora",
@@ -612,15 +616,15 @@ export async function publishOnboarding(userId) {
         customLinks: [],
       },
       contactDetails: {
-        email: draft.contactDetails?.email || user.email || "",
-        phone: draft.contactDetails?.phone || user.phone || "",
-        whatsAppNumber: draft.contactDetails?.whatsAppNumber || "",
+        email: contactDetails.email || companyDetails.email || user.email || "",
+        phone: contactDetails.phone || companyDetails.phone || user.phone || "",
+        whatsAppNumber: contactDetails.whatsAppNumber || "",
       },
       location: {
-        address: draft.contactDetails?.address || "",
-        city: draft.companyDetails?.city || "",
-        country: draft.companyDetails?.country || "",
-        mapsEmbedUrl: draft.contactDetails?.mapsEmbedUrl || "",
+        address: contactDetails.address || "",
+        city: companyDetails.city || contactDetails.city || "",
+        country: companyDetails.country || contactDetails.country || "",
+        mapsEmbedUrl: contactDetails.mapsEmbedUrl || "",
       },
       visibility: "public",
     },

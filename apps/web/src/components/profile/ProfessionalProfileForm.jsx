@@ -3,6 +3,7 @@ import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import { Button } from "../ui/Button";
 import { CoverImageUpload } from "./CoverImageUpload";
+import { AvatarImageUpload } from "./AvatarImageUpload";
 
 export function ProfessionalProfileForm({ form, activeTab }) {
   const { register, watch, setValue, formState } = form;
@@ -10,7 +11,6 @@ export function ProfessionalProfileForm({ form, activeTab }) {
   const experienceList = watch("experience") || [];
   const socialLinks = watch("socialLinks") || {};
   const customLinks = socialLinks.customLinks || [];
-  const employmentType = watch("employmentType") || "self_employed";
 
   const [newExp, setNewExp] = useState({
     title: "",
@@ -77,32 +77,44 @@ export function ProfessionalProfileForm({ form, activeTab }) {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
-            <Input
-              label="Full Name *"
-              placeholder="E.g., Sarah Connor"
-              {...register("title")}
-              error={formState.errors.title?.message}
-            />
-            <Input
-              label="Avatar Image URL"
-              placeholder="https://cloudinary.com/avatar.jpg"
-              {...register("avatarUrl")}
-              error={formState.errors.avatarUrl?.message}
-            />
-            <Input
-              label="Industry"
-              placeholder="E.g., Cybersecurity / Healthcare / Finance"
-              {...register("industry")}
-              error={formState.errors.industry?.message}
-            />
-            <Input
-              label="Years of Experience"
-              type="number"
-              placeholder="E.g., 8"
-              {...register("yearsOfExperience", { valueAsNumber: true })}
-              error={formState.errors.yearsOfExperience?.message}
-            />
+            <div className="sm:col-span-2 grid gap-6 sm:grid-cols-3">
+              <Input
+                label="Full Name *"
+                placeholder="E.g., Sarah Connor"
+                {...register("title")}
+                error={formState.errors.title?.message}
+              />
+              <Input
+                label="Industry"
+                placeholder="E.g., Cybersecurity / Healthcare / Finance"
+                {...register("industry")}
+                error={formState.errors.industry?.message}
+              />
+              <Input
+                label="Years of Experience"
+                type="number"
+                placeholder="E.g., 8"
+                {...register("yearsOfExperience", { valueAsNumber: true })}
+                error={formState.errors.yearsOfExperience?.message}
+              />
+            </div>
+
             <div className="sm:col-span-2">
+              <Input
+                label="Professional Headline / Value Proposition"
+                placeholder="E.g., Senior Cloud Architect & DevOps Consultant"
+                {...register("tagline")}
+                error={formState.errors.tagline?.message}
+                hint="A concise one-line headline summarizing your professional expertise."
+              />
+            </div>
+            <div className="sm:col-span-2 grid gap-4.5 sm:grid-cols-2">
+              <AvatarImageUpload
+                value={watch("avatarUrl")}
+                onChange={(val) =>
+                  setValue("avatarUrl", val, { shouldDirty: true })
+                }
+              />
               <CoverImageUpload
                 value={watch("coverImageUrl")}
                 onChange={(val) =>
@@ -111,79 +123,29 @@ export function ProfessionalProfileForm({ form, activeTab }) {
               />
             </div>
 
-            <div className="sm:col-span-2 space-y-2">
-              <label className="text-xs font-semibold text-slate-300 block">
-                Employment Status
-              </label>
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2 cursor-pointer text-xs text-white">
-                  <input
-                    type="radio"
-                    value="self_employed"
-                    checked={employmentType === "self_employed"}
-                    onChange={() =>
-                      setValue("employmentType", "self_employed", {
-                        shouldDirty: true,
-                      })
-                    }
-                    className="text-brand-500 bg-white/5 border-white/10"
-                  />
-                  Self-Employed / Freelance
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer text-xs text-white">
-                  <input
-                    type="radio"
-                    value="employed"
-                    checked={employmentType === "employed"}
-                    onChange={() =>
-                      setValue("employmentType", "employed", {
-                        shouldDirty: true,
-                      })
-                    }
-                    className="text-brand-500 bg-white/5 border-white/10"
-                  />
-                  Employed
-                </label>
-              </div>
-            </div>
-
-            {employmentType === "employed" ? (
-              <>
-                <Input
-                  label="Company Name *"
-                  placeholder="Connor Inc."
-                  {...register("companyName")}
-                />
-                <Input
-                  label="Job Title *"
-                  placeholder="Senior Consultant"
-                  {...register("designation")}
-                />
-                <Input
-                  label="Department (Optional)"
-                  placeholder="Security Operations"
-                  {...register("department")}
-                />
-                <Input
-                  label="Work Location (Optional)"
-                  placeholder="Mumbai, MH, India"
-                  {...register("workLocation")}
-                />
-              </>
-            ) : (
-              <>
-                <Input
-                  label="Brand Name (Optional)"
-                  placeholder="Connor Advisory"
-                  {...register("practiceName")}
-                />
-                <Input
-                  label="Service Area (Optional)"
-                  placeholder="E.g., Worldwide or Local"
-                  {...register("workLocation")}
-                />
-              </>
-            )}
+            <Input
+              label="Job Title *"
+              required
+              placeholder="Senior Consultant"
+              {...register("designation")}
+            />
+            <Input
+              label="Department (Optional)"
+              placeholder="Security Operations"
+              {...register("department")}
+            />
+            <Input
+              label="Work Location / Service Area (Optional)"
+              placeholder="Mumbai, MH, India"
+              {...register("workLocation")}
+            />
+            <Input
+              label="Languages"
+              placeholder="English, Spanish"
+              {...register("languagesRaw")}
+              error={formState.errors.languagesRaw?.message}
+              hint="Comma separated values"
+            />
           </div>
 
           <Textarea
@@ -194,14 +156,7 @@ export function ProfessionalProfileForm({ form, activeTab }) {
             hint="Write a brief overview. Highlight accomplishments and core credentials."
           />
 
-          <div className="grid gap-4.5 sm:grid-cols-3">
-            <Input
-              label="Languages"
-              placeholder="English, Spanish"
-              {...register("languagesRaw")}
-              error={formState.errors.languagesRaw?.message}
-              hint="Comma separated values"
-            />
+          <div className="grid gap-6 sm:grid-cols-2">
             <Input
               label="Core Skills"
               placeholder="React, AWS, Risk Audit"

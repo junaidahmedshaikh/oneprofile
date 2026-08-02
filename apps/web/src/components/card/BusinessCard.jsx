@@ -20,10 +20,12 @@ export function BusinessCard({ profile, st, onOpenShare, onOpenQr }) {
     ? profile.title || "Professional"
     : profile.companyName || "Business";
   const subtitle = isProfessional
-    ? profile.designation ||
+    ? profile.headline ||
+      profile.designation ||
+      profile.tagline ||
       profile.professionalCategory ||
       "Independent Professional"
-    : profile.tagline || profile.businessCategory || "Premium Services";
+    : profile.headline || profile.tagline || profile.businessCategory || "Premium Services";
   const avatar = isProfessional
     ? profile.avatarUrl
     : profile.logoUrl || profile.avatarUrl;

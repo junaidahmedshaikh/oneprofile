@@ -4,7 +4,7 @@ import { profileApi } from "../../lib/profileApi";
 import { Spinner } from "../ui/Spinner";
 import { UploadCloud, X } from "lucide-react";
 
-export function CoverImageUpload({ value, onChange }) {
+export function AvatarImageUpload({ value, onChange }) {
   const queryClient = useQueryClient();
   const [error, setError] = useState("");
   const [isDragActive, setIsDragActive] = useState(false);
@@ -12,16 +12,17 @@ export function CoverImageUpload({ value, onChange }) {
 
   const uploadMutation = useMutation({
     mutationFn: async (dataUri) => {
-      const response = await profileApi.uploadCover({ dataUri });
+      const response = await profileApi.uploadAvatar({ dataUri });
       return response.data.data;
     },
     onSuccess: (data) => {
-      onChange(data.coverImageUrl || "");
+      const newAvatarUrl = data.avatarUrl || data.logoUrl || "";
+      onChange(newAvatarUrl);
       queryClient.invalidateQueries({ queryKey: ["profile", "me"] });
       setError("");
     },
     onError: (err) => {
-      setError(err?.response?.data?.message || "Failed to upload banner image");
+      setError(err?.response?.data?.message || "Failed to upload avatar image");
     },
   });
 
@@ -80,7 +81,7 @@ export function CoverImageUpload({ value, onChange }) {
   return (
     <div className="space-y-2">
       <label className="text-3xs font-bold text-slate-400 block uppercase tracking-wider h-5 flex items-center">
-        Profile Cover Banner
+        Profile Avatar Photo
       </label>
 
       <div
@@ -105,27 +106,27 @@ export function CoverImageUpload({ value, onChange }) {
         />
 
         {value ? (
-          <div className="relative w-full h-full flex items-center justify-center">
+          <div className="relative w-full h-full flex items-center justify-center gap-4">
             <img
               src={value}
-              alt="Cover Banner Preview"
-              className="absolute inset-0 h-full w-full object-cover rounded-xl"
+              alt="Avatar Preview"
+              className="h-28 w-28 object-cover rounded-2xl border-2 border-white/[0.12] shadow-md shrink-0"
             />
-            <div className="absolute inset-0 bg-[#000000]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center gap-3 backdrop-blur-[2px]">
+            <div className="flex flex-col gap-2 shrink-0">
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="h-8.5 px-3.5 bg-white text-slate-950 rounded-xl text-3xs font-bold flex items-center justify-center hover:bg-slate-200 active:scale-95 transition-all shadow-sm"
+                className="h-8.5 px-3.5 bg-white text-slate-950 rounded-xl text-3xs font-bold hover:bg-slate-200 active:scale-95 transition-all shadow-sm flex items-center justify-center"
               >
-                Replace Banner
+                Change Photo
               </button>
               <button
                 type="button"
                 onClick={handleRemove}
-                className="h-8.5 px-3.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded-xl text-3xs font-bold flex items-center justify-center gap-1.5 hover:bg-red-500/30 active:scale-95 transition-all"
+                className="h-8.5 px-3.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded-xl text-3xs font-bold hover:bg-red-500/30 active:scale-95 transition-all flex items-center justify-center gap-1.5"
               >
                 <X className="w-3.5 h-3.5" />
                 <span>Remove</span>
@@ -138,7 +139,7 @@ export function CoverImageUpload({ value, onChange }) {
               <UploadCloud className="w-5 h-5 text-slate-400" />
             </div>
             <span className="text-3xs font-bold uppercase tracking-wider text-slate-300">
-              Drag & Drop Banner or <span className="text-brand-400">Browse</span>
+              Drag & Drop Avatar or <span className="text-brand-400">Browse</span>
             </span>
             <span className="text-4xs text-slate-500">
               JPG, PNG, or WebP (Max 5MB)
@@ -150,7 +151,7 @@ export function CoverImageUpload({ value, onChange }) {
           <div className="absolute inset-0 bg-[#07080d]/90 flex flex-col items-center justify-center gap-2 z-10">
             <Spinner />
             <span className="text-4xs font-bold uppercase tracking-widest text-slate-400 animate-pulse">
-              Uploading Banner...
+              Uploading Avatar...
             </span>
           </div>
         )}

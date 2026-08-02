@@ -80,7 +80,6 @@ const onboardingDraftSchema = new mongoose.Schema(
       languages: [{ type: String }],
       skills: [{ type: String }],
       certifications: [{ type: String }],
-      employmentType: { type: String, enum: ['self_employed', 'employed'], default: 'self_employed' },
       designation: { type: String, default: '' },
       yearsOfExperience: { type: Number, default: null },
       practiceName: { type: String, default: '' },

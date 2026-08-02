@@ -1,7 +1,8 @@
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
+import { AvatarImageUpload } from "./AvatarImageUpload";
 
-export function PersonalTab({ register, formState }) {
+export function PersonalTab({ register, formState, watch, setValue }) {
   return (
     <div className="space-y-5 animate-fadeUp">
       <div className="space-y-1">
@@ -10,18 +11,38 @@ export function PersonalTab({ register, formState }) {
       </div>
 
       <div className="grid gap-4.5 sm:grid-cols-2">
-        <Input
-          label="Professional Title / Name"
-          placeholder="E.g., Sarah Connor"
-          {...register("title")}
-          error={formState.errors.title?.message}
-        />
-        <Input
-          label="Avatar Image URL"
-          placeholder="https://cloudinary.com/avatar.jpg"
-          {...register("avatarUrl")}
-          error={formState.errors.avatarUrl?.message}
-        />
+        <div className="sm:col-span-2">
+          <Input
+            label="Professional Title / Name"
+            placeholder="E.g., Sarah Connor"
+            {...register("title")}
+            error={formState.errors.title?.message}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <Input
+            label="Professional Headline / Value Proposition"
+            placeholder="E.g., Senior Cloud Architect & DevOps Consultant"
+            {...register("tagline")}
+            error={formState.errors.tagline?.message}
+            hint="A concise one-line headline summarizing your professional expertise."
+          />
+        </div>
+        <div className="sm:col-span-2">
+          {watch && setValue ? (
+            <AvatarImageUpload
+              value={watch("avatarUrl")}
+              onChange={(val) => setValue("avatarUrl", val, { shouldDirty: true })}
+            />
+          ) : (
+            <Input
+              label="Avatar Image URL"
+              placeholder="https://cloudinary.com/avatar.jpg"
+              {...register("avatarUrl")}
+              error={formState.errors.avatarUrl?.message}
+            />
+          )}
+        </div>
         <div className="sm:col-span-2">
           <Input
             label="Profile Cover Image URL"
