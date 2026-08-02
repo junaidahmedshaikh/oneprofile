@@ -72,28 +72,34 @@ export function ProfessionalPublicProfile({ profile, leadForm }) {
   const openStatus = getOperatingStatus(workingHours);
 
   const handleScrollToContact = () => {
-    const whatsAppNumber = profile?.contactDetails?.whatsAppNumber;
+    const whatsAppTarget =
+      profile?.contactDetails?.whatsAppNumber || profile?.contactDetails?.phone;
     const phoneNumber = profile?.contactDetails?.phone;
-    const companyName =
-      profile?.companyName || profile?.title || "your business";
+    const email = profile?.contactDetails?.email;
+    const name = profile?.title || profile?.companyName || "you";
 
-    const message = `Hello,
-
-I'm interested in connecting with ${profile?.slug}.
-
-Could you please share more details about your offerings, pricing, and availability?
-
+    const message = `Hello ${name},
+I'm interested in connecting with you and learning more about your work and services.
+Could you please share more details about what you offer, pricing, and availability?
+Looking forward to connecting with you.
 Thank you.`;
 
-    if (whatsAppNumber) {
-      const cleanWhatsApp = whatsAppNumber.replace(/[^0-9]/g, "");
+    if (whatsAppTarget) {
+      const cleanWhatsApp = whatsAppTarget.replace(/[^0-9]/g, "");
       const encodedMessage = encodeURIComponent(message);
       window.open(
         `https://wa.me/${cleanWhatsApp}?text=${encodedMessage}`,
         "_blank",
       );
     } else if (phoneNumber) {
-      window.location.href = `tel:${phoneNumber}`;
+      window.location.href = `tel:${phoneNumber.replace(/[\s\(\)-]/g, "")}`;
+    } else if (email) {
+      window.location.href = `mailto:${email}?subject=${encodeURIComponent(`Inquiry for ${name}`)}&body=${encodeURIComponent(message)}`;
+    } else {
+      const elem = document.getElementById("contact-section");
+      if (elem) {
+        elem.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 
@@ -229,14 +235,11 @@ Thank you.`;
                       BACKGROUND
                     </span>
                     <h2 className="text-lg sm:text-xl font-bold text-[#111827]">
-                      Professional Background
+                      Professional Summary
                     </h2>
                   </div>
 
                   <div className="space-y-2 pt-1">
-                    <span className="text-3xs font-bold uppercase tracking-wider text-[#6B7280] block">
-                      Biography Overview
-                    </span>
                     {profile.bio ? (
                       <p className="text-xs sm:text-sm text-[#4B5563] leading-relaxed whitespace-pre-wrap font-normal">
                         {profile.bio}
@@ -251,9 +254,6 @@ Thank you.`;
 
                 {/* Right side: Key Credentials & Statistic Chips */}
                 <div className="bg-slate-50/80 border border-[#E5E7EB] rounded-2xl p-5 sm:p-6 space-y-4">
-                  <span className="text-3xs font-bold uppercase tracking-wider text-[#6B7280] block">
-                    Key Credentials
-                  </span>
                   <div className="grid gap-3.5 sm:grid-cols-2 text-xs">
                     {profile.designation && (
                       <div className="bg-white p-3 rounded-xl border border-slate-200/70 shadow-2xs">

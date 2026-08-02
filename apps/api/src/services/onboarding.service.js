@@ -156,7 +156,6 @@ function buildSuggestion({ industry, businessCategory, companyName, tagline }) {
       "Built for fast decision-making",
       "Optimized for polished online presence",
     ],
-    ctaLabel: "Get in touch",
   };
 }
 
@@ -270,7 +269,6 @@ export async function saveOnboardingDraft(userId, payload) {
       headline: payload.aiContent.headline || "",
       summary: payload.aiContent.summary || "",
       benefits: payload.aiContent.benefits || [],
-      ctaLabel: payload.aiContent.ctaLabel || "",
     };
   }
 
@@ -315,7 +313,6 @@ export async function completeStep(userId, step, payload = {}) {
       headline: payload.aiContent.headline || "",
       summary: payload.aiContent.summary || "",
       benefits: payload.aiContent.benefits || [],
-      ctaLabel: payload.aiContent.ctaLabel || "",
     };
   }
 
@@ -618,7 +615,12 @@ export async function publishOnboarding(userId) {
       contactDetails: {
         email: contactDetails.email || companyDetails.email || user.email || "",
         phone: contactDetails.phone || companyDetails.phone || user.phone || "",
-        whatsAppNumber: contactDetails.whatsAppNumber || "",
+        whatsAppNumber:
+          contactDetails.whatsAppNumber ||
+          companyDetails.whatsAppNumber ||
+          contactDetails.phone ||
+          companyDetails.phone ||
+          "",
       },
       location: {
         address: contactDetails.address || "",

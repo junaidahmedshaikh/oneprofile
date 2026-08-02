@@ -63,7 +63,6 @@ const initialState = {
   aiContent: {
     headline: '',
     summary: '',
-    ctaLabel: '',
   },
   experience: [],
   activeStep: 'industry',

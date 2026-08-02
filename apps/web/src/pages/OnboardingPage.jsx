@@ -41,6 +41,7 @@ const companySchema = z.object({
   website: z.string().optional().or(z.literal("")),
   email: z.string().optional().or(z.literal("")),
   phone: z.string().optional().or(z.literal("")),
+  whatsAppNumber: z.string().optional().or(z.literal("")),
   city: z.string().optional().or(z.literal("")),
   country: z.string().optional().or(z.literal("")),
   tagline: z.string().optional().or(z.literal("")),
@@ -332,6 +333,7 @@ export function OnboardingPage() {
       website: "",
       email: "",
       phone: "",
+      whatsAppNumber: "",
       city: "",
       country: "",
       tagline: "",
@@ -348,7 +350,6 @@ export function OnboardingPage() {
     defaultValues: {
       headline: "",
       summary: "",
-      ctaLabel: "",
       personalDetails: {
         title: "",
         bio: "",
@@ -434,27 +435,37 @@ export function OnboardingPage() {
     const currentCompany = companyForm.getValues();
 
     companyForm.reset({
-      companyName: currentCompany.companyName || remoteCompany.companyName || "",
+      companyName:
+        currentCompany.companyName || remoteCompany.companyName || "",
       legalName: currentCompany.legalName || remoteCompany.legalName || "",
       website: currentCompany.website || remoteCompany.website || "",
       email: currentCompany.email || remoteCompany.email || "",
       phone: currentCompany.phone || remoteCompany.phone || "",
+      whatsAppNumber:
+        currentCompany.whatsAppNumber ||
+        remoteCompany.whatsAppNumber ||
+        stateQuery.data.contactDetails?.whatsAppNumber ||
+        "",
       city: currentCompany.city || remoteCompany.city || "",
       country: currentCompany.country || remoteCompany.country || "",
       tagline: currentCompany.tagline || remoteCompany.tagline || "",
-      description: currentCompany.description || remoteCompany.description || "",
+      description:
+        currentCompany.description || remoteCompany.description || "",
       gstNumber: currentCompany.gstNumber || remoteCompany.gstNumber || "",
       registrationDetails:
-        currentCompany.registrationDetails || remoteCompany.registrationDetails || "",
-      serviceArea: currentCompany.serviceArea || remoteCompany.serviceArea || "",
-      foundedYear: currentCompany.foundedYear || remoteCompany.foundedYear || null,
+        currentCompany.registrationDetails ||
+        remoteCompany.registrationDetails ||
+        "",
+      serviceArea:
+        currentCompany.serviceArea || remoteCompany.serviceArea || "",
+      foundedYear:
+        currentCompany.foundedYear || remoteCompany.foundedYear || null,
       teamSize: currentCompany.teamSize || remoteCompany.teamSize || null,
     });
 
     contentForm.reset({
       headline: stateQuery.data.aiContent?.headline || "",
       summary: stateQuery.data.aiContent?.summary || "",
-      ctaLabel: stateQuery.data.aiContent?.ctaLabel || "",
       personalDetails: {
         title: stateQuery.data.personalDetails?.title || "",
         bio: stateQuery.data.personalDetails?.bio || "",
@@ -537,7 +548,8 @@ export function OnboardingPage() {
     const currentFormValues = companyForm.getValues();
     const reduxValues = onboardingState.companyDetails || {};
     return {
-      companyName: currentFormValues.companyName || reduxValues.companyName || "",
+      companyName:
+        currentFormValues.companyName || reduxValues.companyName || "",
       legalName: currentFormValues.legalName || reduxValues.legalName || "",
       website: currentFormValues.website || reduxValues.website || "",
       email: currentFormValues.email || reduxValues.email || "",
@@ -545,12 +557,17 @@ export function OnboardingPage() {
       city: currentFormValues.city || reduxValues.city || "",
       country: currentFormValues.country || reduxValues.country || "",
       tagline: currentFormValues.tagline || reduxValues.tagline || "",
-      description: currentFormValues.description || reduxValues.description || "",
+      description:
+        currentFormValues.description || reduxValues.description || "",
       gstNumber: currentFormValues.gstNumber || reduxValues.gstNumber || "",
       registrationDetails:
-        currentFormValues.registrationDetails || reduxValues.registrationDetails || "",
-      serviceArea: currentFormValues.serviceArea || reduxValues.serviceArea || "",
-      foundedYear: currentFormValues.foundedYear || reduxValues.foundedYear || null,
+        currentFormValues.registrationDetails ||
+        reduxValues.registrationDetails ||
+        "",
+      serviceArea:
+        currentFormValues.serviceArea || reduxValues.serviceArea || "",
+      foundedYear:
+        currentFormValues.foundedYear || reduxValues.foundedYear || null,
       teamSize: currentFormValues.teamSize || reduxValues.teamSize || null,
     };
   };
@@ -577,7 +594,10 @@ export function OnboardingPage() {
         : undefined,
       companyDetails: {
         ...companyValues,
-        tagline: selectedProfileType === "professional" ? (contentValues.headline || companyValues.tagline || "") : (companyValues.tagline || ""),
+        tagline:
+          selectedProfileType === "professional"
+            ? contentValues.headline || companyValues.tagline || ""
+            : companyValues.tagline || "",
       },
       theme: selectedTheme,
       completedSteps: onboardingState.completedSteps,
@@ -586,7 +606,6 @@ export function OnboardingPage() {
       aiContent: {
         headline: contentValues.headline || "",
         summary: contentValues.summary || "",
-        ctaLabel: contentValues.ctaLabel || "",
       },
       personalDetails: {
         title: contentValues.personalDetails?.title || "",
@@ -614,7 +633,23 @@ export function OnboardingPage() {
         workLocation: contentValues.personalDetails?.workLocation || "",
         industry: contentValues.personalDetails?.industry || "",
       },
-      contactDetails: contentValues.contactDetails || {},
+      contactDetails: {
+        ...(contentValues.contactDetails || {}),
+        email:
+          selectedProfileType === "business"
+            ? companyValues.email || contentValues.contactDetails?.email || ""
+            : contentValues.contactDetails?.email || "",
+        phone:
+          selectedProfileType === "business"
+            ? companyValues.phone || contentValues.contactDetails?.phone || ""
+            : contentValues.contactDetails?.phone || "",
+        whatsAppNumber:
+          selectedProfileType === "business"
+            ? companyValues.whatsAppNumber ||
+              contentValues.contactDetails?.whatsAppNumber ||
+              ""
+            : contentValues.contactDetails?.whatsAppNumber || "",
+      },
       socialLinks: contentValues.socialLinks || {},
     });
   };
@@ -626,13 +661,13 @@ export function OnboardingPage() {
     onSuccess: async (res) => {
       dispatch(setOnboardingError(null));
       await queryClient.invalidateQueries({ queryKey: ["onboarding", "me"] });
-      
+
       // Sync Redux auth user onboardingStatus to prevent route redirection
       dispatch(
         setUser({
           ...authUser,
           onboardingStatus: "in_progress",
-        })
+        }),
       );
 
       const draft = res?.data?.data?.draft;
@@ -669,13 +704,14 @@ export function OnboardingPage() {
       dispatch(setOnboardingError(null));
       await queryClient.invalidateQueries({ queryKey: ["onboarding", "me"] });
       await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      
+
       // Sync Redux auth user onboardingStatus
       dispatch(
         setUser({
           ...authUser,
-          onboardingStatus: variables?.step === "content" ? "published" : "in_progress",
-        })
+          onboardingStatus:
+            variables?.step === "content" ? "published" : "in_progress",
+        }),
       );
 
       const draft = res?.data?.data?.draft;
@@ -724,7 +760,10 @@ export function OnboardingPage() {
           : undefined,
         companyDetails: {
           ...companyValues,
-          tagline: selectedProfileType === "professional" ? (contentValues.headline || companyValues.tagline || "") : (companyValues.tagline || ""),
+          tagline:
+            selectedProfileType === "professional"
+              ? contentValues.headline || companyValues.tagline || ""
+              : companyValues.tagline || "",
         },
         theme: selectedTheme,
         completedSteps: onboardingState.completedSteps,
@@ -733,7 +772,6 @@ export function OnboardingPage() {
         aiContent: {
           headline: contentValues.headline || "",
           summary: contentValues.summary || "",
-          ctaLabel: contentValues.ctaLabel || "",
         },
         personalDetails: {
           title: contentValues.personalDetails?.title,
@@ -763,7 +801,23 @@ export function OnboardingPage() {
           workLocation: contentValues.personalDetails?.workLocation || "",
           industry: contentValues.personalDetails?.industry || "",
         },
-        contactDetails: contentValues.contactDetails,
+        contactDetails: {
+          ...(contentValues.contactDetails || {}),
+          email:
+            selectedProfileType === "business"
+              ? companyValues.email || contentValues.contactDetails?.email || ""
+              : contentValues.contactDetails?.email || "",
+          phone:
+            selectedProfileType === "business"
+              ? companyValues.phone || contentValues.contactDetails?.phone || ""
+              : contentValues.contactDetails?.phone || "",
+          whatsAppNumber:
+            selectedProfileType === "business"
+              ? companyValues.whatsAppNumber ||
+                contentValues.contactDetails?.whatsAppNumber ||
+                ""
+              : contentValues.contactDetails?.whatsAppNumber || "",
+        },
         socialLinks: contentValues.socialLinks,
       });
       return onboardingApi.publish();
@@ -801,7 +855,6 @@ export function OnboardingPage() {
   // navigate("/dashboard", { replace: true });
   // });
 
-
   const addCustomLink = () => {
     setUrlError("");
     if (!newLink.title || !newLink.url) {
@@ -809,11 +862,18 @@ export function OnboardingPage() {
       return;
     }
     try {
-      const urlWithProtocol = newLink.url.match(/^https?:\/\//i) ? newLink.url : `https://${newLink.url}`;
+      const urlWithProtocol = newLink.url.match(/^https?:\/\//i)
+        ? newLink.url
+        : `https://${newLink.url}`;
       new URL(urlWithProtocol); // validates URL
 
-      const titleWithIcon = newLink.icon ? `[${newLink.icon}] ${newLink.title}` : newLink.title;
-      contentForm.setValue("socialLinks.customLinks", [...customLinks, { title: titleWithIcon, url: urlWithProtocol }]);
+      const titleWithIcon = newLink.icon
+        ? `[${newLink.icon}] ${newLink.title}`
+        : newLink.title;
+      contentForm.setValue("socialLinks.customLinks", [
+        ...customLinks,
+        { title: titleWithIcon, url: urlWithProtocol },
+      ]);
       setNewLink({ title: "", url: "", icon: "" });
       setShowLinkFields(false);
     } catch (e) {
@@ -907,7 +967,8 @@ export function OnboardingPage() {
           skillsRaw: contentValues.personalDetails?.skillsRaw,
           certificationsRaw: contentValues.personalDetails?.certificationsRaw,
           designation: contentValues.personalDetails?.designation || "",
-          yearsOfExperience: contentValues.personalDetails?.yearsOfExperience || "",
+          yearsOfExperience:
+            contentValues.personalDetails?.yearsOfExperience || "",
           practiceName: contentValues.personalDetails?.practiceName || "",
           department: contentValues.personalDetails?.department || "",
           workLocation: contentValues.personalDetails?.workLocation || "",
@@ -916,7 +977,7 @@ export function OnboardingPage() {
         contactDetails: contentValues.contactDetails,
         socialLinks: contentValues.socialLinks,
         completedSteps: updatedCompleted,
-      })
+      }),
     );
 
     if (step === "content") {
@@ -998,7 +1059,9 @@ export function OnboardingPage() {
         <Alert variant="error">{onboardingState.error}</Alert>
       ) : null}
       {resumeMessage ? <Alert variant="success">{resumeMessage}</Alert> : null}
-      {successMessage ? <Alert variant="success">{successMessage}</Alert> : null}
+      {successMessage ? (
+        <Alert variant="success">{successMessage}</Alert>
+      ) : null}
 
       <div className="flex flex-col gap-4.5 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-1 select-none">
@@ -1009,7 +1072,8 @@ export function OnboardingPage() {
             Get published in under 5 minutes.
           </h1>
           <p className="max-w-xl text-xs leading-relaxed text-slate-400">
-            Let's structure your digital business card and profile. Click Save & Exit to preserve your progress.
+            Let's structure your digital business card and profile. Click Save &
+            Exit to preserve your progress.
           </p>
         </div>
 
@@ -1240,12 +1304,6 @@ export function OnboardingPage() {
                         }
                       />
                       <Input
-                        label="Corporate Website Link"
-                        placeholder="https://website.com"
-                        {...companyForm.register("website")}
-                        error={companyForm.formState.errors.website?.message}
-                      />
-                      <Input
                         label="Business Email"
                         placeholder="hello@company.com"
                         {...companyForm.register("email")}
@@ -1256,6 +1314,14 @@ export function OnboardingPage() {
                         placeholder="+91 9223047765"
                         {...companyForm.register("phone")}
                         error={companyForm.formState.errors.phone?.message}
+                      />
+                      <Input
+                        label="WhatsApp Direct Connection"
+                        placeholder="+91 9223047765"
+                        {...companyForm.register("whatsAppNumber")}
+                        error={
+                          companyForm.formState.errors.whatsAppNumber?.message
+                        }
                       />
 
                       <Input
@@ -1275,7 +1341,7 @@ export function OnboardingPage() {
                       />
 
                       <Input
-                        label="GST Identification Number (GSTIN) - Optional"
+                        label="GST Identification Number (GSTIN)"
                         placeholder="E.g., 22AAAAA0000A1Z5"
                         {...companyForm.register("gstNumber")}
                       />
@@ -1308,7 +1374,7 @@ export function OnboardingPage() {
                       />
                     </div>
                     <Textarea
-                      label="Business Summary Description"
+                      label="Business Description"
                       placeholder="Detailed description of your services..."
                       {...companyForm.register("description")}
                     />
@@ -1379,16 +1445,12 @@ export function OnboardingPage() {
                       <Input
                         label="Designation / Job Title"
                         placeholder="Senior Consultant"
-                        {...contentForm.register(
-                          "personalDetails.designation",
-                        )}
+                        {...contentForm.register("personalDetails.designation")}
                       />
                       <Input
                         label="Department (Optional)"
                         placeholder="Advisory"
-                        {...contentForm.register(
-                          "personalDetails.department",
-                        )}
+                        {...contentForm.register("personalDetails.department")}
                       />
                       <Input
                         label="Work Location / Service Area (Optional)"
@@ -1607,35 +1669,39 @@ export function OnboardingPage() {
                       placeholder="E.g., Empowering businesses with software development"
                       {...contentForm.register("headline")}
                     />
-                    <Input
-                      label="Primary Button Link Label"
-                      placeholder="Connect Profile"
-                      {...contentForm.register("ctaLabel")}
-                    />
                   </div>
 
                   <span className="text-3xs font-bold uppercase tracking-wider text-brand-400 block border-b border-white/[0.05] pb-2 mt-4">
                     Contact & Social Links
                   </span>
                   <div className="grid gap-3.5 sm:grid-cols-2">
+                    {selectedProfileType === "professional" && (
+                      <>
+                        <Input
+                          label="Personal Email"
+                          placeholder="sarah@connor.com"
+                          {...contentForm.register("contactDetails.email")}
+                        />
+                        <Input
+                          label="Personal Phone Number"
+                          placeholder="+15551234"
+                          {...contentForm.register("contactDetails.phone")}
+                        />
+                        <Input
+                          label="WhatsApp Direct Connection Link"
+                          placeholder="+15551234"
+                          {...contentForm.register(
+                            "contactDetails.whatsAppNumber",
+                          )}
+                        />
+                      </>
+                    )}
                     <Input
-                      label={selectedProfileType === "business" ? "Business Email" : "Personal Email"}
-                      placeholder="sarah@connor.com"
-                      {...contentForm.register("contactDetails.email")}
-                    />
-                    <Input
-                      label={selectedProfileType === "business" ? "Business Phone Number" : "Personal Phone Number"}
-                      placeholder="+15551234"
-                      {...contentForm.register("contactDetails.phone")}
-                    />
-                    <Input
-                      label="WhatsApp Direct Connection Link"
-                      placeholder="+15551234"
-                      {...contentForm.register("contactDetails.whatsAppNumber")}
-                      hint="Includes country code, digits only"
-                    />
-                    <Input
-                      label={selectedProfileType === "business" ? "Company Website URL" : "Personal Website URL"}
+                      label={
+                        selectedProfileType === "business"
+                          ? "Company Website URL"
+                          : "Personal Website URL"
+                      }
                       placeholder="https://mywebsite.com"
                       {...contentForm.register("socialLinks.website")}
                     />
@@ -1685,7 +1751,7 @@ export function OnboardingPage() {
                   <span className="text-3xs font-bold uppercase tracking-wider text-brand-400 block border-b border-white/[0.05] pb-2 mt-4">
                     Custom Links
                   </span>
-                  
+
                   {!showLinkFields ? (
                     <Button
                       variant="secondary"

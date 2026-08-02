@@ -75,8 +75,10 @@ export function BusinessPublicProfile({ profile, leadForm }) {
   const openStatus = getOperatingStatus(workingHours);
 
   const handleScrollToContact = () => {
-    const whatsAppNumber = profile?.contactDetails?.whatsAppNumber;
+    const whatsAppTarget =
+      profile?.contactDetails?.whatsAppNumber || profile?.contactDetails?.phone;
     const phoneNumber = profile?.contactDetails?.phone;
+    const email = profile?.contactDetails?.email;
     const companyName =
       profile?.companyName || profile?.title || "your business";
 
@@ -85,50 +87,69 @@ I'm interested in connecting with ${companyName}.
 Could you please share more details about your offerings, pricing, and availability?
 Thank you.`;
 
-    if (whatsAppNumber) {
-      const cleanWhatsApp = whatsAppNumber.replace(/[^0-9]/g, "");
+    if (whatsAppTarget) {
+      const cleanWhatsApp = whatsAppTarget.replace(/[^0-9]/g, "");
       const encodedMessage = encodeURIComponent(message);
       window.open(
         `https://wa.me/${cleanWhatsApp}?text=${encodedMessage}`,
         "_blank",
       );
     } else if (phoneNumber) {
-      window.location.href = `tel:${phoneNumber}`;
+      window.location.href = `tel:${phoneNumber.replace(/[\s\(\)-]/g, "")}`;
+    } else if (email) {
+      window.location.href = `mailto:${email}?subject=${encodeURIComponent(`Inquiry for ${companyName}`)}&body=${encodeURIComponent(message)}`;
+    } else {
+      const elem = document.getElementById("contact-section");
+      if (elem) {
+        elem.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 
   const handleInquiry = (item, type) => {
-    const whatsAppNumber = profile.contactDetails?.whatsAppNumber;
-    const phoneNumber = profile.contactDetails?.phone;
+    const whatsAppTarget =
+      profile?.contactDetails?.whatsAppNumber || profile?.contactDetails?.phone;
+    const phoneNumber = profile?.contactDetails?.phone;
+    const email = profile?.contactDetails?.email;
 
     let message = "";
     if (type === "service") {
       message = `Hello,
 I'm interested in your service.
-Service:
-${item.title}
-${item.description ? `\nDescription:\n${item.description}\n` : ""}${item.price ? `\nStarting Price:\n${item.price}\n` : ""}
-Could you please provide more details, pricing, availability, and the next steps?
+Service: ${item.title}
+${item.description ? `Description: ${item.description}\n` : ""}${item.price ? `Price: ${item.price}\n` : ""}
+Could you please provide more details, pricing, availability, and next steps?
 Thank you.`;
     } else if (type === "product") {
       message = `Hello,
 I'm interested in this product.
-Product:
-${item.title}
-${item.description ? `\nDescription:\n${item.description}\n` : ""}${item.price ? `\nPrice:\n${item.price}\n` : ""}
-Could you please share more details about availability, delivery, customization options, and ordering process?
+Product: ${item.title}
+${item.description ? `Description: ${item.description}\n` : ""}${item.price ? `Price: ${item.price}\n` : ""}
+Could you please share more details about availability, delivery, and ordering process?
+Thank you.`;
+    } else {
+      message = `Hello,
+I'm interested in inquiring about ${item?.title || "your services"}.
+Could you please provide more information?
 Thank you.`;
     }
 
-    if (whatsAppNumber) {
-      const cleanWhatsApp = whatsAppNumber.replace(/[^0-9]/g, "");
+    if (whatsAppTarget) {
+      const cleanWhatsApp = whatsAppTarget.replace(/[^0-9]/g, "");
       const encodedMessage = encodeURIComponent(message);
       window.open(
         `https://wa.me/${cleanWhatsApp}?text=${encodedMessage}`,
         "_blank",
       );
     } else if (phoneNumber) {
-      window.location.href = `tel:${phoneNumber}`;
+      window.location.href = `tel:${phoneNumber.replace(/[\s\(\)-]/g, "")}`;
+    } else if (email) {
+      window.location.href = `mailto:${email}?subject=${encodeURIComponent(`Inquiry for ${item?.title || "Services"}`)}&body=${encodeURIComponent(message)}`;
+    } else {
+      const elem = document.getElementById("contact-section");
+      if (elem) {
+        elem.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 
@@ -190,13 +211,14 @@ Thank you.`;
                 {/* Social Proof Badges */}
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-[#6B7280]">
                   {profile.businessCategory && (
-                    <span className="font-semibold text-[#111827] px-2.5 py-0.5 rounded-md bg-slate-100">
+                    <span className="font-semibold text-[#111827] px-2.5 py-0.5 rounded-md ">
                       {profile.businessCategory}
                     </span>
                   )}
+                  {"•"}
                   {profile.location?.city && (
                     <span className="flex items-center gap-1 font-semibold text-[#111827]">
-                      <MapPin className="w-3.5 h-3.5 text-red-500" />{" "}
+                      <MapPin className="w-3.5 h-3.5 text-red-500" />
                       {profile.location.city}
                     </span>
                   )}
@@ -296,18 +318,19 @@ Thank you.`;
                       </span>
                     </div>
                   )}
-                  {profile.businessCategory && (
-                    <div className="bg-white p-3 rounded-xl border border-slate-200/70 shadow-2xs">
+
+                  {profile.serviceArea && (
+                    <div className="bg-white p-3 rounded-xl border border-slate-200/70 shadow-2xs ">
                       <span className="text-3xs text-[#6B7280] block font-bold uppercase">
-                        Category
+                        Service Area
                       </span>
                       <span className="font-bold text-[#111827] mt-0.5 block truncate">
-                        {profile.businessCategory}
+                        {profile.serviceArea}
                       </span>
                     </div>
                   )}
                   {profile.foundedYear && (
-                    <div className="bg-white p-3 rounded-xl border border-slate-200/70 shadow-2xs">
+                    <div className="bg-white p-3 rounded-xl border border-slate-200/70 shadow-2xs ">
                       <span className="text-3xs text-[#6B7280] block font-bold uppercase">
                         Founded Year
                       </span>
@@ -343,16 +366,6 @@ Thank you.`;
                       </span>
                       <span className="font-bold text-[#111827] mt-0.5 block truncate">
                         {profile.registrationDetails}
-                      </span>
-                    </div>
-                  )}
-                  {profile.serviceArea && (
-                    <div className="bg-white p-3 rounded-xl border border-slate-200/70 shadow-2xs sm:col-span-2">
-                      <span className="text-3xs text-[#6B7280] block font-bold uppercase">
-                        Service Area
-                      </span>
-                      <span className="font-bold text-[#111827] mt-0.5 block truncate">
-                        {profile.serviceArea}
                       </span>
                     </div>
                   )}

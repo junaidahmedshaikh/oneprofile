@@ -75,8 +75,15 @@ Thank you.`;
     }
   };
 
+  const whatsAppNumber =
+    profile?.contactDetails?.whatsAppNumber ||
+    profile?.contactDetails?.phone;
+
   const leadForm = (
-    <div className="bg-white border border-[#E5E7EB] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[24px] p-6 sm:p-8 space-y-6">
+    <div
+      id="contact-section"
+      className="bg-white border border-[#E5E7EB] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[24px] p-6 sm:p-8 space-y-6"
+    >
       <div className="space-y-1">
         <span className="text-3xs uppercase tracking-[0.25em] text-[#6B7280] font-bold block">
           COMMUNICATE
@@ -111,9 +118,9 @@ Thank you.`;
             <span>Email</span>
           </a>
         )}
-        {profile?.contactDetails?.whatsAppNumber && (
+        {whatsAppNumber && (
           <a
-            href={`https://wa.me/${profile.contactDetails.whatsAppNumber.replace(/[^0-9]/g, "")}`}
+            href={`https://wa.me/${whatsAppNumber.replace(/[^0-9]/g, "")}`}
             target="_blank"
             rel="noreferrer"
             className="h-11 px-4 rounded-xl border border-emerald-500/30 bg-emerald-50/50 hover:bg-emerald-100/50 text-emerald-800 text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
@@ -166,9 +173,9 @@ Thank you.`;
             <Phone className="w-4 h-4" /> Call
           </a>
         )}
-        {profile.contactDetails?.whatsAppNumber && (
+        {whatsAppNumber && (
           <a
-            href={`https://wa.me/${profile.contactDetails.whatsAppNumber.replace(/[^0-9]/g, "")}`}
+            href={`https://wa.me/${whatsAppNumber.replace(/[^0-9]/g, "")}`}
             target="_blank"
             rel="noreferrer"
             className="flex-1 h-12 rounded-full text-xs font-bold bg-[#25D366] text-white flex items-center justify-center gap-2 active:scale-[0.98]"

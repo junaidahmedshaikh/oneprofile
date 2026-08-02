@@ -58,8 +58,7 @@ const onboardingDraftSchema = new mongoose.Schema(
     aiContent: {
       headline: { type: String, default: '' },
       summary: { type: String, default: '' },
-      benefits: [{ type: String, trim: true }],
-      ctaLabel: { type: String, default: '' }
+      benefits: [{ type: String, trim: true }]
     },
     publishedProfile: {
       slug: { type: String, default: '' },

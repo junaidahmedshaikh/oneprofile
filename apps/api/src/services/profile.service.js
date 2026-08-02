@@ -98,7 +98,12 @@ export async function getOrCreateProfile(userId) {
     contactDetails: {
       email: draft?.contactDetails?.email || draft?.companyDetails?.email || user.email || '',
       phone: draft?.contactDetails?.phone || draft?.companyDetails?.phone || user.phone || '',
-      whatsAppNumber: draft?.contactDetails?.whatsAppNumber || ''
+      whatsAppNumber:
+        draft?.contactDetails?.whatsAppNumber ||
+        draft?.companyDetails?.whatsAppNumber ||
+        draft?.contactDetails?.phone ||
+        draft?.companyDetails?.phone ||
+        '',
     },
     socialLinks: draft?.socialLinks || {
       linkedin: '',

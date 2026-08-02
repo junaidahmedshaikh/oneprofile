@@ -324,7 +324,6 @@ export function ProfessionalProfileForm({ form, activeTab }) {
                 label="WhatsApp Direct Connection"
                 placeholder="+15551234"
                 {...register("contactDetails.whatsAppNumber")}
-                hint="Includes country code, digits only"
               />
               <Input
                 label="Personal Website URL"

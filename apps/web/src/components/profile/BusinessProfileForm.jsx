@@ -94,9 +94,7 @@ export function BusinessProfileForm({ form, activeTab }) {
           </div>
           <LogoImageUpload
             value={watch("logoUrl")}
-            onChange={(val) =>
-              setValue("logoUrl", val, { shouldDirty: true })
-            }
+            onChange={(val) => setValue("logoUrl", val, { shouldDirty: true })}
           />
 
           <CoverImageUpload
@@ -138,7 +136,7 @@ export function BusinessProfileForm({ form, activeTab }) {
             </span>
             <div className="grid gap-4.5 sm:grid-cols-2">
               <Input
-                label="GST Identification Number (GSTIN) - Optional"
+                label="GST Identification Number (GSTIN) "
                 placeholder="E.g., 22AAAAA0000A1Z5"
                 {...register("gstNumber")}
                 error={formState.errors.gstNumber?.message}
@@ -407,7 +405,6 @@ export function BusinessProfileForm({ form, activeTab }) {
                 label="WhatsApp Direct Number"
                 placeholder="+15551234"
                 {...register("contactDetails.whatsAppNumber")}
-                hint="Includes country code, digits only"
               />
               <Input
                 label="Company Website URL"

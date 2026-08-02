@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
-import { parseCustomLink, renderCustomLinkIcon } from "../../lib/customLinkHelper";
+import {
+  parseCustomLink,
+  renderCustomLinkIcon,
+} from "../../lib/customLinkHelper";
 
 const daysList = [
   { key: "monday", label: "Monday" },
@@ -30,13 +33,21 @@ export function ContactTab({ register, watch, setValue, formState }) {
       return;
     }
     try {
-      const urlWithProtocol = newLink.url.match(/^https?:\/\//i) ? newLink.url : `https://${newLink.url}`;
+      const urlWithProtocol = newLink.url.match(/^https?:\/\//i)
+        ? newLink.url
+        : `https://${newLink.url}`;
       new URL(urlWithProtocol); // validate format
 
-      const titleWithIcon = newLink.icon ? `[${newLink.icon}] ${newLink.title}` : newLink.title;
-      setValue("socialLinks.customLinks", [...customLinks, { title: titleWithIcon, url: urlWithProtocol }], {
-        shouldDirty: true,
-      });
+      const titleWithIcon = newLink.icon
+        ? `[${newLink.icon}] ${newLink.title}`
+        : newLink.title;
+      setValue(
+        "socialLinks.customLinks",
+        [...customLinks, { title: titleWithIcon, url: urlWithProtocol }],
+        {
+          shouldDirty: true,
+        },
+      );
       setNewLink({ title: "", url: "", icon: "" });
     } catch (e) {
       setUrlError("Please enter a valid URL (e.g., https://example.com).");
@@ -77,7 +88,6 @@ export function ContactTab({ register, watch, setValue, formState }) {
             label="WhatsApp Connection Number"
             placeholder="E.g., +91 9223047765"
             {...register("contactDetails.whatsAppNumber")}
-            hint="Include country code, digits only."
           />
         </div>
       </div>
@@ -190,9 +200,7 @@ export function ContactTab({ register, watch, setValue, formState }) {
             </div>
           </div>
           {urlError && (
-            <p className="text-3xs font-semibold text-red-400">
-              {urlError}
-            </p>
+            <p className="text-3xs font-semibold text-red-400">{urlError}</p>
           )}
           <Button
             variant="secondary"
