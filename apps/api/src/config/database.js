@@ -1,6 +1,21 @@
+import dns from "node:dns";
 import mongoose from "mongoose";
 import { env } from "./env.js";
 import { logger } from "./logger.js";
+
+// Ensure Mongoose buffers commands while connecting
+mongoose.set("bufferCommands", true);
+
+// Set custom DNS servers to ensure reliable MongoDB SRV lookup and external resolution
+try {
+  dns.setServers(["8.8.8.8", "8.8.4.4", "1.1.1.1"]);
+  if (typeof dns.setDefaultResultOrder === "function") {
+    dns.setDefaultResultOrder("ipv4first");
+  }
+} catch (dnsErr) {
+  logger.warn({ error: dnsErr?.message }, "Failed to configure custom DNS servers");
+}
+
 
 let connectionPromise = null;
 let connectionEventsRegistered = false;
@@ -176,7 +191,7 @@ async function connectTarget(uri, label, retries) {
 
 export async function connectDatabase(options = {}) {
   mongoose.set("strictQuery", true);
-  mongoose.set("bufferCommands", false);
+  mongoose.set("bufferCommands", true);
   registerConnectionEvents();
 
   if (mongoose.connection.readyState === 1) {
@@ -184,7 +199,11 @@ export async function connectDatabase(options = {}) {
   }
 
   if (connectionPromise) {
-    return connectionPromise;
+    const conn = await connectionPromise;
+    if (conn && mongoose.connection.readyState === 1) {
+      return conn;
+    }
+    connectionPromise = null;
   }
 
   const allowDegradedMode =
@@ -225,6 +244,7 @@ export async function connectDatabase(options = {}) {
         },
         degradedMessage,
       );
+      connectionPromise = null;
       return null;
     }
 

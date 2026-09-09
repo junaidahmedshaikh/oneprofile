@@ -218,3 +218,50 @@
 - Secrets must remain environment-managed.
 - Mail and Google OAuth must be configured per environment.
 - OTP and reset operations should be rate-limited in later hardening work.
+
+## Email OTP Verification System
+
+A production-ready Email OTP verification system has been integrated into User Registration, Forgot Password, and Change Email flows.
+
+### 1. Database Schema Changes
+
+*   **`User` model updates**:
+    *   `emailVerified`: Boolean (default: `false`)
+    *   `emailVerifiedAt`: Date (default: `null`)
+*   **`EmailOtp` collection created**:
+    *   `userId`: ObjectId (references User, optional)
+    *   `email`: String (lowercase, index, required)
+    *   `otpHash`: String (SHA-256 hashed, required)
+    *   `purpose`: String (enum: `['registration', 'forgot-password', 'change-email']`)
+    *   `attempts`: Number (default: `0`, capped at 5)
+    *   `expiresAt`: Date (TTL index deletes expired records automatically)
+
+### 2. Environment Variables
+
+Configure the following variables in `.env`:
+
+```env
+# Resend Email Integration
+RESEND_API_KEY=re_your_api_key_here
+RESEND_FROM=OneProfile <onboarding@resend.dev>
+```
+
+### 3. API Endpoints
+
+| Method | Route | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/auth/verify-registration/confirm` | Verifies registration OTP and marks user verified. | No |
+| `POST` | `/api/v1/auth/verify-registration/resend` | Resends registration OTP (subject to 60s cooldown). | No |
+| `POST` | `/api/v1/auth/forgot-password/request` | Sends a password recovery OTP to the email address. | No |
+| `POST` | `/api/v1/auth/forgot-password/verify` | Verifies recovery OTP and returns a password reset token. | No |
+| `POST` | `/api/v1/auth/change-email/request` | Sends email change verification code to new address. | Yes |
+| `POST` | `/api/v1/auth/change-email/confirm` | Verifies email change OTP and updates account credentials. | Yes |
+
+### 4. Security Rules
+
+*   **Cryptographic Randomness**: Uses Node's `crypto.randomInt` to generate 6-digit numeric codes.
+*   **Brute-Force Rate Limiting**: OTP inputs are locked after 5 failed verification attempts.
+*   **Resend Cooldown**: Restricts OTP requests to a minimum 60-second cooldown per email/purpose pair.
+*   **Hash Protection**: OTPs are hashed using SHA-256 before database storage.
+*   **Single-Use Invalidation**: Validated OTPs are instantly removed from the database on successful verification.
+

@@ -2,6 +2,7 @@ import clsx from "clsx";
 import {
   ShieldCheck,
   MapPin,
+  Building2,
   Users,
   Calendar,
   Clock,
@@ -211,7 +212,8 @@ Thank you.`;
                 {/* Social Proof Badges */}
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-[#6B7280]">
                   {profile.businessCategory && (
-                    <span className="font-semibold text-[#111827] px-2.5 py-0.5 rounded-md ">
+                    <span className=" flex items-center gap-1 font-semibold text-[#111827] rounded-md ">
+                      <Building2 className="w-4 h-4 text-[#2563EB]" />
                       {profile.businessCategory}
                     </span>
                   )}
@@ -352,7 +354,7 @@ Thank you.`;
                   {profile.gstNumber && (
                     <div className="bg-white p-3 rounded-xl border border-slate-200/70 shadow-2xs sm:col-span-2">
                       <span className="text-3xs text-[#6B7280] block font-bold uppercase">
-                        GSTIN Verified
+                        GSTIN
                       </span>
                       <span className="font-bold text-[#111827] mt-0.5 block truncate">
                         {profile.gstNumber}

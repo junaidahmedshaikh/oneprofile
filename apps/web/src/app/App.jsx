@@ -15,6 +15,8 @@ import { OnboardingPage } from "../pages/OnboardingPage";
 import { IdentityPage } from "../pages/IdentityPage";
 import { PublicProfilePage } from "../pages/PublicProfilePage";
 import { DigitalCardPage } from "../pages/DigitalCardPage";
+import { LandingPage } from "../pages/LandingPage";
+import { PricingPage } from "../pages/PricingPage";
 
 export function App() {
   return (
@@ -63,8 +65,9 @@ export function App() {
         </Route>
       </Route>
 
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="/pricing" element={<PricingPage />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

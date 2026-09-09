@@ -1,27 +1,34 @@
-import { Session } from '../models/Session.js';
-import { Device } from '../models/Device.js';
-import { sha256 } from '../utils/crypto.js';
+import { Session } from "../models/Session.js";
+import { Device } from "../models/Device.js";
+import { sha256 } from "../utils/crypto.js";
 
 export function refreshTokenFingerprint(refreshToken) {
   return sha256(refreshToken);
 }
 
-export async function createOrUpdateDevice({ userId, fingerprint, name, type, os, browser }) {
+export async function createOrUpdateDevice({
+  userId,
+  fingerprint,
+  name,
+  type,
+  os,
+  browser,
+}) {
   return Device.findOneAndUpdate(
     { userId, fingerprint },
     {
       $set: {
-        name: name || '',
-        type: type || 'web',
-        os: os || '',
-        browser: browser || '',
-        lastSeenAt: new Date()
+        name: name || "",
+        type: type || "web",
+        os: os || "",
+        browser: browser || "",
+        lastSeenAt: new Date(),
       },
       $setOnInsert: {
-        firstSeenAt: new Date()
-      }
+        firstSeenAt: new Date(),
+      },
     },
-    { upsert: true, new: true }
+    { upsert: true, new: true },
   );
 }
 
@@ -30,13 +37,13 @@ export async function createSession({
   tenantId = null,
   deviceId = null,
   refreshToken,
-  userAgent = '',
-  ipAddress = '',
-  deviceName = '',
-  deviceType = 'web',
-  os = '',
-  browser = '',
-  expiresAt
+  userAgent = "",
+  ipAddress = "",
+  deviceName = "",
+  deviceType = "web",
+  os = "",
+  browser = "",
+  expiresAt,
 }) {
   return Session.create({
     userId,
@@ -49,13 +56,21 @@ export async function createSession({
     deviceType,
     os,
     browser,
-    expiresAt
+    expiresAt,
   });
 }
 
-export async function rotateSession({ refreshToken, nextRefreshTokenHash, expiresAt }) {
+export async function rotateSession({
+  refreshToken,
+  nextRefreshTokenHash,
+  expiresAt,
+}) {
   const refreshTokenHash = refreshTokenFingerprint(refreshToken);
-  const session = await Session.findOne({ refreshTokenHash, isRevoked: false, expiresAt: { $gt: new Date() } });
+  const session = await Session.findOne({
+    refreshTokenHash,
+    isRevoked: false,
+    expiresAt: { $gt: new Date() },
+  });
   if (!session) return null;
   session.refreshTokenHash = nextRefreshTokenHash;
   session.expiresAt = expiresAt;
@@ -65,7 +80,10 @@ export async function rotateSession({ refreshToken, nextRefreshTokenHash, expire
 }
 
 export async function findSessionByRefreshToken(refreshToken) {
-  return Session.findOne({ refreshTokenHash: refreshTokenFingerprint(refreshToken), isRevoked: false });
+  return Session.findOne({
+    refreshTokenHash: refreshTokenFingerprint(refreshToken),
+    isRevoked: false,
+  });
 }
 
 export async function revokeSessionByRefreshToken(refreshToken) {
@@ -80,12 +98,14 @@ export async function revokeSessionByRefreshToken(refreshToken) {
 export async function revokeAllUserSessions(userId, exceptSessionId = null) {
   const filter = { userId, isRevoked: false };
   if (exceptSessionId) filter._id = { $ne: exceptSessionId };
-  return Session.updateMany(filter, { $set: { isRevoked: true, revokedAt: new Date() } });
+  return Session.updateMany(filter, {
+    $set: { isRevoked: true, revokedAt: new Date() },
+  });
 }
 
 export async function listUserSessions(userId) {
   return Session.find({ userId })
-    .select('-refreshTokenHash')
+    .select("-refreshTokenHash")
     .sort({ createdAt: -1 })
     .lean();
 }

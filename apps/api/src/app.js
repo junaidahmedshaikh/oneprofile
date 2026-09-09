@@ -8,7 +8,7 @@ import routes from "./routes/index.js";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
 import { env } from "./config/env.js";
 import { logger } from "./config/logger.js";
-import { getDatabaseStatus } from "./config/database.js";
+import { connectDatabase, getDatabaseStatus } from "./config/database.js";
 
 export function createApp() {
   const app = express();
@@ -63,6 +63,26 @@ export function createApp() {
       database: dbStatus,
     });
   });
+
+  // Ensure DB connection is active before processing API request handlers
+  app.use("/api/v1", async (_req, _res, next) => {
+    try {
+      const conn = await connectDatabase();
+      if (!conn || getDatabaseStatus().readyState !== 1) {
+        return next(
+          new ApiError(
+            503,
+            "Database connection is currently unavailable. Please verify your MongoDB service or network connection.",
+            "DATABASE_DISCONNECTED"
+          )
+        );
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  });
+
   app.use("/api/v1", routes);
   app.use(notFound);
   app.use(errorHandler);
