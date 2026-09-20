@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -31,6 +32,9 @@ import {
   Linkedin,
   Mail,
   Download,
+  ExternalLink,
+  Check,
+  Save,
 } from "lucide-react";
 
 const schema = z.object({
@@ -111,8 +115,10 @@ const schema = z.object({
 export function IdentityPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const authUser = useSelector((state) => state.auth.user);
   const [activeTab, setActiveTab] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveErrorMessage, setSaveErrorMessage] = useState("");
   const [isAutosaving, setIsAutosaving] = useState(false);
 
   // Share & QR actions states
@@ -346,22 +352,39 @@ export function IdentityPage() {
       delete payload.languagesRaw;
       delete payload.skillsRaw;
       delete payload.certificationsRaw;
-      delete payload.seo.keywordsRaw;
+      if (payload.seo) {
+        delete payload.seo.keywordsRaw;
+      }
 
       return profileApi.save(payload);
     },
     onSuccess: () => {
       setSaveSuccess(true);
+      setSaveErrorMessage("");
       queryClient.invalidateQueries({ queryKey: ["profile", "me"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
       setTimeout(() => {
         setSaveSuccess(false);
-        navigate("/dashboard");
-      }, 1000);
+      }, 3500);
+    },
+    onError: (err) => {
+      setSaveSuccess(false);
+      setSaveErrorMessage(
+        err?.response?.data?.message || "Failed to update profile changes. Please review fields."
+      );
     },
   });
 
-  const onSubmit = form.handleSubmit((values) => saveMutation.mutate(values));
+  const onSubmit = form.handleSubmit(
+    (values) => {
+      setSaveErrorMessage("");
+      saveMutation.mutate(values);
+    },
+    (errors) => {
+      console.warn("Form validation errors:", errors);
+      setSaveErrorMessage("Please review and fix invalid fields in the form before saving.");
+    }
+  );
 
   // 3. Background Debounced Auto-save Effect
   useEffect(() => {
@@ -469,8 +492,12 @@ export function IdentityPage() {
   };
 
   const completionPercentage = calculateCompletion();
-  const publicUrl = profile?.slug
-    ? `${window.location.origin}/p/${profile.slug}`
+  const activeSlug = profile?.slug || authUser?.publishedProfileSlug;
+  const publicUrl = activeSlug
+    ? `${window.location.origin}/p/${activeSlug}`
+    : "";
+  const digitalCardUrl = activeSlug
+    ? `${window.location.origin}/p/${activeSlug}/card`
     : "";
   const qrCodeUrl = publicUrl
     ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(publicUrl)}`
@@ -511,269 +538,191 @@ export function IdentityPage() {
   }
 
   return (
-    <div className="space-y-10 min-w-0 select-none pb-12">
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+    <div className="space-y-8 min-w-0 select-none pb-12">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between border-b border-black/[0.08] pb-6">
         <div className="space-y-1">
-          <span className="text-3xs uppercase tracking-[0.25em] text-primary font-bold">
-            Settings Workspace
-          </span>
-          <h1 className="font-display text-2xl font-black tracking-tight text-slate-300 dark:text-white">
-            Identity Settings
+          <div className="inline-flex items-center gap-2 mb-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#163300] animate-pulse" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#576159]">
+              Identity Studio
+            </span>
+          </div>
+          <h1 className="font-display text-2.5xl sm:text-3xl font-bold tracking-tight text-[#121814]">
+            Profile & Digital Card Studio
           </h1>
 
           {/* Autosaving beacon status */}
-          <div className="flex items-center gap-2 pt-1.5">
+          <div className="flex items-center gap-2 pt-0.5">
             <span
               className={clsx(
-                "h-2 w-2 rounded-full",
-                isAutosaving ? "bg-amber-400 animate-pulse" : "bg-emerald-400",
+                "h-1.5 w-1.5 rounded-full",
+                isAutosaving ? "bg-amber-500 animate-pulse" : "bg-[#163300]",
               )}
             />
-            <span className="text-3xs text-oneprofile-600 font-extrabold uppercase tracking-wider">
-              {isAutosaving ? "Autosaving changes..." : "All changes autosaved"}
+            <span className="text-xs text-[#879289] font-medium">
+              {isAutosaving ? "Autosaving changes..." : "All changes encrypted and synced"}
             </span>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           {/* Draft vs Published visibility switcher */}
           <button
             type="button"
             onClick={toggleVisibility}
-            className={`px-3.5 py-2 h-10 rounded-ds-btn text-3xs font-extrabold uppercase tracking-wide border flex items-center gap-1.5 transition-all select-none active:scale-[0.98] ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold border flex items-center gap-1.5 transition-all select-none active:scale-[0.98] ${
               watchedValues.visibility === "public"
-                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
-                : "bg-white/5 border-white/10 text-slate-400"
+                ? "bg-[#F6F5EE] border-black/[0.08] text-[#121814] shadow-2xs"
+                : "bg-white border-black/[0.08] text-[#879289]"
             }`}
           >
             {watchedValues.visibility === "public" ? (
               <>
-                <Globe className="w-3.5 h-3.5 text-emerald-400" /> Published
-                Live
+                <Globe className="w-3.5 h-3.5 text-[#163300]" /> Published Live
               </>
             ) : (
               <>
-                <Lock className="w-3.5 h-3.5 text-slate-400" /> Private Draft
+                <Lock className="w-3.5 h-3.5 text-[#879289]" /> Private Draft
               </>
             )}
           </button>
 
-          {profile?.slug ? (
-            <>
-              <a
-                href={`/p/${profile.slug}`}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-ds-btn bg-oneprofile-900/40 border border-oneprofile-700 hover:bg-oneprofile-100 hover:border-oneprofile-600 px-4 text-xs font-bold dark:text-white transition-all select-none"
-              >
-                Public Profile Link ↗
-              </a>
-              <a
-                href={`/p/${profile.slug}/card`}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-ds-btn bg-primary/10  border border-oneprofile-700 hover:bg-primary/20 px-4 text-xs font-bold text-primary transition-all select-none"
-              >
-                <QrCode className="w-3.5 h-3.5" /> Digital Card
-              </a>
-            </>
-          ) : null}
+          {/* View Profile Button */}
+          {activeSlug ? (
+            <a
+              href={`/p/${activeSlug}`}
+              target="_blank"
+              rel="noreferrer"
+              title="Open your live public profile page in a new tab"
+              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-white border border-black/[0.08] hover:border-black/[0.15] px-3.5 text-xs font-semibold text-[#121814] transition-all shadow-2xs active:scale-[0.98]"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-[#879289]" />
+              <span>View Profile</span>
+            </a>
+          ) : (
+            <button
+              type="button"
+              disabled
+              title="Profile slug not available yet"
+              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-black/[0.03] border border-black/[0.06] px-3.5 text-xs font-semibold text-[#879289] cursor-not-allowed opacity-60"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-[#879289]" />
+              <span>View Profile</span>
+            </button>
+          )}
 
+          {/* Digital Profile Button */}
+          {activeSlug ? (
+            <a
+              href={`/p/${activeSlug}/card`}
+              target="_blank"
+              rel="noreferrer"
+              title="Open your digital card and interactive NFC profile view"
+              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-white border border-black/[0.08] hover:border-black/[0.15] px-3.5 text-xs font-semibold text-[#121814] transition-all shadow-2xs active:scale-[0.98]"
+            >
+              <QrCode className="w-3.5 h-3.5 text-[#163300]" />
+              <span>Digital Card</span>
+            </a>
+          ) : (
+            <button
+              type="button"
+              disabled
+              title="Digital card slug not available yet"
+              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-black/[0.03] border border-black/[0.06] px-3.5 text-xs font-semibold text-[#879289] cursor-not-allowed opacity-60"
+            >
+              <QrCode className="w-3.5 h-3.5 text-[#879289]" />
+              <span>Digital Card</span>
+            </button>
+          )}
+
+          {/* Save Changes Button */}
           <Button
+            type="button"
             onClick={onSubmit}
             loading={saveMutation.isPending}
-            className="inline-flex h-10 items-center justify-center gap-1.5 rounded-ds-btn bg-slate-700/10  border border-oneprofile-700 hover:bg-primary/20 px-4 text-xs font-bold text-primary transition-all select-none"
+            variant="primary"
+            className={clsx(
+              "h-10 px-5 text-xs font-semibold transition-all shadow-sm active:scale-[0.98]",
+              saveSuccess
+                ? "bg-[#163300] text-[#9FE870] border-transparent"
+                : "bg-[#163300] hover:bg-[#121814] text-white"
+            )}
           >
-            Save All Changes
+            {saveSuccess ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-[#9FE870] mr-1.5" />
+                <span>Changes Saved!</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-3.5 h-3.5 mr-1.5" />
+                <span>Save Changes</span>
+              </>
+            )}
           </Button>
         </div>
       </div>
 
       {saveSuccess ? (
         <Alert variant="success">
-          All settings saved successfully to your public profile.
+          All settings saved successfully to your live profile.
         </Alert>
       ) : null}
-      {saveMutation.isError ? (
+      {saveErrorMessage || saveMutation.isError ? (
         <Alert variant="error">
-          {saveMutation.error?.response?.data?.message ||
-            "Failed to update profile changes. Review slug claiming handle."}
+          {saveErrorMessage ||
+            saveMutation.error?.response?.data?.message ||
+            "Failed to update profile changes. Please review fields."}
         </Alert>
       ) : null}
 
-      <div className="grid gap-10 items-start">
-        {/* RIGHT COLUMN: Preview, Sharing & QR Codes */}
-        <div className="space-y-6 ">
-          {/* Live Mobile View Preview */}
-          {/* <Card
-            className="p-0 border-white/[0.06] bg-black overflow-hidden relative"
-            hoverEffect={false}
-          > */}
-          {/* <div className="absolute inset-0 pointer-events-none rounded-[28px] border border-white/10 z-30" /> */}
-
-          {/* Speaker bar */}
-          {/* <div className="w-full bg-[#090a0f] py-2.5 flex justify-center border-b border-white/[0.04] relative z-20">
-              <div className="w-16 h-3.5 rounded-full bg-black/80 flex items-center justify-center gap-1.5 px-3">
-                <span className="h-1 w-1 rounded-full bg-slate-800" />
-                <span className="h-1 w-5 rounded-full bg-slate-800" />
-              </div>
-            </div> */}
-
-          {/* Mobile View */}
-          {/* <div className="p-5 min-h-[440px] max-h-[480px] overflow-y-auto bg-[#12141c] text-white space-y-5 relative">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-3xl pointer-events-none" />
-
-              <div className="space-y-5">
-                {profile?.profileType === "professional" ? (
-                  <ProfessionalPreview values={watchedValues} />
-                ) : (
-                  <BusinessPreview values={watchedValues} />
-                )}
-              </div>
-            </div> */}
-          {/* </Card> */}
-
-          {/* Share & QR Code Actions Card */}
-          {profile?.slug ? (
-            <Card className="p-5 space-y-5" hoverEffect={false}>
-              <div className="border-b border-white/[0.05] pb-3.5">
-                <span className="text-3xs font-bold uppercase tracking-wider text-slate-500">
-                  Live share credentials
-                </span>
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider mt-0.5">
-                  Share Digital Profile
-                </h4>
-              </div>
-
-              <div className="space-y-3 text-xs">
-                {/* Copy profile url */}
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/[0.01] border border-white/[0.04]">
-                  <span className="text-3xs font-bold text-slate-400 select-all truncate flex-1">
-                    {publicUrl}
-                  </span>
-                  <Button
-                    variant="secondary"
-                    className="px-3 min-h-8 h-8 text-2xs"
-                    onClick={handleCopyLink}
-                  >
-                    {copied ? "Copied! ✓" : "Copy Link"}
-                  </Button>
-                </div>
-
-                {/* Share platforms row */}
-                <div className="grid grid-cols-4 gap-2">
-                  <a
-                    href={`https://wa.me/?text=${encodeURIComponent("Checkout my oneprofile digital identity card: " + publicUrl)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex gap-2 items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
-                  >
-                    <MessageSquare className="w-4 h-4 text-emerald-500" />
-                    <span className="text-2xs font-bold text-slate-400 mt-0.5">
-                      WhatsApp
-                    </span>
-                  </a>
-                  <a
-                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(publicUrl)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex gap-2 items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
-                  >
-                    <Linkedin className="w-4 h-4 text-[#0077B5]" />
-                    <span className="text-2xs font-bold text-slate-400 mt-0.5">
-                      LinkedIn
-                    </span>
-                  </a>
-                  <a
-                    href={`mailto:?subject=${encodeURIComponent("Digital Business Profile")}&body=${encodeURIComponent("Here is my digital business card: " + publicUrl)}`}
-                    className="flex gap-2  items-center justify-center p-2.5 bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] rounded-xl text-center select-none"
-                  >
-                    <Mail className="w-4 h-4 text-[#2563EB]" />
-                    <span className="text-2xs font-bold text-slate-400 mt-0.5">
-                      Email
-                    </span>
-                  </a>
-                  {/* QR Code toggle action */}
-                  <Button
-                    variant="secondary"
-                    className="w-full text-xs [display:ruby] items-center justify-center gap-1.5"
-                    onClick={() => setShowQr((prev) => !prev)}
-                  >
-                    <QrCode className="w-4 h-4" />{" "}
-                    <span>{showQr ? "Hide QR Code" : "Generate QR Code"}</span>
-                  </Button>
-                </div>
-
-                <AnimatePresence>
-                  {showQr ? (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      className="p-4 rounded-2xl bg-white flex flex-col items-center gap-3"
-                    >
-                      <img
-                        src={qrCodeUrl}
-                        alt="QR Code"
-                        className="h-36 w-36 object-contain"
-                      />
-                      <a
-                        href={qrCodeUrl}
-                        download="oneprofile-qr-code.png"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex min-h-9 h-9 items-center justify-center rounded-xl bg-slate-900 text-white px-4 text-3xs font-bold hover:bg-slate-800 gap-1.5"
-                      >
-                        <Download className="w-3.5 h-3.5" /> Download QR Code
-                      </a>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-              </div>
-            </Card>
-          ) : null}
-        </div>
-        {/* LEFT COLUMN: Tab Navigation and Fields */}
-        <div className="space-y-8">
+      {/* Split Screen Studio: Form on Left, Live Canvas on Right */}
+      <div className="grid gap-8 lg:grid-cols-12 items-start">
+        {/* LEFT COLUMN: TAB NAVIGATION AND FORMS */}
+        <div className="space-y-6 lg:col-span-7 xl:col-span-8">
           {/* Progress bar widget */}
-          <Card
-            className="p-4 relative overflow-hidden bg-oneprofile-900/40 border-oneprofile-700"
-            hoverEffect={false}
-          >
-            <div className="flex justify-between items-center text-3xs font-bold uppercase tracking-wider text-oneprofile-600 mb-2.5">
-              <span>Profile Setup Completion</span>
-              <span className="text-primary">{completionPercentage}%</span>
+          <div className="p-4 rounded-xl bg-white border border-black/[0.08] shadow-2xs space-y-2">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-[#879289] font-mono uppercase tracking-wider text-[11px]">
+                Profile Setup Completion
+              </span>
+              <span className="text-[#121814] font-bold font-display">{completionPercentage}%</span>
             </div>
-            <div className="h-2 w-full bg-oneprofile-700 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-[#F6F5EE] rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-primary to-brand-400 transition-all duration-500"
+                className="h-full bg-[#163300] transition-all duration-500 rounded-full"
                 style={{ width: `${completionPercentage}%` }}
               />
             </div>
-          </Card>
+          </div>
 
-          <div className="rounded-ds-card border border-oneprofile-700 bg-oneprofile-900/40 p-4 backdrop-blur-xl">
-            <nav className="flex flex-wrap gap-2">
-              {currentTabList.map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all relative ${
-                    activeTab === tab.id
-                      ? "bg-primary/10 text-slate-300 dark:text-white border border-primary/20"
-                      : "text-oneprofile-600 hover:text-slate-300 dark:hover:text-white hover:bg-oneprofile-100 border border-transparent"
-                  }`}
-                >
-                  <span>{tab.icon}</span>
-                  <span>{tab.label}</span>
-                </button>
-              ))}
+          {/* Tab Navigation Pill Bar */}
+          <div className="rounded-xl border border-black/[0.08] bg-[#F6F5EE] p-1.5 shadow-2xs">
+            <nav className="flex flex-wrap gap-1">
+              {currentTabList.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all ${
+                      isActive
+                        ? "bg-[#163300] text-white shadow-2xs"
+                        : "text-[#576159] hover:text-[#121814] hover:bg-white/60"
+                    }`}
+                  >
+                    <span>{tab.icon}</span>
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
             </nav>
           </div>
 
+          {/* Form Content Card */}
           <Card
-            className="p-6 sm:p-8 bg-oneprofile-900/40 border-oneprofile-700"
+            className="p-6 sm:p-8 bg-white border border-black/[0.08] rounded-2xl shadow-[0_4px_20px_rgba(18,24,20,0.02)]"
             hoverEffect={false}
           >
             <form onSubmit={onSubmit} noValidate className="space-y-6">
@@ -789,17 +738,17 @@ export function IdentityPage() {
                 )}
               </div>
 
-              {/* Bottom Step Navigation Footer */}
-              <div className="flex justify-between items-center pt-6 border-t border-oneprofile-700">
+              {/* Step Navigation Footer */}
+              <div className="flex justify-between items-center pt-6 border-t border-black/[0.06]">
                 <Button
                   type="button"
-                  variant="secondary"
+                  variant="outline"
                   disabled={
                     currentTabList.length > 0 &&
                     activeTab === currentTabList[0].id
                   }
                   onClick={handlePrevTab}
-                  className="text-xs"
+                  className="text-xs font-semibold"
                 >
                   ← Previous Tab
                 </Button>
@@ -809,16 +758,18 @@ export function IdentityPage() {
                 activeTab === "security" ? (
                   <Button
                     type="submit"
+                    variant="primary"
                     loading={saveMutation.isPending}
-                    className="text-xs font-bold"
+                    className="text-xs font-semibold"
                   >
                     Save Configuration ✓
                   </Button>
                 ) : (
                   <Button
                     type="button"
+                    variant="primary"
                     onClick={handleNextTab}
-                    className="text-xs"
+                    className="text-xs font-semibold"
                   >
                     Next Tab →
                   </Button>
@@ -827,7 +778,129 @@ export function IdentityPage() {
             </form>
           </Card>
         </div>
+
+        {/* RIGHT COLUMN: STICKY LIVE IDENTITY CANVAS */}
+        <div className="space-y-6 lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24">
+          {/* Live Studio Card Preview */}
+          <Card
+            className="p-5 sm:p-6 bg-white border border-black/[0.08] rounded-2xl shadow-[0_4px_20px_rgba(18,24,20,0.02)] space-y-4"
+            hoverEffect={false}
+          >
+            <div className="flex items-center justify-between border-b border-black/[0.06] pb-3">
+              <div className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#163300] animate-pulse" />
+                <h4 className="font-display text-base font-bold text-[#121814]">
+                  Live Studio Preview
+                </h4>
+              </div>
+              <span className="text-[10px] font-mono text-[#879289] uppercase tracking-wider bg-[#F6F5EE] border border-black/[0.06] px-2 py-0.5 rounded">
+                Real-time
+              </span>
+            </div>
+
+            {profile?.profileType === "professional" ? (
+              <ProfessionalPreview values={watchedValues} />
+            ) : (
+              <BusinessPreview values={watchedValues} />
+            )}
+          </Card>
+
+          {/* Quick Share Card */}
+          {profile?.slug ? (
+            <Card className="p-6 bg-white border border-black/[0.08] rounded-2xl shadow-[0_4px_20px_rgba(18,24,20,0.02)] space-y-4" hoverEffect={false}>
+              <div className="border-b border-black/[0.06] pb-3">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#879289]">
+                  Instant Sharing
+                </span>
+                <h4 className="font-display text-base font-bold text-[#121814]">
+                  Share Your Live Profile
+                </h4>
+              </div>
+
+              <div className="space-y-3">
+                {/* Copy URL bar */}
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-[#F6F5EE] border border-black/[0.08]">
+                  <span className="text-xs font-mono text-[#576159] select-all truncate flex-1 px-2">
+                    {publicUrl}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs font-semibold shrink-0"
+                    onClick={handleCopyLink}
+                  >
+                    {copied ? "Copied! ✓" : "Copy"}
+                  </Button>
+                </div>
+
+                {/* Social Share Buttons */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent("Checkout my digital identity card: " + publicUrl)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex gap-1.5 items-center justify-center p-2.5 bg-[#F6F5EE] border border-black/[0.06] hover:bg-black/[0.04] rounded-xl text-center font-semibold text-xs text-[#121814] transition-colors"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 text-[#163300]" />
+                    WhatsApp
+                  </a>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(publicUrl)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex gap-1.5 items-center justify-center p-2.5 bg-[#F6F5EE] border border-black/[0.06] hover:bg-black/[0.04] rounded-xl text-center font-semibold text-xs text-[#121814] transition-colors"
+                  >
+                    <Linkedin className="w-3.5 h-3.5 text-[#163300]" />
+                    LinkedIn
+                  </a>
+                  <a
+                    href={`mailto:?subject=${encodeURIComponent("Digital Business Profile")}&body=${encodeURIComponent("Here is my digital card: " + publicUrl)}`}
+                    className="flex gap-1.5 items-center justify-center p-2.5 bg-[#F6F5EE] border border-black/[0.06] hover:bg-black/[0.04] rounded-xl text-center font-semibold text-xs text-[#121814] transition-colors"
+                  >
+                    <Mail className="w-3.5 h-3.5 text-[#121814]" />
+                    Email
+                  </a>
+                  <Button
+                    variant="outline"
+                    className="w-full text-xs font-semibold flex items-center justify-center gap-1.5"
+                    onClick={() => setShowQr((prev) => !prev)}
+                  >
+                    <QrCode className="w-3.5 h-3.5 text-[#163300]" />
+                    <span>{showQr ? "Hide QR" : "Show QR"}</span>
+                  </Button>
+                </div>
+
+                <AnimatePresence>
+                  {showQr ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="p-5 rounded-xl bg-[#F6F5EE] border border-black/[0.08] flex flex-col items-center gap-3 mt-3"
+                    >
+                      <img
+                        src={qrCodeUrl}
+                        alt="QR Code"
+                        className="h-36 w-36 object-contain bg-white p-2 rounded-xl border border-black/[0.08] shadow-2xs"
+                      />
+                      <a
+                        href={qrCodeUrl}
+                        download="oneprofile-qr-code.png"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex h-9 items-center justify-center rounded-xl bg-[#163300] text-white px-4 text-xs font-semibold hover:bg-[#121814] gap-1.5 shadow-2xs"
+                      >
+                        <Download className="w-3.5 h-3.5" /> Download QR Code
+                      </a>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+              </div>
+            </Card>
+          ) : null}
+        </div>
       </div>
     </div>
   );
 }
+

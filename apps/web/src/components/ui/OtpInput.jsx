@@ -83,10 +83,12 @@ export function OtpInput({ length = 6, value = "", onChange, error }) {
               inputMode="numeric"
               maxLength={1}
               className={clsx(
-                "h-12 w-12 sm:h-14 sm:w-14 rounded-xl border border-oneprofile-700 bg-oneprofile-900 text-center text-lg font-bold text-slate-300 dark:text-white transition-all duration-150 focus:border-primary focus:bg-white/[0.04] focus:outline-none focus:ring-4 focus:ring-primary/10 hover:border-white/[0.15]",
-                cell && "border-primary/30 bg-primary/[0.02]",
+                "h-12 w-12 sm:h-14 sm:w-14 rounded-2xl border-2 text-center font-parafina text-xl font-bold transition-all duration-150 focus:outline-none",
+                cell
+                  ? "border-[#163300] bg-white text-[#163300] shadow-sm"
+                  : "border-slate-200 bg-slate-50/80 text-slate-800 hover:border-slate-300 focus:bg-white focus:border-[#163300] focus:ring-4 focus:ring-[#9FE870]/30",
                 error &&
-                  "border-red-500/50 focus:border-red-500/40 focus:ring-red-500/10",
+                  "border-rose-300 bg-rose-50/50 text-rose-900 focus:border-rose-500 focus:ring-rose-200",
               )}
               aria-label={`OTP digit ${index + 1}`}
             />
@@ -94,9 +96,9 @@ export function OtpInput({ length = 6, value = "", onChange, error }) {
         })}
       </div>
       {error ? (
-        <p className="text-xs text-red-400 flex items-center gap-1.5 animate-fadeUp">
+        <p className="text-xs text-rose-600 flex items-center gap-1.5 font-medium animate-fadeUp">
           <svg
-            className="h-3.5 w-3.5"
+            className="h-4 w-4 shrink-0"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -114,3 +116,4 @@ export function OtpInput({ length = 6, value = "", onChange, error }) {
     </div>
   );
 }
+

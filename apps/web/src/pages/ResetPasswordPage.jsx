@@ -31,21 +31,21 @@ export function ResetPasswordPage() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.35 }}
       className="space-y-6"
     >
-      <div className="space-y-2">
-        <h2 className="font-display text-2.5xl font-extrabold text-slate-300 dark:text-white tracking-tight">
+      <div className="space-y-1.5">
+        <h2 className="font-parafina text-2.5xl sm:text-3xl font-black text-[#163300] tracking-tight">
           Set a new password
         </h2>
-        <p className="text-xs text-oneprofile-600 font-semibold">
-          Use the reset token sent to your email.
+        <p className="text-sm text-slate-500 font-medium">
+          Enter your reset token code and choose your new password.
         </p>
       </div>
 
       {done ? (
         <Alert variant="success">
-          Password updated. You can now sign in again.
+          Password updated successfully. You can now sign in with your new credentials.
         </Alert>
       ) : null}
 
@@ -71,22 +71,25 @@ export function ResetPasswordPage() {
         <div className="pt-2">
           <Button
             type="submit"
-            className="w-full h-12 rounded-2xl"
+            variant="primary"
+            size="lg"
+            className="w-full text-sm font-bold shadow-md shadow-[#163300]/10"
             loading={mutation.isPending}
           >
-            Update password
+            Update Password
           </Button>
         </div>
       </form>
 
-      <div className="pt-3 border-t border-oneprofile-700 text-xs font-semibold text-center">
+      <div className="pt-4 border-t border-slate-100 text-xs font-semibold text-center">
         <Link
-          className="text-oneprofile-600 hover:text-slate-300 dark:hover:text-white transition-colors"
+          className="text-slate-500 hover:text-[#163300] transition-colors"
           to="/login"
         >
-          Back to login
+          ← Back to sign in
         </Link>
       </div>
     </motion.div>
   );
 }
+

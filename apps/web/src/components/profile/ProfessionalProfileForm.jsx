@@ -68,11 +68,11 @@ export function ProfessionalProfileForm({ form, activeTab }) {
       {activeTab === "personal" && (
         <div className="space-y-5 animate-fadeUp">
           <div className="space-y-1">
-            <h3 className="font-display text-lg font-bold text-white tracking-tight">
+            <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
               Personal Details
             </h3>
-            <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-              Configure your profile header biography
+            <p className="text-xs text-slate-500 font-medium">
+              Configure your profile header biography and core professional details
             </p>
           </div>
 
@@ -178,17 +178,17 @@ export function ProfessionalProfileForm({ form, activeTab }) {
       {activeTab === "experience" && (
         <div className="space-y-6 animate-fadeUp">
           <div className="space-y-1">
-            <h3 className="font-display text-lg font-bold text-white tracking-tight">
+            <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
               Work History & Experience
             </h3>
-            <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-              Configure your historical professional roles and achievements
+            <p className="text-xs text-slate-500 font-medium">
+              Configure your career milestones, historical roles, and achievements
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-3.5">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
-              Add experience milestone
+          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#163300]">
+              Add Experience Milestone
             </span>
             <div className="grid gap-3 sm:grid-cols-2">
               <Input
@@ -205,7 +205,7 @@ export function ProfessionalProfileForm({ form, activeTab }) {
                 onChange={(e) =>
                   setNewExp({ ...newExp, company: e.target.value })
                 }
-                placeholder="E.g., Connor Inc."
+                placeholder="E.g., Acme Labs"
               />
               <Input
                 label="Start Date *"
@@ -237,10 +237,10 @@ export function ProfessionalProfileForm({ form, activeTab }) {
                     endDate: e.target.checked ? "Present" : "",
                   })
                 }
-                className="rounded bg-white/5 border-white/10 text-brand-500"
+                className="rounded border-slate-300 text-[#163300] focus:ring-[#9FE870]"
               />
-              <span className="text-3xs text-slate-400 font-bold uppercase">
-                Current Job
+              <span className="text-xs text-slate-700 font-bold">
+                Current Position
               </span>
             </label>
 
@@ -255,40 +255,40 @@ export function ProfessionalProfileForm({ form, activeTab }) {
 
             <Button
               type="button"
-              variant="secondary"
-              className="text-xs w-full"
+              variant="outline"
+              className="text-xs font-bold w-full"
               onClick={handleAddExperience}
             >
-              Add Experience Node
+              + Add Experience Node
             </Button>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {experienceList.length ? (
               experienceList.map((exp, idx) => (
                 <div
                   key={idx}
-                  className="flex justify-between items-center p-3.5 rounded-xl bg-white/[0.01] border border-white/[0.04] text-xs"
+                  className="flex justify-between items-center p-4 rounded-2xl bg-white border border-slate-200/90 text-xs shadow-xs"
                 >
                   <div>
-                    <span className="font-bold text-white block">
+                    <span className="font-bold text-slate-900 block text-sm">
                       {exp.title}
                     </span>
-                    <span className="text-3xs text-slate-500 block mt-0.5">
+                    <span className="text-xs text-slate-500 block mt-0.5 font-medium">
                       {exp.company} • {exp.startDate} - {exp.endDate}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleRemoveExperience(idx)}
-                    className="h-7 w-7 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center text-xs"
+                    className="h-8 w-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center text-xs font-bold transition-colors"
                   >
                     ✕
                   </button>
                 </div>
               ))
             ) : (
-              <div className="py-6 text-center text-xs text-slate-500">
+              <div className="py-6 text-center text-xs text-slate-400 font-medium">
                 No experience milestones added yet.
               </div>
             )}
@@ -300,14 +300,14 @@ export function ProfessionalProfileForm({ form, activeTab }) {
         <div className="space-y-6 animate-fadeUp">
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
                 Professional Contact Channels
               </h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-                Configure active channels for client inquiries
+              <p className="text-xs text-slate-500 font-medium">
+                Configure direct channels for clients to connect with you
               </p>
             </div>
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2">
               <Input
                 label="Email Address"
                 placeholder="sarah@connor.com"
@@ -316,13 +316,13 @@ export function ProfessionalProfileForm({ form, activeTab }) {
               />
               <Input
                 label="Direct Phone Connection"
-                placeholder="+15551234"
+                placeholder="+91 98765 43210"
                 {...register("contactDetails.phone")}
                 error={formState.errors.contactDetails?.phone?.message}
               />
               <Input
                 label="WhatsApp Direct Connection"
-                placeholder="+15551234"
+                placeholder="+91 98765 43210"
                 {...register("contactDetails.whatsAppNumber")}
               />
               <Input
@@ -343,13 +343,13 @@ export function ProfessionalProfileForm({ form, activeTab }) {
             </div>
           </div>
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
-              Social Connections
+            <span className="text-xs font-bold uppercase tracking-wider text-[#163300]">
+              Social & Developer Profiles
             </span>
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2">
               <Input
                 label="LinkedIn Profile URL"
                 placeholder="https://linkedin.com/in/..."
@@ -383,14 +383,14 @@ export function ProfessionalProfileForm({ form, activeTab }) {
             </div>
           </div>
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#163300]">
               External Custom Links
             </span>
-            <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-4">
-              <div className="grid gap-6 sm:grid-cols-2">
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <Input
                   label="Link Label Title"
                   value={newLink.title}
@@ -410,11 +410,11 @@ export function ProfessionalProfileForm({ form, activeTab }) {
               </div>
               <Button
                 type="button"
-                variant="secondary"
-                className="text-xs w-full"
+                variant="outline"
+                className="text-xs font-bold w-full"
                 onClick={addCustomLink}
               >
-                Add Custom Link Node
+                + Add Custom Link Node
               </Button>
             </div>
 
@@ -422,20 +422,20 @@ export function ProfessionalProfileForm({ form, activeTab }) {
               {customLinks.map((l, i) => (
                 <div
                   key={i}
-                  className="flex justify-between items-center p-3.5 rounded-xl bg-white/[0.01] border border-white/[0.04] text-xs"
+                  className="flex justify-between items-center p-3.5 rounded-2xl bg-white border border-slate-200/90 text-xs shadow-xs"
                 >
                   <div className="truncate min-w-0">
-                    <span className="font-bold text-white block">
+                    <span className="font-bold text-slate-900 block text-sm">
                       {l.title}
                     </span>
-                    <span className="text-3xs text-slate-500 truncate block mt-0.5">
+                    <span className="text-xs text-slate-500 truncate block mt-0.5">
                       {l.url}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => removeCustomLink(i)}
-                    className="h-7 w-7 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center text-xs shrink-0"
+                    className="h-8 w-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center text-xs font-bold shrink-0 transition-colors"
                   >
                     ✕
                   </button>
@@ -444,23 +444,23 @@ export function ProfessionalProfileForm({ form, activeTab }) {
             </div>
           </div>
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#163300]">
               Weekly Operating Working Hours
             </span>
-            <div className=" grid-cols-2 grid gap-3">
+            <div className="grid-cols-1 sm:grid-cols-2 grid gap-3">
               {days.map((day) => (
                 <div
                   key={day}
-                  className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] text-xs"
+                  className="flex flex-wrap items-center justify-between gap-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs"
                 >
-                  <label className="flex items-center gap-2.5 font-semibold text-white capitalize select-none cursor-pointer">
+                  <label className="flex items-center gap-2.5 font-bold text-slate-800 capitalize select-none cursor-pointer">
                     <input
                       type="checkbox"
                       {...register(`workingHours.${day}.enabled`)}
-                      className="rounded bg-white/5 border-white/10 text-brand-500"
+                      className="rounded border-slate-300 text-[#163300] focus:ring-[#9FE870]"
                     />
                     {day}
                   </label>
@@ -469,14 +469,14 @@ export function ProfessionalProfileForm({ form, activeTab }) {
                       type="text"
                       placeholder="09:00"
                       {...register(`workingHours.${day}.open`)}
-                      className="w-16 h-8 text-center rounded-lg bg-white/5 border border-white/10 text-xs text-white"
+                      className="w-20 h-9 text-center rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-800 focus:border-[#163300] focus:ring-2 focus:ring-[#9FE870]/30 shadow-inner"
                     />
-                    <span className="text-slate-500">to</span>
+                    <span className="text-slate-400 font-medium">to</span>
                     <input
                       type="text"
                       placeholder="17:00"
                       {...register(`workingHours.${day}.close`)}
-                      className="w-16 h-8 text-center rounded-lg bg-white/5 border border-white/10 text-xs text-white"
+                      className="w-20 h-9 text-center rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-800 focus:border-[#163300] focus:ring-2 focus:ring-[#9FE870]/30 shadow-inner"
                     />
                   </div>
                 </div>
@@ -487,86 +487,107 @@ export function ProfessionalProfileForm({ form, activeTab }) {
       )}
 
       {activeTab === "seo" && (
-        <div className="space-y-6 animate-fadeUp">
+        <div className="space-y-8 animate-fadeUp">
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
                 Privacy & Visibility
               </h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-                Configure search engine visibility and accessibility
+              <p className="text-xs text-slate-500">
+                Configure search engine visibility and accessibility for your profile
               </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
-              {["public", "unlisted", "private"].map((mode) => (
+              {[
+                {
+                  id: "public",
+                  title: "Public",
+                  desc: "Indexed by search engines and visible to anyone with your link.",
+                },
+                {
+                  id: "unlisted",
+                  title: "Unlisted",
+                  desc: "Visible only to people who have your direct link. Hidden from search.",
+                },
+                {
+                  id: "private",
+                  title: "Private",
+                  desc: "Only visible to you while signed in. Disabled for public visitors.",
+                },
+              ].map((item) => (
                 <button
-                  key={mode}
+                  key={item.id}
                   type="button"
                   onClick={() =>
-                    setValue("visibility", mode, { shouldDirty: true })
+                    setValue("visibility", item.id, { shouldDirty: true })
                   }
                   className={`rounded-2xl border p-4 text-left transition select-none active:scale-[0.98] ${
-                    visibility === mode
-                      ? "border-brand-500/40 bg-brand-500/[0.03] shadow-sm"
-                      : "border-white/[0.06] bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/[0.12]"
+                    visibility === item.id
+                      ? "border-[#163300] bg-[#9FE870]/15 ring-1 ring-[#163300] shadow-sm"
+                      : "border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300"
                   }`}
                 >
-                  <div className="font-bold text-white text-xs capitalize">
-                    {mode}
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-900 text-sm">
+                      {item.title}
+                    </span>
+                    <span
+                      className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                        visibility === item.id
+                          ? "border-[#163300] bg-[#163300]"
+                          : "border-slate-300 bg-white"
+                      }`}
+                    >
+                      {visibility === item.id && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#9FE870]" />
+                      )}
+                    </span>
                   </div>
-                  <p className="text-3xs text-slate-400 mt-1 leading-normal">
-                    {mode === "public"
-                      ? "Indexed by search engines & visible to all."
-                      : ""}
-                    {mode === "unlisted"
-                      ? "Visible to users with slug link, hidden from search."
-                      : ""}
-                    {mode === "private"
-                      ? "Only visible to you. Disabled for public viewers."
-                      : ""}
+                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                    {item.desc}
                   </p>
                 </button>
               ))}
             </div>
           </div>
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
                 Custom Profile URL
               </h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-                Claim your unique URL handle link
+              <p className="text-xs text-slate-500">
+                Claim your unique URL handle link on oneprofile.in
               </p>
             </div>
 
             <Input
               label="Profile Username / Slug URL *"
-              placeholder="E.g., sarah-connor"
+              placeholder="e.g. sarah-connor"
               {...register("slug")}
               error={formState.errors.slug?.message}
               hint="Must be lowercase letters, numbers, and dashes only. Claiming this changes your public URL."
             />
           </div>
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
                 Search Engine Optimization (SEO)
               </h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-                Customize meta descriptors for Google Search indexes
+              <p className="text-xs text-slate-500">
+                Customize meta descriptors for Google and social sharing link previews
               </p>
             </div>
 
             <Input
               label="Meta Title"
-              placeholder="E.g., Sarah Connor | Senior Cybersecurity Consultant"
+              placeholder="e.g. Sarah Connor | Senior Cybersecurity Consultant"
               {...register("seo.metaTitle")}
               error={formState.errors.seo?.metaTitle?.message}
             />
@@ -581,7 +602,7 @@ export function ProfessionalProfileForm({ form, activeTab }) {
 
             <Input
               label="SEO Search Keywords (Comma separated)"
-              placeholder="E.g., Security Consulting, CISSP, Cybersecurity"
+              placeholder="e.g. Security Consulting, CISSP, Cybersecurity"
               {...register("seo.keywordsRaw")}
               error={formState.errors.seo?.keywordsRaw?.message}
               hint="Keywords visitors use to search your profile page."

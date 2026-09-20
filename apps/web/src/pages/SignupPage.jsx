@@ -62,15 +62,15 @@ export function SignupPage() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="space-y-7"
+      transition={{ duration: 0.35 }}
+      className="space-y-6"
     >
-      <div className="space-y-2">
-        <h2 className="font-display text-2.5xl font-extrabold text-slate-300 dark:text-white tracking-tight">
+      <div className="space-y-1.5">
+        <h2 className="font-display text-2.5xl sm:text-3xl font-bold text-[#121814] tracking-tight">
           Create account
         </h2>
-        <p className="text-xs text-oneprofile-600 font-semibold">
-          Start your oneprofile identity workspace in minutes.
+        <p className="text-xs sm:text-sm text-[#576159]">
+          Get your digital card, profile site, and lead capture in minutes.
         </p>
       </div>
 
@@ -83,7 +83,7 @@ export function SignupPage() {
       {info ? <Alert variant="success">{info}</Alert> : null}
 
       <form
-        className="space-y-4"
+        className="space-y-3.5"
         onSubmit={form.handleSubmit((values) => mutation.mutate(values))}
         noValidate
       >
@@ -101,14 +101,14 @@ export function SignupPage() {
         />
         <Input
           label="Phone number (optional)"
-          placeholder="+1 (555) 000-0000"
+          placeholder="+91 98765 43210"
           {...form.register("phone")}
           error={form.formState.errors.phone?.message}
         />
         <Input
           label="Password"
           type="password"
-          placeholder="••••••••••••"
+          placeholder="At least 8 characters"
           {...form.register("password")}
           error={form.formState.errors.password?.message}
         />
@@ -116,22 +116,23 @@ export function SignupPage() {
         <div className="pt-2">
           <Button
             type="submit"
-            variant="secondary"
-            className="text-xs font-bold w-full"
+            variant="primary"
+            size="lg"
+            className="w-full text-xs font-semibold shadow-xs"
             loading={mutation.isPending}
           >
-            Create account
+            Create Your Profile
           </Button>
         </div>
       </form>
 
       <div className="space-y-4">
-        <div className="relative flex py-2 items-center">
-          <div className="flex-grow border-t border-white/[0.06]"></div>
-          <span className="flex-shrink mx-4 text-3xs font-semibold uppercase tracking-[0.25em] text-slate-500">
-            or connect with
+        <div className="relative flex items-center py-1">
+          <div className="flex-grow border-t border-black/[0.08]"></div>
+          <span className="flex-shrink mx-4 text-[10px] font-mono uppercase tracking-wider text-[#879289]">
+            or sign up with
           </span>
-          <div className="flex-grow border-t border-white/[0.06]"></div>
+          <div className="flex-grow border-t border-black/[0.08]"></div>
         </div>
 
         <SocialLoginButton
@@ -141,10 +142,10 @@ export function SignupPage() {
         />
       </div>
 
-      <div className="pt-3 border-t border-white/[0.05] text-xs text-slate-400 font-semibold text-center">
+      <div className="pt-4 border-t border-black/[0.06] text-center text-xs text-[#576159]">
         Already have an account?{" "}
         <Link
-          className="text-brand-400 hover:text-brand-300 transition-colors"
+          className="font-semibold text-[#163300] hover:underline transition-colors ml-1"
           to="/login"
         >
           Sign in
@@ -153,3 +154,4 @@ export function SignupPage() {
     </motion.div>
   );
 }
+

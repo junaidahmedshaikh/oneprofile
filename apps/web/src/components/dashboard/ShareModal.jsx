@@ -167,239 +167,181 @@ export function ShareModal({ isOpen, onClose, profile }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-40 bg-black/80"
+            className="fixed inset-0 z-40 bg-[#121814]/60 backdrop-blur-sm"
           />
 
-          {/* Layered dialog container matching AuthShell visual styling */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 8 }}
-            transition={{ type: "spring", stiffness: 380, damping: 32 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-6 w-[calc(100%-32px)] sm:w-full sm:max-w-[720px] max-h-[90vh] p-1 bg-oneprofile-100 border border-oneprofile-700 rounded-ds-card overflow-hidden shadow-ds-card backdrop-blur-xl flex flex-col"
-          >
-            {/* Inner Surface Wrapper */}
-            <div className="relative p-6 sm:p-8 rounded-[20px] bg-oneprofile-900/40 overflow-y-auto flex flex-col justify-between flex-1">
-              {/* Decorative blurred gradient orb */}
-              <div className="absolute top-0 right-0 w-44 h-44 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-
-              <div className="space-y-6 sm:space-y-8 flex-1 z-10">
-                {/* Header */}
-                <div className="flex items-center justify-between border-b border-oneprofile-700 pb-5">
-                  <div>
-                    <h3 className="font-display text-[20px] font-semibold text-white tracking-tight">
-                      Share Digital Card
-                    </h3>
-                    <p className="text-[14px] text-oneprofile-600 mt-1">
-                      Instantly share your professional identity with anyone.
-                    </p>
-                  </div>
-                  <button
-                    onClick={onClose}
-                    className="h-9 w-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center border border-oneprofile-700 text-slate-400 hover:text-white transition-all active:scale-95 select-none shrink-0"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+          {/* Modal Container */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 8 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-2xl bg-[#FAFAF7] border border-black/[0.1] rounded-2xl shadow-[0_24px_70px_rgba(18,24,20,0.15)] p-6 sm:p-8 relative my-auto max-h-[90vh] overflow-y-auto space-y-6"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-black/[0.08] pb-4">
+                <div>
+                  <h3 className="font-display text-2xl font-bold text-[#121814] tracking-tight">
+                    Share Digital Card
+                  </h3>
+                  <p className="text-xs text-[#576159] mt-0.5">
+                    Instantly share your identity via live link, NFC tap, or vCard file.
+                  </p>
                 </div>
+                <button
+                  onClick={onClose}
+                  className="h-8 w-8 rounded-lg hover:bg-black/[0.05] flex items-center justify-center border border-black/[0.08] text-[#576159] hover:text-[#121814] transition-all"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
 
-                {/* Profile Preview Card */}
-                <div className="relative p-5 sm:p-6 rounded-2xl overflow-hidden bg-oneprofile-950/60 border border-oneprofile-700 flex items-center gap-5 sm:gap-6 shadow-sm">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
-                  {avatarUrl ? (
-                    <img
-                      src={avatarUrl}
-                      alt={name}
-                      className="w-14 h-14 rounded-xl object-cover border border-oneprofile-700 shrink-0 z-10"
-                    />
-                  ) : (
-                    <div className="w-14 h-14 rounded-xl bg-primary/10 border border-oneprofile-700 flex items-center justify-center text-md font-bold text-primary shrink-0 select-none z-10">
-                      {getInitials(name)}
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0 z-10">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="text-[18px] sm:text-[20px] font-semibold text-white truncate">
-                        {name}
-                      </h4>
-                      {profile.isVerified && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-4xs font-bold uppercase tracking-wider text-emerald-400 select-none shrink-0">
-                          <BadgeCheck className="w-3 h-3" />
-                          Verified
-                        </span>
-                      )}
-                    </div>
-                    {designation && (
-                      <p className="text-xs text-oneprofile-600 truncate mt-0.5">
-                        {designation}
-                      </p>
+              {/* Profile Preview Card */}
+              <div className="relative p-5 sm:p-6 rounded-xl overflow-hidden bg-[#121814] text-white flex items-center gap-5 border border-black/[0.12] shadow-sm">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#9FE870]/10 rounded-full blur-2xl pointer-events-none" />
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={name}
+                    className="w-14 h-14 rounded-xl object-cover border border-white/20 shrink-0 z-10"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-base font-bold font-display text-[#9FE870] shrink-0 select-none z-10">
+                    {getInitials(name)}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0 z-10">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h4 className="font-display text-xl font-bold text-white truncate">
+                      {name}
+                    </h4>
+                    {profile.isVerified && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.08] border border-white/10 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-[#9FE870] select-none shrink-0">
+                        <BadgeCheck className="w-3 h-3 text-[#9FE870]" />
+                        Verified
+                      </span>
                     )}
-                    <p className="text-[13px] text-primary truncate mt-1 font-mono">
-                      {publicUrl.replace(/^https?:\/\//, "")}
+                  </div>
+                  {designation && (
+                    <p className="text-xs text-[#879289] truncate mt-0.5">
+                      {designation}
                     </p>
-                  </div>
+                  )}
+                  <p className="text-xs text-[#9FE870] truncate mt-1 font-mono">
+                    {publicUrl.replace(/^https?:\/\//, "")}
+                  </p>
                 </div>
+              </div>
 
-                {/* Contact Information Section */}
-                <div className="space-y-4">
-                  <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-oneprofile-600 block">
-                    Contact Information
-                  </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Phone Card */}
-                    <div className="p-4 sm:p-5 bg-oneprofile-950/60 border border-oneprofile-700 rounded-2xl flex items-start gap-4 shadow-sm">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-oneprofile-700 flex items-center justify-center text-primary shrink-0">
-                        <Phone className="w-4.5 h-4.5" />
-                      </div>
-                      <div className="min-w-0">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-oneprofile-600 block">
-                          Phone
-                        </span>
-                        <span className="text-[13px] font-semibold text-slate-300 block truncate mt-1 select-all">
-                          {phoneVal}
-                        </span>
-                      </div>
+              {/* Contact Details Grid */}
+              <div className="space-y-2.5">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[#879289] block">
+                  Quick Details
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-3.5 bg-[#F6F5EE] border border-black/[0.06] rounded-xl flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white border border-black/[0.08] flex items-center justify-center text-[#163300] shrink-0">
+                      <Phone className="w-3.5 h-3.5" />
                     </div>
-
-                    {/* Email Card */}
-                    <div className="p-4 sm:p-5 bg-oneprofile-950/60 border border-oneprofile-700 rounded-2xl flex items-start gap-4 shadow-sm">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-oneprofile-700 flex items-center justify-center text-primary shrink-0">
-                        <Mail className="w-4.5 h-4.5" />
-                      </div>
-                      <div className="min-w-0">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-oneprofile-600 block">
-                          Email
-                        </span>
-                        <span className="text-[13px] font-semibold text-slate-300 block truncate mt-1 select-all">
-                          {emailVal}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Website Card */}
-                    <div className="p-4 sm:p-5 bg-oneprofile-950/60 border border-oneprofile-700 rounded-2xl flex items-start gap-4 shadow-sm">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-oneprofile-700 flex items-center justify-center text-primary shrink-0">
-                        <Globe className="w-4.5 h-4.5" />
-                      </div>
-                      <div className="min-w-0">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-oneprofile-600 block">
-                          Website
-                        </span>
-                        <a
-                          href={
-                            websiteVal !== "Not Available"
-                              ? websiteVal.startsWith("http")
-                                ? websiteVal
-                                : `https://${websiteVal}`
-                              : undefined
-                          }
-                          target="_blank"
-                          rel="noreferrer"
-                          className={`text-[13px] font-semibold block truncate mt-1 ${
-                            websiteVal !== "Not Available"
-                              ? "text-primary hover:underline"
-                              : "text-oneprofile-600 pointer-events-none"
-                          }`}
-                        >
-                          {websiteVal}
-                        </a>
-                      </div>
-                    </div>
-
-                    {/* Address Card */}
-                    <div className="p-4 sm:p-5 bg-oneprofile-950/60 border border-oneprofile-700 rounded-2xl flex items-start gap-4 shadow-sm">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-oneprofile-700 flex items-center justify-center text-primary shrink-0">
-                        <MapPin className="w-4.5 h-4.5" />
-                      </div>
-                      <div className="min-w-0">
-                        <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-oneprofile-600 block">
-                          Address
-                        </span>
-                        <span className="text-[13px] font-semibold text-slate-300 block truncate mt-1">
-                          {addressVal}
-                        </span>
-                      </div>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-[#879289] block">
+                        Phone
+                      </span>
+                      <span className="text-xs font-medium text-[#121814] block truncate">
+                        {phoneVal}
+                      </span>
                     </div>
                   </div>
-                </div>
 
-                {/* QR Code Actions Section */}
-                <div className="space-y-4">
-                  <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-oneprofile-600 block">
-                    QR Code Actions
-                  </span>
-                  <div className="p-5 sm:p-6 bg-oneprofile-950/60 border border-oneprofile-700 rounded-2xl flex flex-col md:flex-row items-center gap-6 justify-between shadow-sm relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
-
-                    {/* Left Info with QR */}
-                    <div className="flex items-center gap-5 w-full md:w-auto z-10">
-                      {/* QR Code Container */}
-                      <div className="bg-white p-2 rounded-2xl border border-oneprofile-700 shrink-0 shadow-sm">
-                        {profile.qrCodeUrl ? (
-                          <img
-                            src={profile.qrCodeUrl}
-                            alt="QR Code"
-                            className="w-16 h-16 object-contain select-none"
-                          />
-                        ) : (
-                          <div className="w-16 h-16 flex items-center justify-center text-slate-500 text-[10px] font-bold bg-slate-900 rounded-xl">
-                            Generating...
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <h4 className="text-[16px] font-semibold text-white flex items-center gap-2">
-                          <Share2 className="w-4 h-4 text-primary" />
-                          Share Card
-                        </h4>
-                        <p className="text-[13px] text-oneprofile-600 mt-1">
-                          Share your digital business card instantly.
-                        </p>
-                      </div>
+                  <div className="p-3.5 bg-[#F6F5EE] border border-black/[0.06] rounded-xl flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white border border-black/[0.08] flex items-center justify-center text-[#163300] shrink-0">
+                      <Mail className="w-3.5 h-3.5" />
                     </div>
-
-                    {/* Right Action Buttons */}
-                    <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto shrink-0 sm:justify-end z-10">
-                      <Button
-                        onClick={handleShareNative}
-                        className="rounded-xl h-12 text-[13px] font-bold px-5 flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-slate-950 w-full sm:w-auto md:w-[180px] shadow-ds-card transition-all duration-150 active:scale-95"
-                      >
-                        <Share2 className="w-4 h-4" />
-                        Share Card
-                      </Button>
-                      <Button
-                        onClick={handleSaveContact}
-                        variant="secondary"
-                        className="rounded-xl h-12 text-[13px] font-bold px-5 flex items-center justify-center gap-2 border border-oneprofile-700 bg-white/5 hover:bg-white/10 text-slate-200 hover:text-white w-full sm:w-auto md:w-[180px] transition-all duration-150 active:scale-95"
-                      >
-                        <Download className="w-4 h-4" />
-                        Download Card
-                      </Button>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-[#879289] block">
+                        Email
+                      </span>
+                      <span className="text-xs font-medium text-[#121814] block truncate">
+                        {emailVal}
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Footer Section */}
-              <div className="border-t border-oneprofile-700 pt-5 sm:pt-6 mt-6 flex flex-col sm:flex-row gap-3 z-10">
+              {/* QR Code Actions Section */}
+              <div className="p-5 bg-[#F6F5EE] border border-black/[0.08] rounded-xl flex flex-col sm:flex-row items-center gap-5 justify-between">
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <div className="bg-white p-2 rounded-xl border border-black/[0.08] shrink-0 shadow-2xs">
+                    {profile.qrCodeUrl ? (
+                      <img
+                        src={profile.qrCodeUrl}
+                        alt="QR Code"
+                        className="w-16 h-16 object-contain"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 flex items-center justify-center text-[#879289] text-[10px] font-mono bg-[#FAFAF7] rounded-lg">
+                        QR Ready
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-[#121814] flex items-center gap-1.5">
+                      <Share2 className="w-4 h-4 text-[#163300]" />
+                      Scan or Tap Link
+                    </h4>
+                    <p className="text-xs text-[#576159] mt-0.5">
+                      Open with any smartphone camera or NFC card reader.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 w-full sm:w-auto shrink-0">
+                  <Button
+                    onClick={handleShareNative}
+                    variant="primary"
+                    size="sm"
+                    className="flex-1 sm:flex-none text-xs font-semibold"
+                  >
+                    <Share2 className="w-3.5 h-3.5 mr-1.5" />
+                    {copySuccess ? "Copied Link!" : "Share Link"}
+                  </Button>
+                  <Button
+                    onClick={handleSaveContact}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 sm:flex-none text-xs font-semibold"
+                  >
+                    <Download className="w-3.5 h-3.5 mr-1.5" />
+                    Save vCard
+                  </Button>
+                </div>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="border-t border-black/[0.08] pt-4 flex gap-3">
                 <Button
                   onClick={handleCloseAndOpenCard}
-                  className="flex-1 h-12 rounded-xl text-[13px] font-bold flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-slate-950 transition-all duration-150 active:scale-95"
+                  variant="primary"
+                  className="flex-1 text-xs font-semibold"
                 >
-                  <ExternalLink className="w-4 h-4" />
-                  View Digital Card
+                  <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+                  Open Live Digital Card
                 </Button>
                 <Button
-                  variant="secondary"
-                  className="flex-1 h-12 rounded-xl text-[13px] font-bold flex items-center justify-center border border-oneprofile-700 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all duration-150 active:scale-95"
+                  variant="outline"
+                  className="flex-1 text-xs font-semibold"
                   onClick={onClose}
                 >
                   Close
                 </Button>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </>
       ) : null}
     </AnimatePresence>
   );
 }
+

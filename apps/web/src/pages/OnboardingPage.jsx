@@ -25,6 +25,28 @@ import { Input } from "../components/ui/Input";
 import { Textarea } from "../components/ui/Textarea";
 import { Alert } from "../components/ui/Alert";
 import { Spinner } from "../components/ui/Spinner";
+import { OnboardingStepper } from "../components/onboarding/OnboardingStepper";
+import {
+  Phone,
+  MessageSquare,
+  Mail,
+  Download,
+  CheckCircle2,
+  Globe,
+  MapPin,
+  Sparkles,
+  ExternalLink,
+  Wifi,
+  Battery,
+  Signal,
+  Eye,
+  Edit3,
+  Linkedin,
+  Instagram,
+  Twitter,
+  Youtube,
+  Github,
+} from "lucide-react";
 
 const stepOrder = [
   "industry", // profileType selection
@@ -169,7 +191,7 @@ function SearchableDropdown({
   return (
     <div className="relative space-y-1.5 min-w-0 searchable-dropdown-container">
       {label && (
-        <label className="text-3xs font-extrabold uppercase tracking-wider text-slate-400">
+        <label className="text-xs font-bold text-slate-700 block select-none">
           {label}
         </label>
       )}
@@ -179,12 +201,12 @@ function SearchableDropdown({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
-        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-left text-xs font-semibold text-slate-200 hover:text-white shadow-sm transition-all hover:bg-white/[0.06] active:scale-[0.99] select-none"
+        className="flex h-11 w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-left text-xs font-semibold text-slate-800 hover:border-slate-300 shadow-2xs transition-all active:scale-[0.99] select-none"
       >
-        <span className={selectedOption ? "text-white" : "text-slate-500"}>
+        <span className={selectedOption ? "text-slate-900 font-semibold" : "text-slate-400"}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <span className="text-slate-400 text-[10px]">▼</span>
+        <span className="text-slate-400 text-xs">▾</span>
       </button>
 
       {isOpen &&
@@ -197,7 +219,7 @@ function SearchableDropdown({
               left: `${coords.left}px`,
               width: `${coords.width}px`,
             }}
-            className="z-[9999] mt-1 rounded-2xl border border-white/[0.08] bg-[#12141c] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl space-y-2 flex flex-col max-h-[280px] overflow-hidden"
+            className="z-[9999] mt-1 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl space-y-1.5 flex flex-col max-h-[280px] overflow-hidden"
           >
             <input
               type="text"
@@ -205,12 +227,7 @@ function SearchableDropdown({
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Search options..."
-              style={{
-                backgroundColor: "#181a26",
-                color: "#ffffff",
-                borderColor: "rgba(255, 255, 255, 0.08)",
-              }}
-              className="w-full rounded-xl border px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors duration-150"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#163300] focus:bg-white transition-colors duration-150"
               autoFocus
             />
             <div className="flex-1 overflow-y-auto pr-1 space-y-0.5 max-h-[200px] custom-scrollbar">
@@ -224,20 +241,20 @@ function SearchableDropdown({
                       setIsOpen(false);
                       setSearchTerm("");
                     }}
-                    className={`w-full rounded-xl px-3 py-2.5 text-left text-xs font-semibold transition-all duration-150 ease-in-out ${
+                    className={`w-full rounded-xl px-3 py-2 text-left text-xs font-semibold transition-all duration-150 ${
                       value === opt.key
-                        ? "bg-brand-500 text-white shadow-[0_2px_10px_rgba(37,99,235,0.3)]"
+                        ? "bg-[#163300] text-white shadow-xs"
                         : highlightedIndex === idx
-                          ? "bg-white/[0.06] text-white"
-                          : "text-slate-300 hover:bg-brand-500/10 hover:text-brand-300"
+                          ? "bg-slate-100 text-slate-900"
+                          : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
                     {opt.label}
                   </button>
                 ))
               ) : (
-                <div className="px-3 py-2 text-3xs text-slate-500 font-bold uppercase">
-                  No results found
+                <div className="px-3 py-3 text-xs text-slate-400 font-medium text-center">
+                  No options found
                 </div>
               )}
             </div>
@@ -258,6 +275,7 @@ export function OnboardingPage() {
   const accessToken = useSelector((state) => state.auth.accessToken);
 
   const [activeStep, setLocalStep] = useState("industry");
+  const [mobileTab, setMobileTab] = useState("editor"); // "editor" | "preview"
 
   // Custom stepper parameters
   const [selectedProfileType, setSelectedProfileType] = useState("business");
@@ -1065,42 +1083,88 @@ export function OnboardingPage() {
 
       <div className="flex flex-col gap-4.5 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-1 select-none">
-          <span className="text-3xs uppercase tracking-[0.2em] text-brand-400 font-bold">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-[#163300] font-semibold">
             Workspace setup
           </span>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+          <h1 className="font-display font-bold text-2xl tracking-tight text-[#121814] sm:text-3xl">
             Get published in under 5 minutes.
           </h1>
-          <p className="max-w-xl text-xs leading-relaxed text-slate-400">
-            Let's structure your digital business card and profile. Click Save &
-            Exit to preserve your progress.
+          <p className="max-w-xl text-xs leading-relaxed text-[#576159]">
+            Configure your digital identity card and mobile microsite. Click Save &
+            Exit anytime to preserve your progress.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2 shrink-0 items-center select-none">
           <Button
-            variant="secondary"
+            variant="outline"
             loading={saveMutation.isPending}
             onClick={() => saveDraft()}
-            className="rounded-xl h-8.5 min-h-[34px] px-3.5 text-3xs font-bold border-white/[0.08]"
+            className="text-xs font-semibold"
           >
             {saveMutation.isPending ? "Saving..." : "Save & Exit"}
           </Button>
           <Button
+            variant="primary"
             loading={publishMutation.isPending}
             disabled={!publishReady}
             onClick={() => publishMutation.mutate()}
-            className="rounded-xl h-8.5 min-h-[34px] px-3.5 text-3xs font-bold text-slate-200 bg-oneprofile-500  border-white/[0.08] disabled:opacity-70 disabled:cursor-not-allowed"
+            className="text-xs font-semibold"
           >
             Publish Workspace
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] items-start">
+      {/* Stepper Navigation */}
+      <OnboardingStepper
+        activeStep={activeStep}
+        completedSteps={onboardingState.completedSteps || []}
+        onStepClick={(stepId) => {
+          setLocalStep(stepId);
+          setMobileTab("editor");
+        }}
+        profileType={selectedProfileType}
+      />
+
+      {/* Mobile Mode Switcher: Edit Step vs Live Mobile Preview (Only on < lg screens) */}
+      <div className="flex lg:hidden items-center justify-between p-1.5 rounded-xl bg-[#F6F5EE] border border-black/[0.08] shadow-2xs">
+        <button
+          type="button"
+          onClick={() => setMobileTab("editor")}
+          className={clsx(
+            "flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2",
+            mobileTab === "editor"
+              ? "bg-white text-[#121814] shadow-xs border border-black/[0.08] font-bold"
+              : "text-[#576159] hover:text-[#121814]"
+          )}
+        >
+          <Edit3 className="w-3.5 h-3.5" />
+          <span>Edit Step</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileTab("preview")}
+          className={clsx(
+            "flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2",
+            mobileTab === "preview"
+              ? "bg-[#163300] text-[#9FE870] shadow-xs font-bold"
+              : "text-[#576159] hover:text-[#121814]"
+          )}
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-[#9FE870] animate-pulse" />
+          <Eye className="w-3.5 h-3.5" />
+          <span>Live Mobile Preview</span>
+        </button>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_320px] items-start">
         {/* Step configuration cards */}
         <Card
-          className="p-6 sm:p-8 rounded-3xl border border-white/[0.08] bg-white/[0.02] shadow-[0_20px_60px_rgba(0,0,0,0.25)] relative overflow-hidden"
+          className={clsx(
+            "p-6 sm:p-8 rounded-2xl border border-black/[0.08] bg-white/95 backdrop-blur-sm shadow-[0_4px_20px_rgba(18,24,20,0.02)] relative overflow-hidden",
+            mobileTab === "preview" ? "hidden lg:block" : "block"
+          )}
           hoverEffect={false}
         >
           <AnimatePresence mode="wait">
@@ -1111,37 +1175,38 @@ export function OnboardingPage() {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="space-y-4"
+                className="space-y-5"
               >
-                <div className="space-y-0.5">
-                  <h2 className="font-display text-base font-bold text-slate-300 dark:text-white tracking-tight">
+                <div className="space-y-1">
+                  <h2 className="font-display text-lg font-bold text-[#121814] tracking-tight">
                     What best describes you?
                   </h2>
-                  <p className="text-3xs text-oneprofile-600 tracking-wide font-semibold">
-                    Choose between setting up a Business Organization card or a
-                    Professional Personal card.
+                  <p className="text-xs text-[#576159]">
+                    Choose between setting up a Business Organization card or an Individual Professional card.
                   </p>
                 </div>
-                <div className="grid gap-4.5 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <button
                     type="button"
                     onClick={() => {
                       setSelectedProfileType("business");
                       dispatch(setProfileType("business"));
                     }}
-                    className={`flex flex-col gap-2 rounded-2xl p-5 text-left transition-all duration-300 border ${
+                    className={`flex flex-col gap-3 rounded-xl p-5 text-left transition-all duration-200 border ${
                       selectedProfileType === "business"
-                        ? "bg-primary/10 border-primary/30 text-slate-300 dark:text-white shadow-ds-card"
-                        : "bg-oneprofile-900/40 border-oneprofile-700 text-oneprofile-600 hover:bg-oneprofile-100 hover:text-slate-300 dark:hover:text-white"
+                        ? "border-[#163300] bg-[#163300]/[0.04] ring-1 ring-[#163300] text-[#121814] shadow-xs"
+                        : "border-black/[0.08] bg-white hover:border-black/[0.15] text-[#576159]"
                     }`}
                   >
-                    <span className="text-2xl">🏢</span>
-                    <span className="text-xs font-bold">Business</span>
-                    <span className="text-3xs text-oneprofile-600 font-semibold leading-relaxed">
-                      {" "}
-                      E.g., Company, Startup, Agency, Store, Brand,
-                      Organization.
-                    </span>
+                    <div className="w-10 h-10 rounded-xl bg-[#F6F5EE] border border-black/[0.08] flex items-center justify-center text-xl shadow-2xs">
+                      🏢
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold text-[#121814] block">Business</span>
+                      <span className="text-xs text-[#576159] leading-relaxed mt-1 block">
+                        Company, Startup, Agency, Store, Brand, or Organization.
+                      </span>
+                    </div>
                   </button>
                   <button
                     type="button"
@@ -1149,19 +1214,21 @@ export function OnboardingPage() {
                       setSelectedProfileType("professional");
                       dispatch(setProfileType("professional"));
                     }}
-                    className={`flex flex-col gap-2 rounded-2xl p-5 text-left transition-all duration-300 border ${
+                    className={`flex flex-col gap-3 rounded-xl p-5 text-left transition-all duration-200 border ${
                       selectedProfileType === "professional"
-                        ? "bg-primary/10 border-primary/30 text-slate-300 dark:text-white shadow-ds-card"
-                        : "bg-oneprofile-900/40 border-oneprofile-700 text-oneprofile-600 hover:bg-oneprofile-100 hover:text-slate-300 dark:hover:text-white"
+                        ? "border-[#163300] bg-[#163300]/[0.04] ring-1 ring-[#163300] text-[#121814] shadow-xs"
+                        : "border-black/[0.08] bg-white hover:border-black/[0.15] text-[#576159]"
                     }`}
                   >
-                    <span className="text-2xl">👤</span>
-                    <span className="text-xs font-bold">Professional</span>
-                    <span className="text-3xs text-oneprofile-600 font-semibold leading-relaxed">
-                      {" "}
-                      E.g., Doctor, Engineer, Designer, Freelancer, Consultant,
-                      Coach, Trainer.
-                    </span>
+                    <div className="w-10 h-10 rounded-xl bg-[#F6F5EE] border border-black/[0.08] flex items-center justify-center text-xl shadow-2xs">
+                      👤
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold text-[#121814] block">Professional</span>
+                      <span className="text-xs text-[#576159] leading-relaxed mt-1 block">
+                        Freelancer, Consultant, Practitioner, Doctor, Engineer, or Creator.
+                      </span>
+                    </div>
                   </button>
                 </div>
               </motion.div>
@@ -1174,17 +1241,16 @@ export function OnboardingPage() {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="space-y-4"
+                className="space-y-5"
               >
                 {selectedProfileType === "business" ? (
                   <div className="space-y-4">
-                    <div className="space-y-0.5">
-                      <h2 className="font-display text-base font-bold text-white tracking-tight">
+                    <div className="space-y-1">
+                      <h2 className="font-display text-lg font-bold text-[#121814] tracking-tight">
                         Select Business Type
                       </h2>
-                      <p className="text-3xs text-slate-400 tracking-wide">
-                        Choose the organization category matching your startup,
-                        brand, or store.
+                      <p className="text-xs text-[#576159]">
+                        Choose the organization classification matching your startup, brand, or store.
                       </p>
                     </div>
 
@@ -1193,18 +1259,17 @@ export function OnboardingPage() {
                       value={selectedCategory}
                       onChange={setSelectedCategory}
                       placeholder="Search and select business type..."
-                      label="Business Type Selector"
+                      label="Business Type"
                     />
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="space-y-0.5">
-                      <h2 className="font-display text-base font-bold text-white tracking-tight">
+                    <div className="space-y-1">
+                      <h2 className="font-display text-lg font-bold text-[#121814] tracking-tight">
                         Select Professional Category
                       </h2>
-                      <p className="text-3xs text-slate-400 tracking-wide">
-                        Choose the credential title matching your core
-                        profession.
+                      <p className="text-xs text-[#576159]">
+                        Choose the credential category that best describes your profession.
                       </p>
                     </div>
 
@@ -1213,7 +1278,7 @@ export function OnboardingPage() {
                       value={selectedProfessionalCategory}
                       onChange={setSelectedProfessionalCategory}
                       placeholder="Search and select professional category..."
-                      label="Professional Category Selector"
+                      label="Professional Category"
                     />
                   </div>
                 )}
@@ -1227,15 +1292,14 @@ export function OnboardingPage() {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="space-y-4"
+                className="space-y-5"
               >
-                <div className="space-y-0.5">
-                  <h2 className="font-display text-base font-bold text-white tracking-tight">
+                <div className="space-y-1">
+                  <h2 className="font-display text-lg font-bold text-[#121814] tracking-tight">
                     Select Industry
                   </h2>
-                  <p className="text-3xs text-slate-400 tracking-wide">
-                    Choose the industrial sector that outlines your primary
-                    field of business.
+                  <p className="text-xs text-[#576159]">
+                    Choose the industrial sector that outlines your primary field of operation.
                   </p>
                 </div>
 
@@ -1244,7 +1308,7 @@ export function OnboardingPage() {
                   value={selectedIndustry}
                   onChange={setSelectedIndustry}
                   placeholder="Search and select industry..."
-                  label="Industry Selector"
+                  label="Industry Sector"
                 />
               </motion.div>
             ) : null}
@@ -1257,21 +1321,20 @@ export function OnboardingPage() {
                     onSubmit={companyForm.handleSubmit(() =>
                       completeStep("logo"),
                     )}
-                    className="space-y-4"
+                    className="space-y-5"
                   >
-                    <div className="space-y-0.5">
-                      <h2 className="font-display text-base font-bold text-white tracking-tight">
+                    <div className="space-y-1">
+                      <h2 className="font-display text-lg font-bold text-[#121814] tracking-tight">
                         Business details & Logo
                       </h2>
-                      <p className="text-3xs text-slate-400 tracking-wide">
-                        Configure corporate identifiers, address coordinates,
-                        and company logo.
+                      <p className="text-xs text-[#576159]">
+                        Configure corporate identifiers, address coordinates, and company logo.
                       </p>
                     </div>
 
-                    <div className="grid gap-3.5 sm:grid-cols-2">
-                      <div className="flex flex-col items-center justify-center p-1 rounded-xl bg-white/[0.01] border border-white/[0.04] relative overflow-hidden h-28 sm:col-span-2">
-                        <label className="flex w-full h-full cursor-pointer flex-col items-center justify-center p-2.5 text-center rounded-lg hover:bg-white/[0.03] select-none">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="flex flex-col items-center justify-center p-2 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 hover:border-slate-300 relative overflow-hidden h-32 sm:col-span-2 transition-all">
+                        <label className="flex w-full h-full cursor-pointer flex-col items-center justify-center p-3 text-center rounded-xl hover:bg-white/60 select-none">
                           <input
                             type="file"
                             accept="image/*"
@@ -1282,22 +1345,25 @@ export function OnboardingPage() {
                             <img
                               src={logoPreview}
                               alt="Logo"
-                              className="h-11 w-11 rounded-lg object-cover"
+                              className="h-12 w-12 rounded-xl object-cover border border-slate-200 bg-white p-1"
                             />
                           ) : (
-                            <div className="h-10 w-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-md">
+                            <div className="h-11 w-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-lg shadow-2xs">
                               📁
                             </div>
                           )}
-                          <span className="text-3xs font-bold uppercase tracking-wider text-white mt-1.5">
+                          <span className="text-xs font-bold text-slate-700 mt-2">
                             Upload Company Logo
+                          </span>
+                          <span className="text-[11px] text-slate-400">
+                            PNG, JPG, or WebP (Max 5MB)
                           </span>
                         </label>
                       </div>
 
                       <Input
                         label="Company Name *"
-                        placeholder="Connor Consulting"
+                        placeholder="e.g. Connor Consulting"
                         {...companyForm.register("companyName")}
                         error={
                           companyForm.formState.errors.companyName?.message
@@ -1326,40 +1392,44 @@ export function OnboardingPage() {
 
                       <Input
                         label="City"
-                        placeholder="Mumbai"
+                        placeholder="e.g. Mumbai"
                         {...companyForm.register("city")}
                       />
                       <Input
                         label="Country"
-                        placeholder="India"
+                        placeholder="e.g. India"
                         {...companyForm.register("country")}
                       />
-                      <Input
-                        label="Headline"
-                        placeholder="Securing infrastructure pipelines"
-                        {...companyForm.register("tagline")}
-                      />
+                      <div className="sm:col-span-2">
+                        <Input
+                          label="Headline"
+                          placeholder="e.g. Securing cloud computing infrastructure"
+                          {...companyForm.register("tagline")}
+                        />
+                      </div>
 
                       <Input
                         label="GST Identification Number (GSTIN)"
-                        placeholder="E.g., 22AAAAA0000A1Z5"
+                        placeholder="e.g. 22AAAAA0000A1Z5"
                         {...companyForm.register("gstNumber")}
                       />
                       <Input
                         label="Business Registration Details"
-                        placeholder="CIN or Trade License code"
+                        placeholder="e.g. CIN or Trade License code"
                         {...companyForm.register("registrationDetails")}
                       />
-                      <Input
-                        label="Service Area"
-                        placeholder="E.g., Local or Worldwide"
-                        {...companyForm.register("serviceArea")}
-                      />
+                      <div className="sm:col-span-2">
+                        <Input
+                          label="Service Area"
+                          placeholder="e.g. Mumbai, India or Worldwide"
+                          {...companyForm.register("serviceArea")}
+                        />
+                      </div>
 
                       <Input
                         label="Founded Year"
                         type="number"
-                        placeholder="2018"
+                        placeholder="e.g. 2018"
                         {...companyForm.register("foundedYear", {
                           valueAsNumber: true,
                         })}
@@ -1367,7 +1437,7 @@ export function OnboardingPage() {
                       <Input
                         label="Team Size"
                         type="number"
-                        placeholder="25"
+                        placeholder="e.g. 25"
                         {...companyForm.register("teamSize", {
                           valueAsNumber: true,
                         })}
@@ -1380,20 +1450,19 @@ export function OnboardingPage() {
                     />
                   </form>
                 ) : (
-                  <div className="space-y-4">
-                    <div className="space-y-0.5">
-                      <h2 className="font-display text-base font-bold text-white tracking-tight">
+                  <div className="space-y-5">
+                    <div className="space-y-1">
+                      <h2 className="font-display text-lg font-bold text-[#121814] tracking-tight">
                         Professional biography & photo
                       </h2>
-                      <p className="text-3xs text-slate-400 tracking-wide">
-                        Configure your biography credentials, experience nodes,
-                        and profile avatar.
+                      <p className="text-xs text-[#576159]">
+                        Configure your professional credentials, experience history, and profile photo.
                       </p>
                     </div>
 
-                    <div className="grid gap-3.5 sm:grid-cols-2">
-                      <div className="flex flex-col items-center justify-center p-1 rounded-xl bg-white/[0.01] border border-white/[0.04] relative overflow-hidden h-28 sm:col-span-2">
-                        <label className="flex w-full h-full cursor-pointer flex-col items-center justify-center p-2.5 text-center rounded-lg hover:bg-white/[0.03] select-none">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="flex flex-col items-center justify-center p-2 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 hover:border-slate-300 relative overflow-hidden h-32 sm:col-span-2 transition-all">
+                        <label className="flex w-full h-full cursor-pointer flex-col items-center justify-center p-3 text-center rounded-xl hover:bg-white/60 select-none">
                           <input
                             type="file"
                             accept="image/*"
@@ -1404,22 +1473,25 @@ export function OnboardingPage() {
                             <img
                               src={logoPreview}
                               alt="Avatar"
-                              className="h-11 w-11 rounded-lg object-cover"
+                              className="h-12 w-12 rounded-xl object-cover border border-slate-200 bg-white p-1"
                             />
                           ) : (
-                            <div className="h-10 w-10 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-md">
+                            <div className="h-11 w-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-lg shadow-2xs">
                               👤
                             </div>
                           )}
-                          <span className="text-3xs font-bold uppercase tracking-wider text-white mt-1.5">
+                          <span className="text-xs font-bold text-slate-700 mt-2">
                             Upload Profile Photo
+                          </span>
+                          <span className="text-[11px] text-slate-400">
+                            PNG, JPG, or WebP (Max 5MB)
                           </span>
                         </label>
                       </div>
 
                       <Input
                         label="Full Name *"
-                        placeholder="Sarah Connor"
+                        placeholder="e.g. Sarah Connor"
                         {...contentForm.register("personalDetails.title", {
                           required: "Full name is required",
                         })}
@@ -1430,13 +1502,13 @@ export function OnboardingPage() {
                       />
                       <Input
                         label="Industry"
-                        placeholder="IT / Legal / Consulting"
+                        placeholder="e.g. Technology / Cybersecurity"
                         {...contentForm.register("personalDetails.industry")}
                       />
                       <Input
                         label="Years of Experience"
                         type="number"
-                        placeholder="5"
+                        placeholder="e.g. 8"
                         {...contentForm.register(
                           "personalDetails.yearsOfExperience",
                         )}
@@ -1444,17 +1516,17 @@ export function OnboardingPage() {
 
                       <Input
                         label="Designation / Job Title"
-                        placeholder="Senior Consultant"
+                        placeholder="e.g. Senior Security Consultant"
                         {...contentForm.register("personalDetails.designation")}
                       />
                       <Input
                         label="Department (Optional)"
-                        placeholder="Advisory"
+                        placeholder="e.g. Advisory Services"
                         {...contentForm.register("personalDetails.department")}
                       />
                       <Input
-                        label="Work Location / Service Area (Optional)"
-                        placeholder="E.g., Remote, Mumbai, India"
+                        label="Work Location (Optional)"
+                        placeholder="e.g. Remote or Mumbai, India"
                         {...contentForm.register(
                           "personalDetails.workLocation",
                         )}
@@ -1462,36 +1534,38 @@ export function OnboardingPage() {
 
                       <Input
                         label="Languages (comma separated)"
-                        placeholder="English, Spanish"
+                        placeholder="e.g. English, Hindi"
                         {...contentForm.register(
                           "personalDetails.languagesRaw",
                         )}
                       />
                       <Input
                         label="Expertise Skills (comma separated)"
-                        placeholder="React, Copywriting, Marketing"
+                        placeholder="e.g. Cloud Security, CISSP, Auditing"
                         {...contentForm.register("personalDetails.skillsRaw")}
                       />
-                      <Input
-                        label="Certifications (comma separated)"
-                        placeholder="AWS Certified, Project Management"
-                        {...contentForm.register(
-                          "personalDetails.certificationsRaw",
-                        )}
-                      />
+                      <div className="sm:col-span-2">
+                        <Input
+                          label="Certifications (comma separated)"
+                          placeholder="e.g. AWS Certified Solutions Architect, CISSP"
+                          {...contentForm.register(
+                            "personalDetails.certificationsRaw",
+                          )}
+                        />
+                      </div>
                     </div>
 
                     <Textarea
-                      label="Professional biography details"
+                      label="Professional Biography"
                       placeholder="Summarize your credentials, certifications, and value proposition..."
                       {...contentForm.register("personalDetails.bio")}
                     />
 
-                    <div className="border-t border-white/[0.05] pt-4 space-y-3.5">
-                      <span className="text-3xs font-bold uppercase tracking-wider text-brand-400 block">
-                        Experience History builder
+                    <div className="border-t border-slate-200/80 pt-4 space-y-3.5">
+                      <span className="text-xs font-bold uppercase tracking-wider text-[#163300] block">
+                        Experience History
                       </span>
-                      <div className="p-3.5 rounded-xl bg-white/[0.01] border border-white/[0.04] space-y-3 text-xs">
+                      <div className="p-4.5 rounded-2xl bg-slate-50/70 border border-slate-200 space-y-3.5 text-xs">
                         <div className="grid gap-3 sm:grid-cols-2">
                           <Input
                             label="Job Title"
@@ -1499,7 +1573,7 @@ export function OnboardingPage() {
                             onChange={(e) =>
                               setNewExp({ ...newExp, title: e.target.value })
                             }
-                            placeholder="E.g., Senior Designer"
+                            placeholder="e.g. Senior Security Consultant"
                           />
                           <Input
                             label="Company Name"
@@ -1507,7 +1581,7 @@ export function OnboardingPage() {
                             onChange={(e) =>
                               setNewExp({ ...newExp, company: e.target.value })
                             }
-                            placeholder="E.g., Connor Inc."
+                            placeholder="e.g. Connor Security Advisory"
                           />
                           <Input
                             label="Start Date"
@@ -1518,7 +1592,7 @@ export function OnboardingPage() {
                                 startDate: e.target.value,
                               })
                             }
-                            placeholder="E.g., Jan 2021"
+                            placeholder="e.g. Jan 2021"
                           />
                           <Input
                             label="End Date"
@@ -1527,7 +1601,7 @@ export function OnboardingPage() {
                             onChange={(e) =>
                               setNewExp({ ...newExp, endDate: e.target.value })
                             }
-                            placeholder="E.g., Present"
+                            placeholder="e.g. Present"
                           />
                         </div>
                         <label className="flex items-center gap-2 select-none cursor-pointer">
@@ -1541,19 +1615,19 @@ export function OnboardingPage() {
                                 endDate: e.target.checked ? "Present" : "",
                               })
                             }
-                            className="rounded bg-white/5 border-white/10"
+                            className="rounded border-slate-300 text-[#163300] focus:ring-[#9FE870]"
                           />
-                          <span className="text-3xs text-slate-400 font-bold uppercase">
-                            Current Job
+                          <span className="text-xs text-slate-700 font-semibold">
+                            I currently work here
                           </span>
                         </label>
                         <Button
                           type="button"
                           variant="secondary"
-                          className="w-full text-xs"
+                          className="w-full text-xs font-bold"
                           onClick={handleAddExperience}
                         >
-                          Add Experience Node
+                          Add Experience Position
                         </Button>
                       </div>
 
@@ -1561,20 +1635,20 @@ export function OnboardingPage() {
                         {experienceList.map((exp, idx) => (
                           <div
                             key={idx}
-                            className="flex justify-between items-center p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04]"
+                            className="flex justify-between items-center p-3 rounded-xl bg-white border border-slate-200 shadow-2xs"
                           >
                             <div>
-                              <h4 className="text-xs font-bold text-white">
+                              <h4 className="text-xs font-bold text-slate-900">
                                 {exp.title}
                               </h4>
-                              <span className="text-3xs text-slate-500 block">
+                              <span className="text-xs text-slate-500 block mt-0.5">
                                 {exp.company} • {exp.startDate} - {exp.endDate}
                               </span>
                             </div>
                             <button
                               type="button"
                               onClick={() => handleRemoveExperience(idx)}
-                              className="h-6.5 w-6.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center text-xs"
+                              className="h-7 w-7 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center text-xs shrink-0"
                             >
                               ✕
                             </button>
@@ -1597,11 +1671,11 @@ export function OnboardingPage() {
                 className="space-y-5"
               >
                 <div className="space-y-1">
-                  <h2 className="font-display text-xl font-bold text-white">
-                    Choose profile color theme skin
+                  <h2 className="font-display text-lg font-bold text-[#121814] tracking-tight">
+                    Choose profile color theme
                   </h2>
-                  <p className="text-xs text-slate-400">
-                    Choose a look that represents your identity.
+                  <p className="text-xs text-[#576159]">
+                    Select an elegant color harmony that defines your brand identity.
                   </p>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -1610,27 +1684,27 @@ export function OnboardingPage() {
                       key={t.key}
                       type="button"
                       onClick={() => setSelectedTheme(t)}
-                      className={`flex flex-col gap-3 rounded-2xl p-4.5 text-left border ${
+                      className={`flex flex-col gap-3 rounded-xl p-4.5 text-left border transition-all duration-200 ${
                         selectedTheme.key === t.key
-                          ? "bg-brand-500/10 border-brand-500/30 text-white"
-                          : "bg-white/[0.01] border-white/[0.04] text-slate-400 hover:bg-white/[0.03]"
+                          ? "bg-[#163300]/[0.04] border-[#163300] text-[#121814] ring-1 ring-[#163300] shadow-xs"
+                          : "bg-white border-black/[0.08] text-[#576159] hover:border-black/[0.15] hover:text-[#121814]"
                       }`}
                     >
                       <div className="flex justify-between items-center w-full">
-                        <span className="text-xs font-extrabold">{t.name}</span>
-                        <div className="flex gap-1">
+                        <span className="text-xs font-bold text-[#121814]">{t.name}</span>
+                        <div className="flex gap-1.5 p-1 rounded-full bg-[#F6F5EE] border border-black/[0.06]">
                           <span
-                            className="h-3 w-3 rounded-full"
+                            className="h-3.5 w-3.5 rounded-full border border-black/10"
                             style={{ backgroundColor: t.primary }}
                           />
                           <span
-                            className="h-3 w-3 rounded-full"
+                            className="h-3.5 w-3.5 rounded-full border border-black/10"
                             style={{ backgroundColor: t.accent }}
                           />
                         </div>
                       </div>
-                      <span className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-                        {t.mode} Mode theme pack
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-[#879289]">
+                        {t.mode} Palette
                       </span>
                     </button>
                   ))}
@@ -1647,49 +1721,48 @@ export function OnboardingPage() {
                 exit={{ opacity: 0, x: -10 }}
                 className="space-y-6"
               >
-                <div className="space-y-0.5">
-                  <h2 className="font-display text-base font-bold text-white tracking-tight">
+                <div className="space-y-1">
+                  <h2 className="font-display text-lg font-bold text-[#121814] tracking-tight">
                     {selectedProfileType === "professional"
-                      ? "AI-Assisted Bio & Contacts"
-                      : "AI-Assisted Content & Contacts"}
+                      ? "Bio & Contact Channels"
+                      : "Content & Contact Channels"}
                   </h2>
-                  <p className="text-3xs text-slate-400 tracking-wide">
-                    Fill in biographies, active social channels, and external
-                    booklet URLs.
+                  <p className="text-xs text-[#576159]">
+                    Add your headline slogan, communication channels, social media, and portfolio links.
                   </p>
                 </div>
 
-                <div className="space-y-3.5">
-                  <span className="text-3xs font-bold uppercase tracking-wider text-brand-400 block border-b border-white/[0.05] pb-2">
-                    Profile Headline Slogans
+                <div className="space-y-4">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#163300] block border-b border-black/[0.08] pb-2">
+                    Profile Headline
                   </span>
                   <div className="space-y-3">
                     <Input
                       label="Headline"
-                      placeholder="E.g., Empowering businesses with software development"
+                      placeholder="e.g. Empowering modern businesses with next-generation cloud advisory"
                       {...contentForm.register("headline")}
                     />
                   </div>
 
-                  <span className="text-3xs font-bold uppercase tracking-wider text-brand-400 block border-b border-white/[0.05] pb-2 mt-4">
-                    Contact & Social Links
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#163300] block border-b border-slate-200/80 pb-2 mt-6">
+                    Contact & Social Connections
                   </span>
-                  <div className="grid gap-3.5 sm:grid-cols-2">
+                  <div className="grid gap-4 sm:grid-cols-2">
                     {selectedProfileType === "professional" && (
                       <>
                         <Input
                           label="Personal Email"
-                          placeholder="sarah@connor.com"
+                          placeholder="sarah@example.com"
                           {...contentForm.register("contactDetails.email")}
                         />
                         <Input
                           label="Personal Phone Number"
-                          placeholder="+15551234"
+                          placeholder="+91 9223047765"
                           {...contentForm.register("contactDetails.phone")}
                         />
                         <Input
                           label="WhatsApp Direct Connection Link"
-                          placeholder="+15551234"
+                          placeholder="+91 9223047765"
                           {...contentForm.register(
                             "contactDetails.whatsAppNumber",
                           )}
@@ -1702,11 +1775,11 @@ export function OnboardingPage() {
                           ? "Company Website URL"
                           : "Personal Website URL"
                       }
-                      placeholder="https://mywebsite.com"
+                      placeholder="https://example.com"
                       {...contentForm.register("socialLinks.website")}
                     />
                     <Input
-                      label="Address"
+                      label="Location / Address"
                       placeholder="Mumbai, Maharashtra, India"
                       {...contentForm.register("contactDetails.address")}
                     />
@@ -1748,20 +1821,20 @@ export function OnboardingPage() {
                     />
                   </div>
 
-                  <span className="text-3xs font-bold uppercase tracking-wider text-brand-400 block border-b border-white/[0.05] pb-2 mt-4">
-                    Custom Links
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#163300] block border-b border-slate-200/80 pb-2 mt-6">
+                    Custom Links & Booklets
                   </span>
 
                   {!showLinkFields ? (
                     <Button
                       variant="secondary"
-                      className="rounded-xl h-9 px-4 text-3xs font-bold w-full bg-white/5 border border-white/10 text-white"
+                      className="w-full text-xs font-bold"
                       onClick={() => setShowLinkFields(true)}
                     >
                       + Add Custom Link
                     </Button>
                   ) : (
-                    <div className="p-3.5 rounded-xl bg-white/[0.01] border border-white/[0.04] space-y-3">
+                    <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200 space-y-3">
                       <div className="grid gap-3.5 sm:grid-cols-3">
                         <Input
                           label="Link Title *"
@@ -1769,7 +1842,7 @@ export function OnboardingPage() {
                           onChange={(e) =>
                             setNewLink({ ...newLink, title: e.target.value })
                           }
-                          placeholder="E.g., Portfolio"
+                          placeholder="e.g. Portfolio"
                         />
                         <Input
                           label="Destination URL *"
@@ -1777,10 +1850,10 @@ export function OnboardingPage() {
                           onChange={(e) =>
                             setNewLink({ ...newLink, url: e.target.value })
                           }
-                          placeholder="E.g., https://example.com"
+                          placeholder="e.g. https://example.com"
                         />
                         <div className="flex flex-col space-y-1">
-                          <label className="text-3xs font-bold text-slate-400 uppercase tracking-wider">
+                          <label className="text-xs font-bold text-slate-700">
                             Optional Icon
                           </label>
                           <select
@@ -1788,7 +1861,7 @@ export function OnboardingPage() {
                             onChange={(e) =>
                               setNewLink({ ...newLink, icon: e.target.value })
                             }
-                            className="h-10 rounded-xl bg-oneprofile-900 border border-white/[0.08] text-xs text-white px-3 focus:outline-none focus:border-primary/50"
+                            className="h-10 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 px-3 focus:outline-none focus:border-[#163300]"
                           >
                             <option value="">None</option>
                             <option value="globe">Globe</option>
@@ -1801,14 +1874,14 @@ export function OnboardingPage() {
                         </div>
                       </div>
                       {urlError && (
-                        <p className="text-3xs font-semibold text-red-400">
+                        <p className="text-xs font-semibold text-rose-600">
                           {urlError}
                         </p>
                       )}
                       <div className="flex gap-2">
                         <Button
-                          variant="secondary"
-                          className="flex-1 rounded-xl h-8.5 text-3xs font-bold"
+                          variant="outline"
+                          className="flex-1 text-xs font-bold"
                           onClick={() => {
                             setShowLinkFields(false);
                             setUrlError("");
@@ -1817,7 +1890,8 @@ export function OnboardingPage() {
                           Cancel
                         </Button>
                         <Button
-                          className="flex-1 rounded-xl h-8.5 text-3xs font-bold text-slate-900 bg-brand-400 hover:bg-brand-500"
+                          variant="primary"
+                          className="flex-1 text-xs font-bold"
                           onClick={addCustomLink}
                         >
                           Save Link
@@ -1832,23 +1906,23 @@ export function OnboardingPage() {
                       return (
                         <div
                           key={idx}
-                          className="flex justify-between items-center p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04]"
+                          className="flex justify-between items-center p-3 rounded-xl bg-white border border-slate-200 shadow-2xs"
                         >
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5">
                               {renderCustomLinkIcon(parsed.icon)}
-                              <h4 className="text-xs font-bold text-white truncate">
+                              <h4 className="text-xs font-bold text-slate-900 truncate">
                                 {parsed.title}
                               </h4>
                             </div>
-                            <span className="text-3xs text-slate-500 block truncate max-w-[200px] mt-1">
+                            <span className="text-xs text-slate-500 block truncate max-w-[200px] mt-0.5">
                               {link.url}
                             </span>
                           </div>
                           <button
                             type="button"
                             onClick={() => removeCustomLink(idx)}
-                            className="h-6.5 w-6.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center text-xs shrink-0 ml-2"
+                            className="h-7 w-7 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center text-xs shrink-0 ml-2"
                           >
                             ✕
                           </button>
@@ -1861,13 +1935,13 @@ export function OnboardingPage() {
             ) : null}
           </AnimatePresence>
 
-          <div className="flex flex-wrap items-center justify-between border-t border-white/[0.05] pt-4.5 gap-3 mt-4">
+          <div className="flex flex-wrap items-center justify-between border-t border-slate-200/80 pt-5 gap-3 mt-6">
             <div>
               {["logo", "content"].includes(activeStep) ? (
                 <Button
                   variant="ghost"
                   onClick={() => skipCurrent()}
-                  className="rounded-xl h-8.5 min-h-[34px] px-3 text-3xs font-bold text-slate-400 hover:text-white"
+                  className="text-xs font-semibold text-slate-500 hover:text-slate-900"
                 >
                   Skip Step
                 </Button>
@@ -1876,10 +1950,20 @@ export function OnboardingPage() {
               )}
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
+              {/* Quick Mobile Preview trigger for small screens */}
+              <button
+                type="button"
+                onClick={() => setMobileTab("preview")}
+                className="lg:hidden inline-flex items-center gap-1.5 text-xs font-bold text-[#163300] bg-[#9FE870]/25 hover:bg-[#9FE870]/40 border border-[#163300]/20 px-3 py-2 rounded-xl transition-all shadow-2xs"
+              >
+                <Eye className="w-3.5 h-3.5" />
+                <span>Live Preview</span>
+              </button>
+
               {activeStep !== "industry" ? (
                 <Button
-                  variant="secondary"
+                  variant="outline"
                   disabled={
                     completeMutation.isPending || saveMutation.isPending
                   }
@@ -1889,9 +1973,9 @@ export function OnboardingPage() {
                     setLocalStep(prevStep);
                     dispatch(setActiveStep(prevStep));
                   }}
-                  className="rounded-xl h-8 mt-2 min-h-[34px] px-3.5 text-3xs font-bold border-white/[0.08]"
+                  className="text-xs font-bold"
                 >
-                  Back
+                  ← Back
                 </Button>
               ) : null}
 
@@ -1899,127 +1983,373 @@ export function OnboardingPage() {
                 onClick={() => completeStep(activeStep)}
                 loading={completeMutation.isPending}
                 disabled={completeMutation.isPending || saveMutation.isPending}
-                className="rounded-xl h-8 mt-2 min-h-[34px] px-3.5 text-3xs font-bold"
-                variant="secondary"
+                variant="primary"
+                className="text-xs font-bold"
               >
-                {activeStep === "content" ? "Save" : "Continue"}
+                {activeStep === "content" ? "Save & Publish" : "Continue →"}
               </Button>
             </div>
           </div>
         </Card>
 
-        {/* Live Smartphone Chassis mockup */}
-        <Card
-          className="p-0 border-white/[0.06] bg-black overflow-hidden relative mx-auto lg:sticky lg:top-24 w-full max-w-[285px] rounded-3xl"
-          hoverEffect={false}
+        {/* Live Smartphone Chassis mockup - Responsive to website width and height */}
+        <div
+          className={clsx(
+            "relative w-full max-w-[280px] sm:max-w-[295px] xl:max-w-[315px] mx-auto lg:sticky lg:top-20 select-none group",
+            mobileTab === "editor" ? "hidden lg:block" : "block"
+          )}
         >
-          <div className="absolute inset-0 pointer-events-none rounded-3xl border border-white/10 z-30" />
-          <div className="w-full bg-[#090a0f] py-1.5 flex justify-center border-b border-white/[0.04]">
-            <div className="w-12 h-2.5 rounded-full bg-black/80 flex items-center justify-center gap-1.5 px-3">
-              <span className="h-0.75 w-0.75 rounded-full bg-slate-800" />
-              <span className="h-0.75 w-3 rounded-full bg-slate-800" />
+          {/* Mobile Back to Editor banner (Only on < lg screens) */}
+          <div className="lg:hidden flex items-center justify-between bg-white border border-black/[0.08] rounded-xl p-2.5 mb-2.5 shadow-2xs">
+            <div className="flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#163300] animate-pulse" />
+              <span className="text-xs font-semibold text-[#121814]">
+                Mobile Preview
+              </span>
             </div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setMobileTab("editor")}
+              className="text-xs font-medium h-7 px-3"
+            >
+              ← Back to Edit
+            </Button>
           </div>
 
-          <div className="p-4 min-h-[340px] max-h-[340px] overflow-y-auto bg-oneprofile-900/40 text-white space-y-3.5">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/10 rounded-full blur-2xl pointer-events-none" />
+          {/* Subtle Ambient Glow behind Phone */}
+          <div
+            className="absolute -inset-4 bg-gradient-to-b from-[#9FE870]/15 via-[#163300]/5 to-transparent rounded-[44px] blur-xl -z-10 pointer-events-none transition-opacity duration-500 opacity-70 group-hover:opacity-100"
+            aria-hidden="true"
+          />
 
-            <div className="space-y-4">
-              {/* Dynamic Mock Header based on Profile Type */}
-              <div className="flex items-center gap-3">
-                {selectedProfileType === "professional" ? (
-                  watchedContent.personalDetails?.avatarUrl || logoPreview ? (
+          <div className="text-center mb-2 flex items-center justify-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#163300] animate-pulse" />
+            <span className="text-[10px] font-mono font-medium text-[#576159] uppercase tracking-wider">
+              Live Preview
+            </span>
+            <span className="text-[9px] font-mono text-[#879289] bg-[#F6F5EE] border border-black/[0.06] px-1.5 py-0.5 rounded">
+              Synced
+            </span>
+          </div>
+
+          {/* Smartphone Outer Chassis Frame */}
+          <div className="p-0 border-[5px] sm:border-[6px] border-[#121814] bg-[#121814] overflow-hidden relative w-full rounded-[38px] sm:rounded-[42px] shadow-[0_24px_60px_rgba(18,24,20,0.18),0_6px_16px_rgba(0,0,0,0.08)] transition-all duration-300">
+            {/* Top Bezel: Status Bar & Dynamic Island */}
+            <div className="w-full bg-[#121814] text-[#879289] px-4 pt-2 pb-1.5 flex items-center justify-between text-[10px] font-medium border-b border-white/[0.04] select-none">
+              <span className="font-semibold text-white/90">9:41</span>
+
+              {/* Dynamic Island */}
+              <div className="w-20 h-4 rounded-full bg-black flex items-center justify-center gap-1.5 px-2.5 border border-white/[0.06] shadow-inner">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#1c241e] border border-white/[0.05]" />
+                <span className="h-1.5 w-2.5 rounded-full bg-[#1c241e] border border-white/[0.05]" />
+              </div>
+
+              <div className="flex items-center gap-1 text-white/80">
+                <Signal className="w-2.5 h-2.5" />
+                <Wifi className="w-2.5 h-2.5" />
+                <Battery className="w-3 h-3" />
+              </div>
+            </div>
+
+            {/* Mobile Viewport Screen Content */}
+            <div className="h-[430px] sm:h-[460px] xl:h-[490px] max-h-[calc(100vh-230px)] overflow-y-auto bg-[#FAFAF7] text-[#121814] relative custom-scrollbar">
+              {/* Mobile Hero Cover Banner */}
+              <div
+                className="h-20 sm:h-22 w-full relative overflow-hidden flex items-end p-2.5 transition-colors duration-300"
+                style={{
+                  background: watchedContent.personalDetails?.coverImageUrl
+                    ? `url(${watchedContent.personalDetails.coverImageUrl}) center/cover no-repeat`
+                    : `linear-gradient(135deg, ${selectedTheme?.primary || "#163300"} 0%, ${selectedTheme?.accent || "#9FE870"} 100%)`,
+                }}
+              >
+                <div className="absolute inset-0 bg-black/10" />
+                <div className="relative z-10 flex items-center justify-between w-full">
+                  <span className="text-[9px] font-mono uppercase tracking-wider text-white/90 bg-black/40 backdrop-blur-md px-1.5 py-0.5 rounded">
+                    {selectedProfileType === "professional" ? "Professional" : "Business"}
+                  </span>
+                  <span className="text-[9px] font-mono text-white/90 bg-black/40 backdrop-blur-md px-1.5 py-0.5 rounded flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#9FE870]" />
+                    Live
+                  </span>
+                </div>
+              </div>
+
+              {/* Avatar & Verification Header */}
+              <div className="px-3 relative -mt-8 mb-2.5 flex items-end justify-between">
+                {/* Avatar / Logo with border & ring */}
+                <div className="relative">
+                  {selectedProfileType === "professional" ? (
+                    watchedContent.personalDetails?.avatarUrl || logoPreview ? (
+                      <img
+                        src={watchedContent.personalDetails?.avatarUrl || logoPreview}
+                        alt="Avatar"
+                        className="h-15 w-15 sm:h-16 sm:w-16 rounded-xl object-cover border-[2.5px] border-white bg-white shadow-md shrink-0"
+                      />
+                    ) : (
+                      <div className="h-15 w-15 sm:h-16 sm:w-16 rounded-xl bg-[#163300] text-[#9FE870] border-[2.5px] border-white flex items-center justify-center font-bold text-base shadow-md shrink-0 font-display">
+                        {(watchedContent.personalDetails?.title || "U")
+                          .charAt(0)
+                          .toUpperCase()}
+                      </div>
+                    )
+                  ) : logoPreview ? (
                     <img
-                      src={
-                        watchedContent.personalDetails?.avatarUrl || logoPreview
-                      }
-                      alt="Avatar"
-                      className="h-11 w-11 rounded-xl object-cover border border-white/10"
+                      src={logoPreview}
+                      alt="Logo"
+                      className="h-15 w-15 sm:h-16 sm:w-16 rounded-xl object-cover border-[2.5px] border-white bg-white shadow-md shrink-0"
                     />
                   ) : (
-                    <div className="h-11 w-11 rounded-xl bg-brand-500/20 border border-brand-500/30 flex items-center justify-center font-bold text-xs text-brand-300">
-                      {(watchedContent.personalDetails?.title || "U")
-                        .charAt(0)
-                        .toUpperCase()}
+                    <div className="h-15 w-15 sm:h-16 sm:w-16 rounded-xl bg-[#163300] text-[#9FE870] border-[2.5px] border-white flex items-center justify-center font-bold text-xs shadow-md shrink-0 font-display">
+                      OP
                     </div>
-                  )
-                ) : logoPreview ? (
-                  <img
-                    src={logoPreview}
-                    alt="Logo"
-                    className="h-11 w-11 rounded-xl object-cover border border-white/10"
-                  />
-                ) : (
-                  <div className="h-11 w-11 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center font-bold text-xs">
-                    OP
+                  )}
+                  <span className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-white rounded-full shadow-2xs">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#163300]" />
+                  </span>
+                </div>
+
+                <div className="text-right pb-0.5">
+                  <span className="inline-flex items-center gap-1 text-[9px] font-mono text-[#163300] bg-[#F6F5EE] border border-black/[0.08] px-2 py-0.5 rounded-full shadow-2xs">
+                    oneprofile.in
+                  </span>
+                </div>
+              </div>
+
+              {/* Identity Details */}
+              <div className="px-3 space-y-0.5">
+                <h3 className="text-sm font-display font-bold text-[#121814] leading-tight">
+                  {selectedProfileType === "professional"
+                    ? watchedContent.personalDetails?.title || "Your Full Name"
+                    : watchedCompany.companyName || "Your Company Name"}
+                </h3>
+
+                <p className="text-[11px] font-medium text-[#163300]">
+                  {selectedProfileType === "professional"
+                    ? watchedContent.personalDetails?.designation || selectedProfessionalCategoryLabel || "Professional Category"
+                    : watchedCompany.tagline || selectedCategoryLabel || "Business Category"}
+                </p>
+
+                {(watchedCompany.city || watchedContent.personalDetails?.workLocation) && (
+                  <div className="flex items-center gap-1 text-[10px] text-[#576159] pt-0.5">
+                    <MapPin className="w-2.5 h-2.5 text-[#879289] shrink-0" />
+                    <span className="truncate">
+                      {[
+                        watchedCompany.city || watchedContent.personalDetails?.workLocation,
+                        watchedCompany.country,
+                      ]
+                        .filter(Boolean)
+                        .join(", ")}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile Quick Action Buttons Row */}
+              <div className="px-3 pt-2.5 pb-1.5">
+                <div className="grid grid-cols-4 gap-1">
+                  <div
+                    className={clsx(
+                      "flex flex-col items-center justify-center p-1.5 rounded-lg text-center border transition-all",
+                      watchedContent.contactDetails?.phone || watchedCompany.phone
+                        ? "bg-white border-black/[0.08] text-[#121814] shadow-2xs"
+                        : "bg-[#F6F5EE] border-dashed border-black/[0.08] text-[#879289]"
+                    )}
+                  >
+                    <Phone className="w-3.5 h-3.5 text-[#163300] mb-0.5" />
+                    <span className="text-[9px] font-medium">Call</span>
+                  </div>
+
+                  <div
+                    className={clsx(
+                      "flex flex-col items-center justify-center p-1.5 rounded-lg text-center border transition-all",
+                      watchedContent.contactDetails?.whatsAppNumber || watchedCompany.whatsAppNumber
+                        ? "bg-white border-black/[0.08] text-[#121814] shadow-2xs"
+                        : "bg-[#F6F5EE] border-dashed border-black/[0.08] text-[#879289]"
+                    )}
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 text-[#163300] mb-0.5" />
+                    <span className="text-[9px] font-medium">WhatsApp</span>
+                  </div>
+
+                  <div
+                    className={clsx(
+                      "flex flex-col items-center justify-center p-1.5 rounded-lg text-center border transition-all",
+                      watchedContent.contactDetails?.email || watchedCompany.email
+                        ? "bg-white border-black/[0.08] text-[#121814] shadow-2xs"
+                        : "bg-[#F6F5EE] border-dashed border-black/[0.08] text-[#879289]"
+                    )}
+                  >
+                    <Mail className="w-3.5 h-3.5 text-[#121814] mb-0.5" />
+                    <span className="text-[9px] font-medium">Email</span>
+                  </div>
+
+                  <div className="flex flex-col items-center justify-center p-1.5 rounded-lg text-center border bg-[#163300] border-[#163300] text-white shadow-2xs">
+                    <Download className="w-3.5 h-3.5 text-[#9FE870] mb-0.5" />
+                    <span className="text-[9px] font-semibold">Save</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Card Content Stack */}
+              <div className="px-3 py-1.5 space-y-2">
+                {/* About / Bio Card */}
+                <div className="p-2.5 rounded-xl bg-white border border-black/[0.08] shadow-2xs space-y-0.5">
+                  <span className="text-[9px] font-mono uppercase tracking-wider text-[#879289] font-medium block">
+                    About
+                  </span>
+                  <p className="text-[11px] text-[#576159] leading-relaxed">
+                    {selectedProfileType === "professional"
+                      ? watchedContent.personalDetails?.bio ||
+                        "Describe your professional experience and specialties here..."
+                      : watchedCompany.description ||
+                        "Brief overview of company offerings, mission, and services..."}
+                  </p>
+                </div>
+
+                {/* Business Specific Details */}
+                {selectedProfileType === "business" && (
+                  <div className="p-2.5 rounded-xl bg-white border border-black/[0.08] shadow-2xs space-y-1.5">
+                    <span className="text-[9px] font-mono uppercase tracking-wider text-[#879289] font-medium block">
+                      Business Details
+                    </span>
+                    <div className="grid grid-cols-2 gap-1.5 text-[10px]">
+                      {watchedCompany.gstNumber ? (
+                        <div>
+                          <span className="text-[9px] text-[#879289] block">GSTIN</span>
+                          <span className="font-semibold text-[#121814] font-mono">{watchedCompany.gstNumber}</span>
+                        </div>
+                      ) : null}
+                      {watchedCompany.foundedYear ? (
+                        <div>
+                          <span className="text-[9px] text-[#879289] block">Founded</span>
+                          <span className="font-semibold text-[#121814]">{watchedCompany.foundedYear}</span>
+                        </div>
+                      ) : null}
+                      {watchedCompany.teamSize ? (
+                        <div>
+                          <span className="text-[9px] text-[#879289] block">Team</span>
+                          <span className="font-semibold text-[#121814]">{watchedCompany.teamSize}+ Members</span>
+                        </div>
+                      ) : null}
+                      {watchedCompany.serviceArea ? (
+                        <div className="col-span-2">
+                          <span className="text-[9px] text-[#879289] block">Service Area</span>
+                          <span className="font-semibold text-[#121814]">{watchedCompany.serviceArea}</span>
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                 )}
 
-                <div className="min-w-0">
-                  <div className="text-xs font-bold truncate max-w-[130px]">
-                    {selectedProfileType === "professional"
-                      ? watchedContent.personalDetails?.title || "Full Name"
-                      : watchedCompany.companyName || "Company Name"}
+                {/* Professional Skills / Practice */}
+                {selectedProfileType === "professional" && (
+                  <div className="p-2.5 rounded-xl bg-white border border-black/[0.08] shadow-2xs space-y-1.5">
+                    <span className="text-[9px] font-mono uppercase tracking-wider text-[#879289] font-medium block">
+                      Expertise & Skills
+                    </span>
+                    {watchedContent.personalDetails?.skillsRaw ? (
+                      <div className="flex gap-1 flex-wrap">
+                        {watchedContent.personalDetails.skillsRaw
+                          .split(",")
+                          .map((s, i) => (
+                            <span
+                              key={i}
+                              className="px-1.5 py-0.5 rounded-md bg-[#F6F5EE] border border-black/[0.06] text-[9px] font-medium text-[#121814]"
+                            >
+                              {s.trim()}
+                            </span>
+                          ))}
+                      </div>
+                    ) : (
+                      <p className="text-[10px] text-[#879289] italic">
+                        Your skills will appear here as badges...
+                      </p>
+                    )}
                   </div>
-                  <div className="text-3xs text-slate-400 truncate max-w-[150px] mt-0.5">
-                    {selectedProfileType === "professional"
-                      ? selectedProfessionalCategoryLabel ||
-                        "Professional Category"
-                      : selectedCategoryLabel || "Business Type"}
+                )}
+
+                {/* Social & Digital Links */}
+                <div className="p-2.5 rounded-xl bg-white border border-black/[0.08] shadow-2xs space-y-1.5">
+                  <span className="text-[9px] font-mono uppercase tracking-wider text-[#879289] font-medium block">
+                    Online Presence
+                  </span>
+                  <div className="flex flex-wrap gap-1">
+                    {watchedContent.socialLinks?.website || watchedCompany.website ? (
+                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F6F5EE] border border-black/[0.06] text-[#121814] text-[9px] font-medium">
+                        <Globe className="w-2.5 h-2.5 text-[#163300]" />
+                        <span>Website</span>
+                      </div>
+                    ) : null}
+                    {watchedContent.socialLinks?.linkedin && (
+                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F6F5EE] border border-black/[0.06] text-[#121814] text-[9px] font-medium">
+                        <Linkedin className="w-2.5 h-2.5 text-[#163300]" />
+                        <span>LinkedIn</span>
+                      </div>
+                    )}
+                    {watchedContent.socialLinks?.instagram && (
+                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F6F5EE] border border-black/[0.06] text-[#121814] text-[9px] font-medium">
+                        <Instagram className="w-2.5 h-2.5 text-[#163300]" />
+                        <span>Instagram</span>
+                      </div>
+                    )}
+                    {watchedContent.socialLinks?.twitter && (
+                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F6F5EE] border border-black/[0.06] text-[#121814] text-[9px] font-medium">
+                        <Twitter className="w-2.5 h-2.5 text-[#163300]" />
+                        <span>Twitter/X</span>
+                      </div>
+                    )}
+                    {watchedContent.socialLinks?.youtube && (
+                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F6F5EE] border border-black/[0.06] text-[#121814] text-[9px] font-medium">
+                        <Youtube className="w-2.5 h-2.5 text-[#163300]" />
+                        <span>YouTube</span>
+                      </div>
+                    )}
+                    {watchedContent.socialLinks?.github && (
+                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#121814] text-white text-[9px] font-medium">
+                        <Github className="w-2.5 h-2.5" />
+                        <span>GitHub</span>
+                      </div>
+                    )}
+                    {customLinks.map((link, idx) => (
+                      <div
+                        key={idx}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F6F5EE] border border-black/[0.06] text-[#163300] text-[9px] font-medium"
+                      >
+                        <ExternalLink className="w-2.5 h-2.5 text-[#163300]" />
+                        <span className="truncate max-w-[80px]">{link.title}</span>
+                      </div>
+                    ))}
+                    {!watchedContent.socialLinks?.website &&
+                    !watchedCompany.website &&
+                    !watchedContent.socialLinks?.linkedin &&
+                    !watchedContent.socialLinks?.instagram &&
+                    !watchedContent.socialLinks?.twitter &&
+                    !watchedContent.socialLinks?.youtube &&
+                    !watchedContent.socialLinks?.github &&
+                    customLinks.length === 0 ? (
+                      <span className="text-[10px] text-[#879289] italic">
+                        Connected links will display here...
+                      </span>
+                    ) : null}
                   </div>
+                </div>
+
+                {/* Footer Brand pill inside phone screen */}
+                <div className="pt-1.5 pb-2 text-center">
+                  <span className="inline-flex items-center gap-1 text-[8px] font-mono text-[#879289] tracking-wider uppercase">
+                    ⚡ Powered by OneProfile.in
+                  </span>
                 </div>
               </div>
 
-              <div className="h-px bg-white/[0.06]" />
-
-              <div className="space-y-1">
-                <span className="text-3xs uppercase tracking-[0.2em] text-slate-500 font-bold block">
-                  Biography
-                </span>
-                <p className="text-3xs text-slate-300 leading-normal truncate-3-lines">
-                  {selectedProfileType === "professional"
-                    ? watchedContent.personalDetails?.bio ||
-                      "Describe your professional background..."
-                    : watchedCompany.description ||
-                      "Brief biography details..."}
-                </p>
+              {/* iOS Home Indicator Bar */}
+              <div className="sticky bottom-0 inset-x-0 py-1 bg-[#FAFAF7]/90 backdrop-blur-xs flex justify-center pointer-events-none">
+                <div className="w-24 h-1 rounded-full bg-black/20" />
               </div>
-
-              {selectedProfileType === "business" &&
-              watchedCompany.gstNumber ? (
-                <div className="p-2 rounded-lg bg-white/[0.01] border border-white/[0.04]">
-                  <span className="text-3xs text-slate-500 font-bold uppercase block">
-                    GSTIN
-                  </span>
-                  <span className="text-3xs font-bold text-white block mt-0.5">
-                    {watchedCompany.gstNumber}
-                  </span>
-                </div>
-              ) : null}
-
-              {selectedProfileType === "professional" &&
-              watchedContent.personalDetails?.skillsRaw ? (
-                <div className="space-y-1">
-                  <span className="text-3xs uppercase tracking-[0.2em] text-slate-500 font-bold block">
-                    Skills
-                  </span>
-                  <div className="flex gap-1.5 flex-wrap">
-                    {watchedContent.personalDetails.skillsRaw
-                      .split(",")
-                      .map((s, i) => (
-                        <span
-                          key={i}
-                          className="px-2 py-0.5 rounded-md bg-brand-500/10 border border-brand-500/20 text-3xs font-bold text-brand-300"
-                        >
-                          {s.trim()}
-                        </span>
-                      ))}
-                  </div>
-                </div>
-              ) : null}
             </div>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

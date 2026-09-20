@@ -74,12 +74,12 @@ export function BusinessProfileForm({ form, activeTab }) {
   return (
     <div className="space-y-6">
       {activeTab === "business" && (
-        <div className="space-y-5 animate-fadeUp">
+        <div className="space-y-6 animate-fadeUp">
           <div className="space-y-1">
-            <h3 className="font-display text-lg font-bold text-white tracking-tight">
+            <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
               Business Details
             </h3>
-            <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
+            <p className="text-xs text-slate-500">
               Configure your organization and company card parameters
             </p>
           </div>
@@ -87,7 +87,7 @@ export function BusinessProfileForm({ form, activeTab }) {
           <div className="grid gap-4.5 sm:grid-cols-1">
             <Input
               label="Company / Brand Name *"
-              placeholder="E.g., Connor Security Consultants"
+              placeholder="e.g. Connor Security Consultants"
               {...register("companyName")}
               error={formState.errors.companyName?.message}
             />
@@ -106,7 +106,7 @@ export function BusinessProfileForm({ form, activeTab }) {
 
           <Input
             label="Company Headline"
-            placeholder="E.g., Securing the future of cloud computing pipelines"
+            placeholder="e.g. Securing the future of cloud computing pipelines"
             {...register("headline")}
             error={formState.errors.headline?.message}
             hint="A concise one-line headline showing your business specialty."
@@ -128,29 +128,29 @@ export function BusinessProfileForm({ form, activeTab }) {
             hint="Detail your business operations clearly. Keep it legible."
           />
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#163300]">
               Advanced Organization Credentials
             </span>
             <div className="grid gap-4.5 sm:grid-cols-2">
               <Input
-                label="GST Identification Number (GSTIN) "
-                placeholder="E.g., 22AAAAA0000A1Z5"
+                label="GST Identification Number (GSTIN)"
+                placeholder="e.g. 22AAAAA0000A1Z5"
                 {...register("gstNumber")}
                 error={formState.errors.gstNumber?.message}
               />
               <Input
-                label="Business Registration Details - Optional"
-                placeholder="E.g., CIN or Trade License Number"
+                label="Business Registration Details (Optional)"
+                placeholder="e.g. CIN or Trade License Number"
                 {...register("registrationDetails")}
                 error={formState.errors.registrationDetails?.message}
               />
               <div className="sm:col-span-2">
                 <Input
                   label="Service Area / Geographical Coverage"
-                  placeholder="E.g., Mumbai, Maharashtra, India"
+                  placeholder="e.g. Mumbai, Maharashtra, India"
                   {...register("serviceArea")}
                   error={formState.errors.serviceArea?.message}
                 />
@@ -158,14 +158,14 @@ export function BusinessProfileForm({ form, activeTab }) {
               <Input
                 label="Founded Year"
                 type="number"
-                placeholder="E.g., 2018"
+                placeholder="e.g. 2018"
                 {...register("foundedYear", { valueAsNumber: true })}
                 error={formState.errors.foundedYear?.message}
               />
               <Input
                 label="Team Size (Employees count)"
                 type="number"
-                placeholder="E.g., 25"
+                placeholder="e.g. 25"
                 {...register("teamSize", { valueAsNumber: true })}
                 error={formState.errors.teamSize?.message}
               />
@@ -178,17 +178,17 @@ export function BusinessProfileForm({ form, activeTab }) {
         <div className="space-y-8 animate-fadeUp">
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
                 Professional Services
               </h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-                Configure booking rates and packages
+              <p className="text-xs text-slate-500">
+                Configure booking rates, packages, and service options
               </p>
             </div>
 
-            <div className="p-4.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-4">
-              <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
-                Add service offering
+            <div className="p-5 rounded-2xl bg-slate-50/60 border border-slate-200 space-y-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#163300]">
+                Add service package
               </span>
               <div className="grid gap-4.5 sm:grid-cols-2">
                 <Input
@@ -197,15 +197,15 @@ export function BusinessProfileForm({ form, activeTab }) {
                   onChange={(e) =>
                     setNewService({ ...newService, title: e.target.value })
                   }
-                  placeholder="E.g., 1-on-1 Consultation"
+                  placeholder="e.g. 1-on-1 Consultation"
                 />
                 <Input
-                  label="Pricing (E.g., ₹1,500 / hr)"
+                  label="Pricing (e.g. ₹1,500 / hr)"
                   value={newService.price}
                   onChange={(e) =>
                     setNewService({ ...newService, price: e.target.value })
                   }
-                  placeholder="E.g., Free or ₹999"
+                  placeholder="e.g. Free or ₹999"
                 />
               </div>
               <Textarea
@@ -219,7 +219,7 @@ export function BusinessProfileForm({ form, activeTab }) {
               <Button
                 type="button"
                 variant="secondary"
-                className="text-xs w-full"
+                className="w-full"
                 onClick={addService}
               >
                 Add Service Package
@@ -231,21 +231,21 @@ export function BusinessProfileForm({ form, activeTab }) {
                 services.map((srv, index) => (
                   <div
                     key={index}
-                    className="flex justify-between items-start gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] hover:border-white/[0.08] transition-all"
+                    className="flex justify-between items-start gap-4 p-4 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs transition-all"
                   >
                     <div className="flex-1">
-                      <div className="flex justify-between">
-                        <h4 className="text-sm font-bold text-white leading-snug">
+                      <div className="flex items-center justify-between gap-2">
+                        <h4 className="text-sm font-bold text-slate-900 leading-snug">
                           {srv.title}
                         </h4>
                         {srv.price ? (
-                          <span className="text-xs font-bold text-brand-300">
+                          <span className="text-xs font-bold text-[#163300] bg-[#9FE870]/20 px-2.5 py-0.5 rounded-md">
                             {srv.price}
                           </span>
                         ) : null}
                       </div>
                       {srv.description && (
-                        <p className="text-3xs text-slate-400 leading-relaxed mt-2">
+                        <p className="text-xs text-slate-500 leading-relaxed mt-2">
                           {srv.description}
                         </p>
                       )}
@@ -253,34 +253,34 @@ export function BusinessProfileForm({ form, activeTab }) {
                     <button
                       type="button"
                       onClick={() => removeService(index)}
-                      className="h-8 w-8 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition-all shrink-0"
+                      className="h-8 w-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition-all shrink-0"
                     >
                       ✕
                     </button>
                   </div>
                 ))
               ) : (
-                <div className="py-6 text-center text-xs text-slate-500">
+                <div className="py-6 text-center text-xs text-slate-400">
                   No service packages added yet.
                 </div>
               )}
             </div>
           </div>
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
                 Products Catalog
               </h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-                Feature digital downloads, books, or physical assets
+              <p className="text-xs text-slate-500">
+                Feature digital downloads, books, goods, or physical assets
               </p>
             </div>
 
-            <div className="p-4.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-4">
-              <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+            <div className="p-5 rounded-2xl bg-slate-50/60 border border-slate-200 space-y-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#163300]">
                 Add catalog product
               </span>
               <div className="grid gap-4.5 sm:grid-cols-2">
@@ -290,15 +290,15 @@ export function BusinessProfileForm({ form, activeTab }) {
                   onChange={(e) =>
                     setNewProduct({ ...newProduct, title: e.target.value })
                   }
-                  placeholder="E.g., Masterclass Video Course"
+                  placeholder="e.g. Masterclass Video Course"
                 />
                 <Input
-                  label="Price (E.g., ₹1,499)"
+                  label="Price (e.g. ₹1,499)"
                   value={newProduct.price}
                   onChange={(e) =>
                     setNewProduct({ ...newProduct, price: e.target.value })
                   }
-                  placeholder="E.g., ₹1,999"
+                  placeholder="e.g. ₹1,999"
                 />
                 <div className="sm:col-span-2">
                   <Input
@@ -307,7 +307,7 @@ export function BusinessProfileForm({ form, activeTab }) {
                     onChange={(e) =>
                       setNewProduct({ ...newProduct, imageUrl: e.target.value })
                     }
-                    placeholder="https://cloudinary.com/product.jpg"
+                    placeholder="https://images.example.com/product.jpg"
                   />
                 </div>
               </div>
@@ -322,7 +322,7 @@ export function BusinessProfileForm({ form, activeTab }) {
               <Button
                 type="button"
                 variant="secondary"
-                className="text-xs w-full"
+                className="w-full"
                 onClick={addProduct}
               >
                 Add Product Item
@@ -334,41 +334,41 @@ export function BusinessProfileForm({ form, activeTab }) {
                 products.map((prod, index) => (
                   <div
                     key={index}
-                    className="flex gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] hover:border-white/[0.08] transition-all relative group"
+                    className="flex gap-4 p-4 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs transition-all relative group"
                   >
                     {prod.imageUrl ? (
                       <img
                         src={prod.imageUrl}
                         alt={prod.title}
-                        className="h-16 w-16 rounded-xl object-cover border border-white/10 shrink-0"
+                        className="h-16 w-16 rounded-xl object-cover border border-slate-200 shrink-0"
                       />
                     ) : (
-                      <div className="h-16 w-16 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-center text-lg shrink-0">
+                      <div className="h-16 w-16 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xl shrink-0">
                         📦
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-bold text-white truncate">
+                      <div className="text-sm font-bold text-slate-900 truncate">
                         {prod.title}
                       </div>
-                      <div className="text-xs font-bold text-brand-300 mt-0.5">
+                      <div className="text-xs font-bold text-[#163300] mt-0.5">
                         {prod.price || "Free"}
                       </div>
-                      <p className="text-3xs text-slate-400 leading-normal mt-1.5 truncate-2-lines">
+                      <p className="text-xs text-slate-500 leading-normal mt-1 line-clamp-2">
                         {prod.description}
                       </p>
                     </div>
                     <button
                       type="button"
                       onClick={() => removeProduct(index)}
-                      className="absolute top-2 right-2 h-7 w-7 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shrink-0"
+                      className="absolute top-2 right-2 h-7 w-7 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shrink-0"
                     >
                       ✕
                     </button>
                   </div>
                 ))
               ) : (
-                <div className="sm:col-span-2 py-6 text-center text-xs text-slate-500">
+                <div className="sm:col-span-2 py-6 text-center text-xs text-slate-400">
                   No catalog product items added yet.
                 </div>
               )}
@@ -378,14 +378,14 @@ export function BusinessProfileForm({ form, activeTab }) {
       )}
 
       {activeTab === "contact" && (
-        <div className="space-y-6 animate-fadeUp">
+        <div className="space-y-8 animate-fadeUp">
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
                 Business Contact Channels
               </h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-                Configure active contact channels and address directories
+              <p className="text-xs text-slate-500">
+                Configure direct communication channels and physical address coordinates
               </p>
             </div>
             <div className="grid gap-4.5 sm:grid-cols-2">
@@ -397,13 +397,13 @@ export function BusinessProfileForm({ form, activeTab }) {
               />
               <Input
                 label="Business Phone Number"
-                placeholder="+15551234"
+                placeholder="+1 555 123 4567"
                 {...register("contactDetails.phone")}
                 error={formState.errors.contactDetails?.phone?.message}
               />
               <Input
                 label="WhatsApp Direct Number"
-                placeholder="+15551234"
+                placeholder="+1 555 123 4567"
                 {...register("contactDetails.whatsAppNumber")}
               />
               <Input
@@ -413,7 +413,7 @@ export function BusinessProfileForm({ form, activeTab }) {
               />
               <Input
                 label="Physical Address"
-                placeholder="123 Main St, Mumbai, Maharashtra, India"
+                placeholder="123 Corporate Tower, Mumbai, India"
                 {...register("location.address")}
               />
               <Input
@@ -424,11 +424,11 @@ export function BusinessProfileForm({ form, activeTab }) {
             </div>
           </div>
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
-              Social Connections
+            <span className="text-xs font-bold uppercase tracking-wider text-[#163300]">
+              Social Media Connections
             </span>
             <div className="grid gap-4.5 sm:grid-cols-2">
               <Input
@@ -464,13 +464,13 @@ export function BusinessProfileForm({ form, activeTab }) {
             </div>
           </div>
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
-              External Custom booklet URLs
+            <span className="text-xs font-bold uppercase tracking-wider text-[#163300]">
+              External Custom Links & Brochures
             </span>
-            <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-4">
+            <div className="p-5 rounded-2xl bg-slate-50/60 border border-slate-200 space-y-4">
               <div className="grid gap-4.5 sm:grid-cols-2">
                 <Input
                   label="Link Label Title"
@@ -478,7 +478,7 @@ export function BusinessProfileForm({ form, activeTab }) {
                   onChange={(e) =>
                     setNewLink({ ...newLink, title: e.target.value })
                   }
-                  placeholder="E.g., Read Our Brochure"
+                  placeholder="e.g. Read Our Brochure"
                 />
                 <Input
                   label="Destination URL"
@@ -486,16 +486,16 @@ export function BusinessProfileForm({ form, activeTab }) {
                   onChange={(e) =>
                     setNewLink({ ...newLink, url: e.target.value })
                   }
-                  placeholder="E.g., https://brochure.com"
+                  placeholder="e.g. https://brochure.com"
                 />
               </div>
               <Button
                 type="button"
                 variant="secondary"
-                className="text-xs w-full"
+                className="w-full"
                 onClick={addCustomLink}
               >
-                Add Custom Link Node
+                Add Custom Link
               </Button>
             </div>
 
@@ -503,20 +503,20 @@ export function BusinessProfileForm({ form, activeTab }) {
               {customLinks.map((l, i) => (
                 <div
                   key={i}
-                  className="flex justify-between items-center p-3.5 rounded-xl bg-white/[0.01] border border-white/[0.04] text-xs"
+                  className="flex justify-between items-center p-3.5 rounded-xl bg-white border border-slate-200 text-xs shadow-xs"
                 >
                   <div className="truncate min-w-0">
-                    <span className="font-bold text-white block">
+                    <span className="font-bold text-slate-900 block">
                       {l.title}
                     </span>
-                    <span className="text-3xs text-slate-500 truncate block mt-0.5">
+                    <span className="text-xs text-slate-500 truncate block mt-0.5">
                       {l.url}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => removeCustomLink(i)}
-                    className="h-7 w-7 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center text-xs shrink-0"
+                    className="h-7 w-7 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center text-xs shrink-0"
                   >
                     ✕
                   </button>
@@ -525,23 +525,23 @@ export function BusinessProfileForm({ form, activeTab }) {
             </div>
           </div>
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
-            <span className="text-3xs font-bold uppercase tracking-wider text-brand-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#163300]">
               Weekly Operating Working Hours
             </span>
-            <div className="space-y-3.5">
+            <div className="space-y-2.5">
               {days.map((day) => (
                 <div
                   key={day}
-                  className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.01] border border-white/[0.04] text-xs"
+                  className="flex flex-wrap items-center justify-between gap-4 p-3.5 rounded-2xl bg-white border border-slate-200 text-xs shadow-xs"
                 >
-                  <label className="flex items-center gap-2.5 font-semibold text-white capitalize select-none cursor-pointer">
+                  <label className="flex items-center gap-2.5 font-semibold text-slate-800 capitalize select-none cursor-pointer">
                     <input
                       type="checkbox"
                       {...register(`workingHours.${day}.enabled`)}
-                      className="rounded bg-white/5 border-white/10 text-brand-500"
+                      className="rounded border-slate-300 text-[#163300] focus:ring-[#9FE870]"
                     />
                     {day}
                   </label>
@@ -550,14 +550,14 @@ export function BusinessProfileForm({ form, activeTab }) {
                       type="text"
                       placeholder="09:00"
                       {...register(`workingHours.${day}.open`)}
-                      className="w-16 h-8 text-center rounded-lg bg-white/5 border border-white/10 text-xs text-white"
+                      className="w-20 h-8.5 text-center rounded-lg bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:bg-white focus:border-[#163300] focus:outline-none"
                     />
-                    <span className="text-slate-500">to</span>
+                    <span className="text-slate-400">to</span>
                     <input
                       type="text"
                       placeholder="17:00"
                       {...register(`workingHours.${day}.close`)}
-                      className="w-16 h-8 text-center rounded-lg bg-white/5 border border-white/10 text-xs text-white"
+                      className="w-20 h-8.5 text-center rounded-lg bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:bg-white focus:border-[#163300] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -568,86 +568,107 @@ export function BusinessProfileForm({ form, activeTab }) {
       )}
 
       {activeTab === "seo" && (
-        <div className="space-y-6 animate-fadeUp">
+        <div className="space-y-8 animate-fadeUp">
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
                 Privacy & Visibility
               </h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-                Configure search engine visibility and accessibility
+              <p className="text-xs text-slate-500">
+                Configure search engine visibility and accessibility for your company profile
               </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
-              {["public", "unlisted", "private"].map((mode) => (
+              {[
+                {
+                  id: "public",
+                  title: "Public",
+                  desc: "Indexed by search engines and visible to anyone with your link.",
+                },
+                {
+                  id: "unlisted",
+                  title: "Unlisted",
+                  desc: "Visible only to people who have your direct link. Hidden from search.",
+                },
+                {
+                  id: "private",
+                  title: "Private",
+                  desc: "Only visible to you while signed in. Disabled for public visitors.",
+                },
+              ].map((item) => (
                 <button
-                  key={mode}
+                  key={item.id}
                   type="button"
                   onClick={() =>
-                    setValue("visibility", mode, { shouldDirty: true })
+                    setValue("visibility", item.id, { shouldDirty: true })
                   }
                   className={`rounded-2xl border p-4 text-left transition select-none active:scale-[0.98] ${
-                    visibility === mode
-                      ? "border-brand-500/40 bg-brand-500/[0.03] shadow-sm"
-                      : "border-white/[0.06] bg-white/[0.01] hover:bg-white/[0.03] hover:border-white/[0.12]"
+                    visibility === item.id
+                      ? "border-[#163300] bg-[#9FE870]/15 ring-1 ring-[#163300] shadow-sm"
+                      : "border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300"
                   }`}
                 >
-                  <div className="font-bold text-white text-xs capitalize">
-                    {mode}
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-900 text-sm">
+                      {item.title}
+                    </span>
+                    <span
+                      className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                        visibility === item.id
+                          ? "border-[#163300] bg-[#163300]"
+                          : "border-slate-300 bg-white"
+                      }`}
+                    >
+                      {visibility === item.id && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#9FE870]" />
+                      )}
+                    </span>
                   </div>
-                  <p className="text-3xs text-slate-400 mt-1 leading-normal">
-                    {mode === "public"
-                      ? "Indexed by search engines & visible to all."
-                      : ""}
-                    {mode === "unlisted"
-                      ? "Visible to users with slug link, hidden from search."
-                      : ""}
-                    {mode === "private"
-                      ? "Only visible to you. Disabled for public viewers."
-                      : ""}
+                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                    {item.desc}
                   </p>
                 </button>
               ))}
             </div>
           </div>
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
                 Custom Profile URL
               </h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-                Claim your unique URL handle link
+              <p className="text-xs text-slate-500">
+                Claim your unique business URL handle link on oneprofile.in
               </p>
             </div>
 
             <Input
               label="Profile Username / Slug URL *"
-              placeholder="E.g., sarah-connor"
+              placeholder="e.g. connor-consultants"
               {...register("slug")}
               error={formState.errors.slug?.message}
               hint="Must be lowercase letters, numbers, and dashes only. Claiming this changes your public URL."
             />
           </div>
 
-          <hr className="border-white/[0.05]" />
+          <hr className="border-slate-200/80" />
 
           <div className="space-y-4">
             <div className="space-y-1">
-              <h3 className="font-display text-lg font-bold text-white tracking-tight">
+              <h3 className="font-parafina text-lg font-bold text-slate-900 tracking-tight">
                 Search Engine Optimization (SEO)
               </h3>
-              <p className="text-3xs text-slate-500 font-bold uppercase tracking-wider">
-                Customize meta descriptors for Google Search indexes
+              <p className="text-xs text-slate-500">
+                Customize meta descriptors for Google Search indexes and social previews
               </p>
             </div>
 
             <Input
               label="Meta Title"
-              placeholder="E.g., Connor Security Consultants | Cloud Architectures"
+              placeholder="e.g. Connor Security Consultants | Cloud Architectures"
               {...register("seo.metaTitle")}
               error={formState.errors.seo?.metaTitle?.message}
             />
@@ -662,7 +683,7 @@ export function BusinessProfileForm({ form, activeTab }) {
 
             <Input
               label="SEO Search Keywords (Comma separated)"
-              placeholder="E.g., Security, Cloud Audit, IT Consultancy"
+              placeholder="e.g. Security, Cloud Audit, IT Consultancy"
               {...register("seo.keywordsRaw")}
               error={formState.errors.seo?.keywordsRaw?.message}
               hint="Keywords visitors use to search your profile page."

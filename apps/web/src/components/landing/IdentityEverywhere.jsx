@@ -20,9 +20,9 @@ export function IdentityEverywhere({ activeSegment = "personal" }) {
   return (
     <section
       id="identity-everywhere"
-      className="bg-white py-16 sm:py-24 border-b border-[#EAECEF]"
+      className="bg-[#FAFAF7] py-20 sm:py-28 border-b border-black/[0.07]"
     >
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
+      <div className="max-w-[1280px] mx-auto px-6 sm:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Heading, Subtitle, Feature Pillars, CTAs */}
           <div className="lg:col-span-6 space-y-6 sm:space-y-7">
@@ -33,16 +33,16 @@ export function IdentityEverywhere({ activeSegment = "personal" }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ duration: 0.2 }}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#163300]/5 text-xs font-bold text-[#163300]"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/[0.03] border border-black/[0.06] text-[11px] font-semibold uppercase tracking-[0.16em] text-[#576159] select-none"
               >
                 {isBusiness ? (
                   <>
-                    <Building2 className="w-3.5 h-3.5 text-[#255203]" />
+                    <Building2 className="w-3.5 h-3.5 text-[#163300]" />
                     <span>Centralized Team Identity Management</span>
                   </>
                 ) : (
                   <>
-                    <Smartphone className="w-3.5 h-3.5 text-[#255203]" />
+                    <Smartphone className="w-3.5 h-3.5 text-[#163300]" />
                     <span>Cross-Device Digital Identity</span>
                   </>
                 )}
@@ -60,30 +60,32 @@ export function IdentityEverywhere({ activeSegment = "personal" }) {
               >
                 {isBusiness ? (
                   <>
-                    <h2 className="font-parafina font-black text-[36px] sm:text-[50px] lg:text-[56px] text-[#163300] tracking-[-0.035em] leading-[1.04]">
-                      Complete brand governance.
+                    <div className="font-editorial italic text-2xl sm:text-3xl text-[#576159]">
+                      Total brand authority,
+                    </div>
+                    <h2 className="font-display font-black text-3xl sm:text-5xl text-[#121814] tracking-[-0.035em] uppercase leading-[1.02]">
+                      COMPLETE BRAND GOVERNANCE.
                       <br />
-                      Zero rogue designs.
-                      <br />
-                      Total lead visibility.
+                      ZERO ROGUE DESIGNS.
                     </h2>
-                    <p className="text-base sm:text-[18px] text-[#3A4833] font-normal leading-relaxed max-w-lg">
+                    <p className="text-base sm:text-lg text-[#576159] font-normal leading-relaxed max-w-lg">
                       Eliminate disconnected paper cards and outdated contact details across your company. OneProfile for Teams gives marketing, sales, and HR leaders complete centralized oversight over every employee's digital card.
                     </p>
                   </>
                 ) : (
                   <>
-                    <h2 className="font-parafina font-black text-[36px] sm:text-[50px] lg:text-[56px] text-[#163300] tracking-[-0.035em] leading-[1.04]">
-                      Manage your complete
+                    <div className="font-editorial italic text-2xl sm:text-3xl text-[#576159]">
+                      Every contact point,
+                    </div>
+                    <h2 className="font-display font-black text-3xl sm:text-5xl text-[#121814] tracking-[-0.035em] uppercase leading-[1.02]">
+                      MANAGED IN ONE
                       <br />
-                      business identity
-                      <br />
-                      in one smart link.
+                      SMART LINK.
                     </h2>
-                    <p className="text-base sm:text-[18px] text-[#3A4833] font-normal leading-relaxed max-w-lg">
-                      Save directly to phone address books in 1 tap, showcase your
-                      portfolio and services, capture qualified inbound leads, and let
-                      clients book calls without the friction.
+                    <p className="text-base sm:text-lg text-[#576159] font-normal leading-relaxed max-w-lg">
+                      Save directly into recipient phone address books in 1 tap, showcase your
+                      portfolio and offerings, capture qualified inbound leads, and let
+                      clients schedule meetings effortlessly.
                     </p>
                   </>
                 )}
@@ -191,9 +193,9 @@ export function IdentityEverywhere({ activeSegment = "personal" }) {
             <div className="flex flex-wrap items-center gap-3.5 pt-3">
               <Link
                 to={isBusiness ? "/signup?type=business" : "/signup"}
-                className="px-8 py-3.5 rounded-full font-bold text-[15px] text-[#163300] bg-[#9FE870] hover:bg-[#8DE05B] shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="px-7 py-3.5 rounded-full font-semibold text-sm text-[#FAFAF7] bg-[#163300] hover:bg-[#0E2100] shadow-xs transition-all active:scale-[0.98]"
               >
-                {isBusiness ? "Deploy for Your Team" : "Create Your Profile Free"}
+                {isBusiness ? "Deploy for Your Team →" : "Create Your Profile Free →"}
               </Link>
             </div>
 

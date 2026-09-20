@@ -1,17 +1,35 @@
-import clsx from 'clsx';
+import clsx from "clsx";
+import { Check } from "lucide-react";
 
-export function OnboardingStepper({ activeStep, completedSteps = [], onStepClick, profileType = 'business' }) {
+export function OnboardingStepper({
+  activeStep,
+  completedSteps = [],
+  onStepClick,
+  profileType = "business",
+}) {
   const steps = [
-    { id: 'industry', label: 'Profile Type' },
-    { id: 'category', label: profileType === 'professional' ? 'Category' : 'Business Type' },
-    ...(profileType === 'professional' ? [] : [{ id: 'company', label: 'Industry' }]),
-    { id: 'logo', label: profileType === 'professional' ? 'Details & Photo' : 'Details & Logo' },
-    { id: 'content', label: profileType === 'professional' ? 'AI Bio & Contact' : 'AI Copy & Contact' }
+    { id: "industry", label: "Profile Type" },
+    {
+      id: "category",
+      label: profileType === "professional" ? "Category" : "Business Type",
+    },
+    ...(profileType === "professional"
+      ? []
+      : [{ id: "company", label: "Industry" }]),
+    {
+      id: "logo",
+      label:
+        profileType === "professional" ? "Details & Photo" : "Details & Logo",
+    },
+    {
+      id: "content",
+      label: profileType === "professional" ? " Contact" : " Contact",
+    },
   ];
 
   return (
     <nav aria-label="Onboarding steps" className="w-full select-none">
-      <ol className="flex flex-wrap sm:flex-nowrap items-stretch justify-between gap-3 w-full">
+      <ol className="flex flex-wrap sm:flex-nowrap items-stretch justify-between gap-2 sm:gap-2.5 w-full">
         {steps.map((step, index) => {
           const isActive = step.id === activeStep;
           const isComplete = completedSteps.includes(step.id);
@@ -21,26 +39,45 @@ export function OnboardingStepper({ activeStep, completedSteps = [], onStepClick
                 type="button"
                 onClick={() => onStepClick?.(step.id)}
                 className={clsx(
-                  'flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-left transition-all duration-200 border w-full justify-center sm:justify-start active:scale-[0.98]',
-                  isActive && 'border-brand-500/30 bg-brand-500/10 shadow-[0_2px_12px_rgba(37,99,235,0.08)]',
-                  !isActive && isComplete && 'border-emerald-500/20 bg-emerald-500/[0.03]',
-                  !isActive && !isComplete && 'border-white/[0.04] bg-white/[0.01] opacity-35 hover:opacity-85'
+                  "group flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left transition-all duration-200 border w-full justify-center sm:justify-start active:scale-[0.99] cursor-pointer",
+                  isActive &&
+                    "border-[#163300] bg-[#163300] text-white shadow-sm ring-1 ring-[#163300]",
+                  !isActive &&
+                    isComplete &&
+                    "border-black/[0.08] bg-[#F6F5EE] text-[#121814] hover:border-black/[0.15]",
+                  !isActive &&
+                    !isComplete &&
+                    "border-black/[0.06] bg-white/60 text-[#879289] hover:border-black/[0.12] hover:bg-white hover:text-[#121814]",
                 )}
               >
-                <span className={clsx(
-                  'flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full text-4xs font-black transition-colors',
-                  isComplete ? 'bg-emerald-500 text-slate-950' : isActive ? 'bg-brand-500 text-white' : 'bg-white/10 text-slate-400'
-                )}>
+                <span
+                  className={clsx(
+                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-mono font-medium transition-all duration-200",
+                    isActive
+                      ? "bg-[#9FE870] text-[#163300] shadow-2xs scale-105 font-bold"
+                      : isComplete
+                        ? "bg-[#163300] text-[#9FE870]"
+                        : "bg-black/[0.04] text-[#879289] group-hover:text-[#121814] group-hover:bg-black/[0.08]",
+                  )}
+                >
                   {isComplete ? (
-                    <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
-                    </svg>
-                  ) : index + 1}
+                    <Check className="h-3 w-3 stroke-[3]" />
+                  ) : (
+                    index + 1
+                  )}
                 </span>
-                <span className={clsx(
-                  'text-3xs font-extrabold tracking-wider uppercase truncate',
-                  isActive ? 'text-white' : isComplete ? 'text-emerald-400' : 'text-slate-400'
-                )}>{step.label}</span>
+                <span
+                  className={clsx(
+                    "text-xs font-semibold tracking-tight truncate transition-colors duration-200",
+                    isActive
+                      ? "text-white font-bold"
+                      : isComplete
+                        ? "text-[#121814]"
+                        : "text-[#576159] group-hover:text-[#121814]",
+                  )}
+                >
+                  {step.label}
+                </span>
               </button>
             </li>
           );

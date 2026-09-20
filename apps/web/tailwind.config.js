@@ -67,10 +67,12 @@ export default {
         "ds-popover": "0 10px 20px -2px rgba(0, 0, 0, 0.2)",
       },
       fontFamily: {
-        sans: ["'Inter'", "-apple-system", "BlinkMacSystemFont", "system-ui", "sans-serif"],
-        display: ["'Parafina Black'", "'Parafina'", "'Wise Sans'", "sans-serif"],
+        sans: ["'Plus Jakarta Sans'", "'Inter'", "-apple-system", "BlinkMacSystemFont", "system-ui", "sans-serif"],
+        editorial: ["'Instrument Serif'", "Georgia", "serif"],
+        serif: ["'Instrument Serif'", "Georgia", "serif"],
+        display: ["'Wise Sans'", "'Parafina Black'", "'Parafina'", "sans-serif"],
         parafina: ["'Parafina Black'", "'Parafina'", "'Wise Sans'", "sans-serif"],
-        wise: ["'Parafina Black'", "'Parafina'", "'Wise Sans'", "sans-serif"],
+        wise: ["'Wise Sans'", "'Parafina Black'", "sans-serif"],
       },
       fontSize: {
         "3xs": ["0.625rem", { lineHeight: "0.75rem" }],

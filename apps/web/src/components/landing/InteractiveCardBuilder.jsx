@@ -143,13 +143,13 @@ export function InteractiveCardBuilder({ activeSegment = "personal" }) {
   return (
     <section
       id="interactive-builder"
-      className="bg-[#9FE870] py-20 sm:py-28 text-[#163300]"
+      className="bg-[#F6F5EE] py-24 sm:py-32 border-b border-black/[0.07] text-[#121814]"
     >
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
+      <div className="max-w-[1280px] mx-auto px-6 sm:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Headline, Visual NFC Card Preview, Core Value Pillars */}
           <div className="lg:col-span-6 space-y-6 sm:space-y-8">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#163300]/10 text-xs font-bold text-[#163300]">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/[0.03] border border-black/[0.06] text-[11px] font-semibold uppercase tracking-[0.16em] text-[#576159] select-none">
               <Sparkles className="w-3.5 h-3.5 text-[#163300]" />
               <span>
                 {isBusiness
@@ -158,27 +158,32 @@ export function InteractiveCardBuilder({ activeSegment = "personal" }) {
               </span>
             </div>
 
-            <h2 className="font-parafina font-black text-[38px] sm:text-[54px] lg:text-[62px] text-[#163300] tracking-[-0.035em] leading-[1]">
-              {isBusiness ? (
-                <>
-                  Deploy your team.
-                  <br />
-                  Pick your hardware.
-                  <br />
-                  Track ROI live.
-                </>
-              ) : (
-                <>
-                  Configure your identity.
-                  <br />
-                  Pick your smart card.
-                  <br />
-                  Connect in 1 tap.
-                </>
-              )}
-            </h2>
+            <div className="space-y-2">
+              <div className="font-editorial italic text-2xl sm:text-3xl text-[#576159]">
+                Tailored hardware & software,
+              </div>
+              <h2 className="font-display font-black text-3xl sm:text-5xl text-[#121814] tracking-[-0.035em] uppercase leading-[1]">
+                {isBusiness ? (
+                  <>
+                    DEPLOY YOUR TEAM.
+                    <br />
+                    PICK YOUR HARDWARE.
+                    <br />
+                    TRACK ROI LIVE.
+                  </>
+                ) : (
+                  <>
+                    CONFIGURE YOUR IDENTITY.
+                    <br />
+                    PICK YOUR SMART CARD.
+                    <br />
+                    CONNECT IN 1 TAP.
+                  </>
+                )}
+              </h2>
+            </div>
 
-            <p className="text-base sm:text-[18px] text-[#163300] font-normal leading-relaxed max-w-lg">
+            <p className="text-base sm:text-lg text-[#576159] font-normal leading-relaxed max-w-lg">
               {isBusiness ? (
                 <>
                   Standardize your company's digital cards, empower every sales
@@ -187,10 +192,9 @@ export function InteractiveCardBuilder({ activeSegment = "personal" }) {
                 </>
               ) : (
                 <>
-                  Built for ambitious founders, freelancers, sales reps, and
-                  modern teams. Pair your live OneProfile digital identity with
-                  a 1-tap physical NFC smart card — purchased{" "}
-                  <strong>once</strong>, updated anytime, with zero recurring
+                  Built for founders, freelancers, sales leaders, and
+                  modern professionals. Pair your live OneProfile digital identity with
+                  a 1-tap physical NFC smart card — purchased once, updated anytime, with zero recurring
                   card fees.
                 </>
               )}
@@ -280,27 +284,27 @@ export function InteractiveCardBuilder({ activeSegment = "personal" }) {
 
             {/* 3 Key Value Pillars for OneProfile Users */}
             <div className="grid grid-cols-3 gap-3 pt-2">
-              <div className="p-3.5 sm:p-4 rounded-2xl bg-[#163300]/10 border border-[#163300]/15">
-                <div className="font-black text-xl sm:text-2xl text-[#163300]">
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
+                <div className="font-display font-black text-xl sm:text-2xl text-[#121814]">
                   1-Tap
                 </div>
-                <div className="text-[11px] font-bold text-[#163300]/80 mt-1 leading-snug">
+                <div className="text-[11px] font-medium text-[#576159] mt-1 leading-snug">
                   Direct vCard save to Apple/Google Contacts
                 </div>
               </div>
-              <div className="p-3.5 sm:p-4 rounded-2xl bg-[#163300]/10 border border-[#163300]/15">
-                <div className="font-black text-xl sm:text-2xl text-[#163300]">
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
+                <div className="font-display font-black text-xl sm:text-2xl text-[#121814]">
                   1-Time
                 </div>
-                <div className="text-[11px] font-bold text-[#163300]/80 mt-1 leading-snug">
+                <div className="text-[11px] font-medium text-[#576159] mt-1 leading-snug">
                   Hardware purchase, zero recurring card fees
                 </div>
               </div>
-              <div className="p-3.5 sm:p-4 rounded-2xl bg-[#163300]/10 border border-[#163300]/15">
-                <div className="font-black text-xl sm:text-2xl text-[#163300]">
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
+                <div className="font-display font-black text-xl sm:text-2xl text-[#121814]">
                   Live
                 </div>
-                <div className="text-[11px] font-bold text-[#163300]/80 mt-1 leading-snug">
+                <div className="text-[11px] font-medium text-[#576159] mt-1 leading-snug">
                   Real-time updates, unlimited link edits
                 </div>
               </div>
@@ -309,17 +313,17 @@ export function InteractiveCardBuilder({ activeSegment = "personal" }) {
 
           {/* Right Column: Interactive White Configurator Card */}
           <div className="lg:col-span-6 flex justify-center lg:justify-end">
-            <div className="w-full max-w-[540px] bg-white rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.14)] p-6 sm:p-8 text-[#163300] space-y-5">
+            <div className="w-full max-w-[540px] bg-white rounded-3xl shadow-[0_16px_50px_-12px_rgba(18,24,20,0.06)] border border-black/[0.08] p-6 sm:p-8 text-[#121814] space-y-5">
               {/* Header */}
-              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <div className="flex justify-between items-center border-b border-black/[0.06] pb-3.5">
                 <div className="flex items-center gap-2">
                   <Smartphone className="w-4 h-4 text-[#163300]" />
-                  <h3 className="font-parafina font-black text-lg text-[#163300]">
+                  <h3 className="font-display font-black text-lg text-[#121814]">
                     Build Your Setup
                   </h3>
                 </div>
-                <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-[#9FE870] text-[#163300]">
-                  Live Pricing
+                <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-[#163300] text-[#FAFAF7]">
+                  Live Calculator
                 </span>
               </div>
 

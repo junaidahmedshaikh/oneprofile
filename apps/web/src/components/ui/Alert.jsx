@@ -1,88 +1,59 @@
 import clsx from "clsx";
+import { Info, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 
 const variants = {
-  info: "border-blue-500/20 bg-blue-500/5 text-blue-200",
-  success: "border-emerald-500/20 bg-emerald-500/5 text-emerald-200",
-  warning: "border-amber-500/20 bg-amber-500/5 text-amber-200",
-  error: "border-red-500/20 bg-red-500/5 text-red-200",
+  info: {
+    container: "bg-blue-50/80 border-blue-200 text-blue-900 dark:bg-blue-950/40 dark:border-blue-800/60 dark:text-blue-200",
+    title: "text-blue-950 dark:text-blue-100",
+    text: "text-blue-800 dark:text-blue-300",
+    icon: <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />,
+  },
+  success: {
+    container: "bg-emerald-50/90 border-emerald-200 text-emerald-900 dark:bg-emerald-950/40 dark:border-emerald-800/60 dark:text-emerald-200",
+    title: "text-emerald-950 dark:text-emerald-100",
+    text: "text-emerald-800 dark:text-emerald-300",
+    icon: <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />,
+  },
+  warning: {
+    container: "bg-amber-50/90 border-amber-200 text-amber-900 dark:bg-amber-950/40 dark:border-amber-800/60 dark:text-amber-200",
+    title: "text-amber-950 dark:text-amber-100",
+    text: "text-amber-800 dark:text-amber-300",
+    icon: <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />,
+  },
+  error: {
+    container: "bg-rose-50/90 border-rose-200 text-rose-900 dark:bg-rose-950/40 dark:border-rose-800/60 dark:text-rose-200",
+    title: "text-rose-950 dark:text-rose-100",
+    text: "text-rose-800 dark:text-rose-300",
+    icon: <XCircle className="h-5 w-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />,
+  },
 };
 
-const icons = {
-  info: (
-    <svg
-      className="h-5 w-5 text-blue-400 shrink-0"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
-  ),
-  success: (
-    <svg
-      className="h-5 w-5 text-emerald-400 shrink-0"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
-  ),
-  warning: (
-    <svg
-      className="h-5 w-5 text-amber-400 shrink-0"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-      />
-    </svg>
-  ),
-  error: (
-    <svg
-      className="h-5 w-5 text-red-400 shrink-0"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
-  ),
-};
+export function Alert({ variant = "info", title, children, className }) {
+  const current = variants[variant] || variants.info;
 
-export function Alert({ variant = "info", title, children }) {
   return (
     <div
+      role="alert"
       className={clsx(
-        "flex gap-3 rounded-2xl border p-6 text-sm backdrop-blur-md animate-fadeUp",
-        variants[variant],
+        "flex gap-3.5 rounded-2xl border p-4 text-sm transition-all shadow-sm",
+        current.container,
+        className,
       )}
     >
-      {icons[variant]}
-      <div className="space-y-1 text-black rounded">
-        {title ? <div className="font-semibold text-black">{title}</div> : null}
-        <div className="leading-relaxed text-red-400">{children}</div>
+      {current.icon}
+      <div className="space-y-0.5 flex-1 min-w-0">
+        {title ? (
+          <div className={clsx("font-bold text-sm tracking-tight", current.title)}>
+            {title}
+          </div>
+        ) : null}
+        {children ? (
+          <div className={clsx("leading-relaxed text-[13px]", current.text)}>
+            {children}
+          </div>
+        ) : null}
       </div>
     </div>
   );
 }
+

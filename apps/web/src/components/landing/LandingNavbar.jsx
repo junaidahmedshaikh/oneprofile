@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Shield, ChevronDown, Menu, X, Globe } from "lucide-react";
+import { OneProfileLogo } from "../ui/OneProfileLogo";
 
 export function LandingNavbar({ activeSegment, onSegmentChange }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -9,48 +10,24 @@ export function LandingNavbar({ activeSegment, onSegmentChange }) {
   const { accessToken } = useSelector((state) => state.auth);
 
   return (
-    <header className="w-full bg-white sticky top-0 z-50">
-      {/* 1. Top Announcement Bar */}
-      {/* <div className="bg-white border-b border-[#EAECEF] py-2 px-4 text-xs font-medium text-[#163300] flex items-center justify-center gap-1.5 text-center">
-        <span className="inline-block text-xs">🌿</span>
-        <span>Zero paper waste. 100% digital ROI. Never lose a networking contact again.</span>
-        <a
-          href="#interactive-calculator"
-          className="font-semibold underline underline-offset-2 hover:text-[#255203] transition-colors"
-        >
-          Calculate savings
-        </a>
-      </div> */}
-
-      {/* 2. Main Navigation Bar */}
-      <nav className="max-w-[1240px] mx-auto px-4 sm:px-8 h-[76px] flex items-center justify-between">
+    <header className="w-full bg-[#FAFAF7]/90 backdrop-blur-md sticky top-0 z-50 border-b border-black/[0.07]">
+      {/* Main Navigation Bar */}
+      <nav className="max-w-[1280px] mx-auto px-6 sm:px-10 h-[72px] flex items-center justify-between">
         {/* Left: Brand Logo + Capsule Switcher (Personal | Business) */}
         <div className="flex items-center gap-6 sm:gap-8">
-          <Link to="/" className="flex items-center gap-2 group">
-            {/* Wise Diagonal Fast Flag Arrow Geometric Mark */}
-            <div className="flex items-center gap-2">
-              <svg
-                className="w-7 h-7 text-[#163300] group-hover:scale-105 transition-transform"
-                viewBox="0 0 32 32"
-                fill="currentColor"
-              >
-                <path d="M4 8h16l-5 8h13L14 30l3.5-10H5L4 8z" />
-              </svg>
-              <span className="font-parafina font-black text-2xl tracking-[-0.04em] text-[#163300] lowercase leading-none">
-                oneprofile<span className="text-[#255203]">.in</span>
-              </span>
-            </div>
+          <Link to="/" className="flex items-center gap-2 group transition-opacity hover:opacity-90">
+            <OneProfileLogo size="md" variant="primary" showDomain={true} />
           </Link>
 
-          {/* Capsule Switcher: [Personal | Business] - Exact Wise Reference */}
-          <div className="hidden sm:flex items-center p-1 bg-[#F2F4F7] rounded-full text-xs font-bold select-none">
+          {/* Capsule Switcher: [Personal | Business] */}
+          <div className="hidden sm:flex items-center p-1 bg-black/[0.04] border border-black/[0.05] rounded-full text-xs font-semibold select-none">
             <button
               type="button"
               onClick={() => onSegmentChange("personal")}
-              className={`px-4 py-1.5 rounded-full transition-all duration-150 ${
+              className={`px-3.5 py-1.5 rounded-full transition-all duration-150 ${
                 activeSegment === "personal"
-                  ? "bg-[#9FE870] text-[#163300] font-extrabold shadow-sm"
-                  : "text-[#556947] hover:text-[#163300]"
+                  ? "bg-[#163300] text-[#FAFAF7] font-semibold shadow-xs"
+                  : "text-[#576159] hover:text-[#121814]"
               }`}
             >
               Personal
@@ -58,10 +35,10 @@ export function LandingNavbar({ activeSegment, onSegmentChange }) {
             <button
               type="button"
               onClick={() => onSegmentChange("business")}
-              className={`px-4 py-1.5 rounded-full transition-all duration-150 ${
+              className={`px-3.5 py-1.5 rounded-full transition-all duration-150 ${
                 activeSegment === "business"
-                  ? "bg-[#9FE870] text-[#163300] font-extrabold shadow-sm"
-                  : "text-[#556947] hover:text-[#163300]"
+                  ? "bg-[#163300] text-[#FAFAF7] font-semibold shadow-xs"
+                  : "text-[#576159] hover:text-[#121814]"
               }`}
             >
               Business
@@ -69,18 +46,18 @@ export function LandingNavbar({ activeSegment, onSegmentChange }) {
           </div>
         </div>
 
-        {/* Right Navigation: [Features ▾] [Pricing] [Help] [🌐 EN ▾] [Log in] [Register] */}
-        <div className="hidden lg:flex items-center gap-6 text-sm font-semibold text-[#163300]">
+        {/* Right Navigation: [Features ▾] [Pricing] [Log in] [Register] */}
+        <div className="hidden lg:flex items-center gap-7 text-sm font-medium text-[#121814]">
           {/* Features Dropdown */}
           <div className="relative">
             <button
               type="button"
               onClick={() => setFeaturesDropdownOpen(!featuresDropdownOpen)}
-              className="flex items-center gap-1 hover:text-[#255203] py-2 transition-colors"
+              className="flex items-center gap-1.5 text-sm font-medium text-[#576159] hover:text-[#121814] py-2 transition-colors cursor-pointer"
             >
               Features
               <ChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${featuresDropdownOpen ? "rotate-180" : ""}`}
+                className={`w-3.5 h-3.5 transition-transform duration-200 opacity-60 ${featuresDropdownOpen ? "rotate-180" : ""}`}
               />
             </button>
 
@@ -165,18 +142,18 @@ export function LandingNavbar({ activeSegment, onSegmentChange }) {
               </Link>
             </div>
           ) : (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Link
                 to="/login"
-                className="text-sm font-bold text-[#163300] hover:text-[#255203] transition-colors"
+                className="px-3.5 py-2 text-xs font-semibold text-[#576159] hover:text-[#121814] transition-colors"
               >
-                Log in
+                Sign in
               </Link>
               <Link
                 to={activeSegment === "business" ? "/signup?type=business" : "/signup"}
-                className="px-6 py-2.5 rounded-full text-sm font-extrabold text-[#163300] bg-[#9FE870] hover:bg-[#8DE05B] shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="px-5 py-2 rounded-full text-xs font-semibold text-[#FAFAF7] bg-[#163300] hover:bg-[#0E2100] border border-[#163300] shadow-xs transition-all active:scale-[0.98]"
               >
-                {activeSegment === "business" ? "Get for Teams" : "Claim Your Handle"}
+                {activeSegment === "business" ? "Deploy for Teams →" : "Create Profile →"}
               </Link>
             </div>
           )}
@@ -186,9 +163,9 @@ export function LandingNavbar({ activeSegment, onSegmentChange }) {
         <div className="flex lg:hidden items-center gap-3">
           <Link
             to={activeSegment === "business" ? "/signup?type=business" : "/signup"}
-            className="px-4 py-1.5 rounded-full text-xs font-extrabold text-[#163300] bg-[#9FE870]"
+            className="px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#FAFAF7] bg-[#163300]"
           >
-            {activeSegment === "business" ? "Teams" : "Claim Handle"}
+            {activeSegment === "business" ? "Teams" : "Start"}
           </Link>
           <button
             type="button"
@@ -280,15 +257,15 @@ export function LandingNavbar({ activeSegment, onSegmentChange }) {
           <div className="pt-4 border-t border-slate-100 flex flex-col gap-2">
             <Link
               to="/login"
-              className="w-full py-3 rounded-full text-center text-xs font-bold border border-[#163300] text-[#163300]"
+              className="w-full py-3 rounded-full text-center text-xs font-bold border border-[#163300] text-[#163300] hover:bg-[#F2F4F7] transition-colors"
             >
-              Log in
+              Sign in
             </Link>
             <Link
               to={activeSegment === "business" ? "/signup?type=business" : "/signup"}
-              className="w-full py-3 rounded-full text-center text-xs font-extrabold bg-[#9FE870] text-[#163300]"
+              className="w-full py-3 rounded-full text-center text-xs font-extrabold bg-[#9FE870] text-[#163300] hover:bg-[#8DE05B] transition-colors"
             >
-              {activeSegment === "business" ? "Get for Teams" : "Claim Your Handle Free"}
+              {activeSegment === "business" ? "Deploy for Teams" : "Create Your Profile"}
             </Link>
           </div>
         </div>

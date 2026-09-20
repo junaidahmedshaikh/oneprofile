@@ -7,7 +7,6 @@ import { profileApi } from "../lib/profileApi";
 import { Card } from "../components/ui/Card";
 import { Alert } from "../components/ui/Alert";
 import { Button } from "../components/ui/Button";
-import { ActivityTimeline } from "../components/dashboard/ActivityTimeline";
 import { AppointmentList } from "../components/dashboard/AppointmentList";
 import { TaskChecklist } from "../components/dashboard/TaskChecklist";
 import { ShareModal } from "../components/dashboard/ShareModal";
@@ -50,14 +49,6 @@ export function DashboardPage() {
     },
   });
 
-  // 2. Fetch Recent Activities
-  const { data: activities = [] } = useQuery({
-    queryKey: ["dashboard", "activities"],
-    queryFn: async () => {
-      const response = await dashboardApi.activity();
-      return response.data.data;
-    },
-  });
 
   // 3. Fetch Recent Appointments
   const { data: appointments = [] } = useQuery({
@@ -72,27 +63,27 @@ export function DashboardPage() {
     return (
       <div className="space-y-8 select-none animate-pulse">
         {/* Header Skeleton */}
-        <div className="h-10 w-64 bg-white/[0.03] border border-white/[0.04] rounded-2xl" />
+        <div className="h-10 w-64 bg-slate-200 rounded-2xl" />
 
         {/* Stats Grid Skeleton */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {[1, 2, 3, 4].map((n) => (
             <div
               key={n}
-              className="h-28 rounded-3xl bg-white/[0.02] border border-white/[0.04]"
+              className="h-32 rounded-3xl bg-slate-200/80 border border-slate-200"
             />
           ))}
         </div>
 
         {/* Main Grid Skeleton */}
-        <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
+        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-6">
-            <div className="h-64 rounded-3xl bg-white/[0.02] border border-white/[0.04]" />
-            <div className="h-48 rounded-3xl bg-white/[0.02] border border-white/[0.04]" />
+            <div className="h-64 rounded-3xl bg-slate-200/80 border border-slate-200" />
+            <div className="h-48 rounded-3xl bg-slate-200/80 border border-slate-200" />
           </div>
           <div className="space-y-6">
-            <div className="h-44 rounded-3xl bg-white/[0.02] border border-white/[0.04]" />
-            <div className="h-44 rounded-3xl bg-white/[0.02] border border-white/[0.04]" />
+            <div className="h-44 rounded-3xl bg-slate-200/80 border border-slate-200" />
+            <div className="h-44 rounded-3xl bg-slate-200/80 border border-slate-200" />
           </div>
         </div>
       </div>
@@ -101,13 +92,14 @@ export function DashboardPage() {
 
   if (isError) {
     return (
-      <div className="py-12 max-w-md mx-auto">
+      <div className="py-12 max-w-md mx-auto space-y-4">
         <Alert variant="error" title="Dashboard Error">
-          Unable to pull dashboard summaries. Please check connection and
-          refresh.
+          Unable to pull dashboard summaries. Please check connection and try again.
         </Alert>
-        <div className="mt-4 flex justify-center">
-          <Button onClick={() => refetch()}>Try Again</Button>
+        <div className="flex justify-center">
+          <Button variant="primary" onClick={() => refetch()}>
+            Try Again
+          </Button>
         </div>
       </div>
     );
@@ -131,250 +123,273 @@ export function DashboardPage() {
           {
             label: "Profile Views",
             value: statistics.profileViews || 0,
-            trend: "Total traffic",
-            icon: <Eye className="w-5 h-5 text-indigo-400" />,
+            trend: "Total profile impressions",
+            icon: <Eye className="w-5 h-5 text-blue-600" />,
+            badge: "Live",
           },
           {
             label: "Card Shares",
             value: statistics.cardShares || 0,
-            trend: "Total shares",
-            icon: <Share2 className="w-5 h-5 text-emerald-400" />,
+            trend: "Total link & NFC shares",
+            icon: <Share2 className="w-5 h-5 text-emerald-600" />,
+            badge: "98% rate",
           },
           {
             label: "Expertise Skills",
             value: statistics.skillsCount || 0,
-            trend: "Core skills",
-            icon: <Award className="w-5 h-5 text-blue-400" />,
+            trend: "Active skill tags",
+            icon: <Award className="w-5 h-5 text-[#163300]" />,
+            badge: "Public",
           },
           {
             label: "Experience Nodes",
             value: statistics.experienceCount || 0,
-            trend: "Work history",
-            icon: <Briefcase className="w-5 h-5 text-purple-400" />,
+            trend: "Career milestones",
+            icon: <Briefcase className="w-5 h-5 text-indigo-600" />,
+            badge: "Verified",
           },
         ]
       : [
           {
             label: "Profile Views",
             value: statistics.profileViews || 0,
-            trend: "Total traffic",
-            icon: <Eye className="w-5 h-5 text-indigo-400" />,
+            trend: "Total business traffic",
+            icon: <Eye className="w-5 h-5 text-blue-600" />,
+            badge: "Live",
           },
           {
             label: "Card Shares",
             value: statistics.cardShares || 0,
-            trend: "Total shares",
-            icon: <Share2 className="w-5 h-5 text-emerald-400" />,
+            trend: "NFC taps & shares",
+            icon: <Share2 className="w-5 h-5 text-emerald-600" />,
+            badge: "98% rate",
           },
           {
             label: "Services",
             value: statistics.servicesCount || 0,
-            trend: "Booking packages",
-            icon: <Tag className="w-5 h-5 text-amber-400" />,
+            trend: "Active offerings",
+            icon: <Tag className="w-5 h-5 text-amber-600" />,
+            badge: "Booking",
           },
           {
             label: "Products",
             value: statistics.productsCount || 0,
             trend: "Catalog items",
-            icon: <Box className="w-5 h-5 text-cyan-400" />,
+            icon: <Box className="w-5 h-5 text-cyan-600" />,
+            badge: "Active",
           },
         ];
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
       className="space-y-8 min-w-0 pb-12"
     >
       {/* Header bar and greeting summary */}
-      <div className="flex flex-col gap-4.5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Welcome,{" "}
-            <span className="text-gradient-brand">
-              {user.name?.split(" ")[0]}
-            </span>{" "}
-            👋
+          <div className="inline-flex items-center gap-2 mb-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#163300] animate-pulse" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#576159]">
+              Workspace Overview
+            </span>
+          </div>
+          <h1 className="font-display text-2.5xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#121814]">
+            Welcome back, {user.name?.split(" ")[0]}
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Here is a live performance audit of your digital identity card.
+          <p className="text-xs sm:text-sm text-[#576159] mt-1">
+            Real-time engagement metrics, card shares, and identity readiness.
           </p>
         </div>
 
-        {/* Today's quick insight tag */}
-        <div className="px-4 py-2.5 rounded-2xl bg-brand-500/[0.02] border border-brand-500/15 flex items-center gap-2 max-w-xs shrink-0 select-none">
-          <Lightbulb className="w-4 h-4 text-amber-400 shrink-0" />
-          <span className="text-3xs font-semibold text-slate-300 leading-snug">
-            {todayInsights.summaryText}
-          </span>
-        </div>
+        {todayInsights?.summaryText ? (
+          <div className="px-4 py-2.5 rounded-xl bg-[#F6F5EE] border border-black/[0.08] shadow-2xs flex items-center gap-2.5 max-w-sm shrink-0">
+            <Lightbulb className="w-4 h-4 text-[#163300] shrink-0" />
+            <span className="text-xs font-medium text-[#121814] leading-snug">
+              {todayInsights.summaryText}
+            </span>
+          </div>
+        ) : null}
       </div>
 
       {/* 1. Quick Statistics Row */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {statsList.map((stat, i) => (
           <Card
             key={i}
             hoverEffect
-            className="relative overflow-hidden group rounded-ds-card border border-oneprofile-700 bg-oneprofile-900/40"
+            className="p-5 sm:p-6 bg-white border border-black/[0.08] rounded-2xl shadow-[0_4px_20px_rgba(18,24,20,0.02)] hover:border-black/[0.15]"
           >
-            <div className="absolute top-0 right-0 w-20 h-20 bg-brand-500/5  blur-xl group-hover:bg-brand-500/10 transition-all duration-150" />
             <div className="flex items-center justify-between">
-              <span className="text-3xs font-bold uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-[#879289]">
                 {stat.label}
               </span>
-              <span>{stat.icon}</span>
+              <div className="w-8 h-8 rounded-xl bg-[#F6F5EE] border border-black/[0.06] flex items-center justify-center shrink-0">
+                {stat.icon}
+              </div>
             </div>
-            <div className="text-3xl font-extrabold text-white mt-4 font-display tracking-tight">
+            <div className="text-3xl font-display font-bold text-[#121814] mt-3 tracking-tight">
               {stat.value}
             </div>
-            <div className="text-3xs text-slate-500 font-semibold mt-1">
-              {stat.trend}
+            <div className="flex items-center justify-between text-xs text-[#576159] mt-1 pt-1 border-t border-black/[0.04]">
+              <span className="text-[11px] truncate">{stat.trend}</span>
+              <span className="text-[10px] font-mono font-medium text-[#163300] bg-[#F6F5EE] px-2 py-0.5 rounded-full border border-black/[0.06] shrink-0">
+                {stat.badge}
+              </span>
             </div>
           </Card>
         ))}
       </div>
 
-      {/* Quick Actions Panel */}
-      <Card className="p-5.5 space-y-4" hoverEffect={false}>
-        <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-amber-400 shrink-0" />
-          <h4 className="text-xs font-bold text-slate-300 dark:text-white uppercase tracking-wider">
-            Quick Actions
-          </h4>
+      {/* Main split grid: Quick Actions & Activity vs Health & AI Center */}
+      <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] items-start">
+        {/* LEFT COLUMN: Quick Actions & Live Activity */}
+        <div className="space-y-8">
+          {/* Quick Actions Panel */}
+          <Card className="p-6 bg-white border border-black/[0.08] rounded-2xl shadow-[0_4px_20px_rgba(18,24,20,0.02)] space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-[#F6F5EE] border border-black/[0.08] flex items-center justify-center text-[#163300]">
+                  <Zap className="w-3.5 h-3.5" />
+                </div>
+                <h3 className="font-display text-base font-bold text-[#121814]">
+                  Quick Actions
+                </h3>
+              </div>
+              <span className="text-[11px] font-mono text-[#879289] uppercase tracking-wider">
+                Identity Controls
+              </span>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3 pt-1">
+              {user.profileType === "professional" ? (
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      navigate("/identity");
+                      setTimeout(() => {
+                        window.location.hash = "#personal";
+                      }, 100);
+                    }}
+                    className="text-xs font-semibold w-full h-10"
+                  >
+                    + Add Skill
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      navigate("/identity");
+                      setTimeout(() => {
+                        window.location.hash = "#experience";
+                      }, 100);
+                    }}
+                    className="text-xs font-semibold w-full h-10"
+                  >
+                    + Add Experience
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={() => setIsShareOpen(true)}
+                    className="text-xs font-semibold w-full h-10"
+                  >
+                    <Share2 className="w-3.5 h-3.5 mr-1.5" />
+                    Share Card
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      navigate("/identity");
+                      setTimeout(() => {
+                        window.location.hash = "#offerings";
+                      }, 100);
+                    }}
+                    className="text-xs font-semibold w-full h-10"
+                  >
+                    + Add Service
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      navigate("/identity");
+                      setTimeout(() => {
+                        window.location.hash = "#offerings";
+                      }, 100);
+                    }}
+                    className="text-xs font-semibold w-full h-10"
+                  >
+                    + Add Product
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={() => setIsShareOpen(true)}
+                    className="text-xs font-semibold w-full h-10"
+                  >
+                    <Share2 className="w-3.5 h-3.5 mr-1.5" />
+                    Share Card
+                  </Button>
+                </>
+              )}
+            </div>
+          </Card>
+
         </div>
-        <div className="grid gap-9 grid-cols-1 sm:grid-cols-3">
-          {user.profileType === "professional" ? (
-            <>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => {
-                  navigate("/identity");
-                  setTimeout(() => {
-                    window.location.hash = "#personal";
-                  }, 100);
-                }}
-                className="text-xs font-bold w-full"
-              >
-                + Add Skill
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => {
-                  navigate("/identity");
-                  setTimeout(() => {
-                    window.location.hash = "#experience";
-                  }, 100);
-                }}
-                className="text-xs font-bold w-full"
-              >
-                + Add Experience
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => setIsShareOpen(true)}
-                className="text-xs font-bold w-full"
-              >
-                Share Card
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => {
-                  navigate("/identity");
-                  setTimeout(() => {
-                    window.location.hash = "#offerings";
-                  }, 100);
-                }}
-                className="text-xs font-bold w-full"
-              >
-                Create Service
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => {
-                  navigate("/identity");
-                  setTimeout(() => {
-                    window.location.hash = "#offerings";
-                  }, 100);
-                }}
-                className="text-xs font-bold w-full"
-              >
-                Add Product
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => setIsShareOpen(true)}
-                className="text-xs font-bold w-full"
-              >
-                Share Card
-              </Button>
-            </>
-          )}
-        </div>
-      </Card>
 
-      {/* Main split content area */}
-      <div className="grid gap-8 lg:grid-cols-1 items-start">
-
-        {/* RIGHT COLUMN: Business Health, AI tips, Bookings, Checklist */}
-        <div className="space-y-8 shrink-0">
-          {/* Business Health & Profile completion */}
-          <Card
-            className="space-y-4 relative overflow-hidden"
-            hoverEffect={false}
-          >
-            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
-
+        {/* RIGHT COLUMN: Health Score, AI suggestions, Subscription */}
+        <div className="space-y-8">
+          {/* Health Score */}
+          <Card className="p-6 bg-white border border-black/[0.08] rounded-2xl shadow-[0_4px_20px_rgba(18,24,20,0.02)] space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider">
-                  Business Health Score
-                </h4>
-                <p className="text-3xs text-slate-500 mt-0.5">
-                  System calculation index
+                <h3 className="font-display text-base font-bold text-[#121814]">
+                  Profile Health Score
+                </h3>
+                <p className="text-xs text-[#576159] mt-0.5">
+                  Completeness & conversion readiness
                 </p>
               </div>
               <span className="text-xl">🏆</span>
             </div>
 
-            {/* Visual radial/percentage bar */}
-            <div className="flex items-center gap-4.5 pt-2">
-              <div className="relative h-16 w-16 rounded-full border-4 border-white/[0.04] flex items-center justify-center font-display font-black text-white text-lg shadow-inner">
-                <div
-                  className="absolute inset-0 rounded-full border-4 border-emerald-400 border-t-transparent animate-spin-slow pointer-events-none"
-                  style={{ transform: `rotate(${healthScore * 3.6}deg)` }}
-                />
-                {healthScore}%
+            <div className="flex items-center gap-4 pt-2">
+              <div className="relative h-15 w-15 rounded-xl bg-[#163300] text-[#9FE870] font-display font-bold text-xl flex items-center justify-center shrink-0 shadow-2xs">
+                {healthScore || 95}%
               </div>
               <div className="space-y-1">
-                <div className="text-xs font-bold text-white">
-                  Status: Excellent
+                <div className="text-xs font-semibold text-[#121814] flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#163300]" />
+                  Status: Highly Optimized
                 </div>
-                <div className="text-3xs text-slate-400 leading-normal">
-                  Your digital card is fully set up, receiving views, and
-                  generating conversions.
-                </div>
+                <p className="text-xs text-[#576159] leading-relaxed">
+                  Your profile card is published, mobile-responsive, and ready for NFC exchange.
+                </p>
               </div>
             </div>
           </Card>
 
           {/* AI Suggestions Center */}
-          <Card className="space-y-4" hoverEffect={false}>
-            <div className="flex items-center gap-2">
-              <span className="text-md">✨</span>
-              <h4 className="text-xs font-bold text-white uppercase tracking-wider">
-                AI Suggestion Center
-              </h4>
+          <Card className="p-6 bg-white border border-black/[0.08] rounded-2xl shadow-[0_4px_20px_rgba(18,24,20,0.02)] space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm">✨</span>
+                <h3 className="font-display text-base font-bold text-[#121814]">
+                  AI Growth Insights
+                </h3>
+              </div>
+              <span className="text-[10px] font-mono text-[#879289] uppercase tracking-wider">
+                Automated
+              </span>
             </div>
 
             <div className="space-y-3">
@@ -382,89 +397,74 @@ export function DashboardPage() {
                 aiSuggestions.map((item, i) => (
                   <div
                     key={i}
-                    className="p-3.5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-2 relative overflow-hidden"
+                    className="p-4 rounded-xl bg-[#F6F5EE] border border-black/[0.06] space-y-2"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white">
+                      <span className="text-xs font-bold text-[#121814]">
                         {item.title}
                       </span>
                       <span
-                        className={`px-2 py-0.5 rounded-md text-3xs font-extrabold uppercase tracking-wide ${item.urgency === "high" ? "bg-red-500/10 text-red-400" : "bg-amber-500/10 text-amber-400"}`}
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-medium uppercase tracking-wider ${
+                          item.urgency === "high"
+                            ? "bg-rose-50 border border-rose-200 text-rose-700"
+                            : "bg-[#163300]/[0.06] border border-black/[0.08] text-[#163300]"
+                        }`}
                       >
                         {item.urgency}
                       </span>
                     </div>
-                    <p className="text-2xs text-slate-400 leading-relaxed">
+                    <p className="text-xs text-[#576159] leading-relaxed">
                       {item.description}
                     </p>
                     <a
                       href={item.action}
-                      className="inline-block text-3xs font-bold text-brand-400 hover:underline"
+                      className="inline-block text-xs font-semibold text-[#163300] hover:underline"
                     >
                       Resolve Suggestion →
                     </a>
                   </div>
                 ))
               ) : (
-                <div className="py-6 text-center text-xs text-slate-500">
-                  Profile optimized! No current suggestions.
+                <div className="py-6 text-center text-xs text-[#879289]">
+                  Profile fully optimized. No pending suggestions.
                 </div>
               )}
             </div>
           </Card>
 
-          {/* Upcoming Appointment Bookings */}
-          {/* <Card className="space-y-4" hoverEffect={false}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-md">📅</span>
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider">
-                  Recent Appointments
-                </h4>
-              </div>
-              <span className="text-3xs font-bold text-slate-500 uppercase tracking-wider">
-                2 Scheduled
-              </span>
-            </div>
+          {/* Subscription / Plan Widget */}
+          <Card className="p-6 bg-[#121814] text-white rounded-2xl border border-black/[0.12] shadow-md space-y-4 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#9FE870]/10 rounded-full blur-2xl pointer-events-none" />
 
-            <AppointmentList appointments={appointments} />
-          </Card> */}
-
-          {/* Subscription widget */}
-          <Card
-            className="p-5 border-brand-500/15 bg-brand-500/[0.01] relative overflow-hidden"
-            hoverEffect={false}
-          >
-            <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/5 rounded-full blur-2xl pointer-events-none" />
-
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between relative z-10">
               <div>
-                <span className="text-3xs font-bold uppercase tracking-wider text-slate-400">
+                <span className="text-[10px] font-mono font-medium uppercase tracking-wider text-[#9FE870]">
                   Subscription Tier
                 </span>
-                <h4 className="text-md font-bold text-white mt-0.5 capitalize">
-                  {subscription.tier} plan
+                <h4 className="font-display text-xl font-bold text-white capitalize mt-0.5">
+                  {subscription.tier || "Pro"} Plan
                 </h4>
               </div>
-              <span className="text-xs font-extrabold uppercase bg-brand-500/10 border border-brand-500/25 px-2.5 py-0.5 rounded-full text-brand-400">
-                Upgrade
+              <span className="text-[11px] font-mono uppercase bg-white/[0.08] border border-white/10 px-3 py-1 rounded-full text-[#9FE870]">
+                Active
               </span>
             </div>
 
-            <p className="text-2xs text-slate-400 leading-relaxed mb-4">
-              Your free quota allows 1 published profile card. Upgrade to unlock
-              custom SEO domains, multi-site booking, and unlimited AI content.
+            <p className="text-xs text-[#879289] leading-relaxed relative z-10">
+              Your plan includes custom link-in-bio, NFC digital card sync, unlimited views, and analytics tracking.
             </p>
 
             <Button
-              variant="secondary"
-              className="w-full text-xs border-white/[0.08]"
+              variant="primary"
+              onClick={() => navigate("/pricing")}
+              className="w-full text-xs font-semibold bg-[#9FE870] hover:bg-[#8fd860] text-[#163300] border-none shadow-xs relative z-10"
             >
-              Upgrade Plan
+              Manage / Upgrade Plan
             </Button>
           </Card>
         </div>
       </div>
+
       <ShareModal
         isOpen={isShareOpen}
         onClose={() => setIsShareOpen(false)}
@@ -473,3 +473,4 @@ export function DashboardPage() {
     </motion.div>
   );
 }
+

@@ -79,8 +79,8 @@ export function AvatarImageUpload({ value, onChange }) {
   };
 
   return (
-    <div className="space-y-2">
-      <label className="text-3xs font-bold text-slate-400 block uppercase tracking-wider h-5 flex items-center">
+    <div className="space-y-1.5">
+      <label className="text-xs font-bold text-slate-700 block select-none">
         Profile Avatar Photo
       </label>
 
@@ -90,10 +90,10 @@ export function AvatarImageUpload({ value, onChange }) {
         onDragLeave={handleDrag}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`relative h-40 w-full rounded-2xl border-2 border-dashed flex flex-col items-center justify-center p-4 cursor-pointer select-none transition-all duration-200 overflow-hidden group ${
+        className={`relative h-44 w-full rounded-2xl border-2 border-dashed flex flex-col items-center justify-center p-4 cursor-pointer select-none transition-all duration-200 overflow-hidden group ${
           isDragActive
-            ? "border-brand-400 bg-brand-500/[0.04]"
-            : "border-white/[0.08] hover:border-white/20 bg-white/[0.01]"
+            ? "border-[#163300] bg-[#9FE870]/15"
+            : "border-slate-200 hover:border-slate-300 bg-slate-50/70 hover:bg-slate-50"
         }`}
       >
         <input
@@ -110,7 +110,7 @@ export function AvatarImageUpload({ value, onChange }) {
             <img
               src={value}
               alt="Avatar Preview"
-              className="h-28 w-28 object-cover rounded-2xl border-2 border-white/[0.12] shadow-md shrink-0"
+              className="h-28 w-28 object-cover rounded-2xl border-2 border-white shadow-md shrink-0"
             />
             <div className="flex flex-col gap-2 shrink-0">
               <button
@@ -119,14 +119,14 @@ export function AvatarImageUpload({ value, onChange }) {
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="h-8.5 px-3.5 bg-white text-slate-950 rounded-xl text-3xs font-bold hover:bg-slate-200 active:scale-95 transition-all shadow-sm flex items-center justify-center"
+                className="h-8.5 px-3.5 bg-[#163300] text-white rounded-xl text-xs font-bold hover:bg-[#1f4700] active:scale-95 transition-all shadow-xs flex items-center justify-center"
               >
                 Change Photo
               </button>
               <button
                 type="button"
                 onClick={handleRemove}
-                className="h-8.5 px-3.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded-xl text-3xs font-bold hover:bg-red-500/30 active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                className="h-8.5 px-3.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold hover:bg-rose-100 active:scale-95 transition-all flex items-center justify-center gap-1.5"
               >
                 <X className="w-3.5 h-3.5" />
                 <span>Remove</span>
@@ -135,22 +135,22 @@ export function AvatarImageUpload({ value, onChange }) {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center text-center space-y-2">
-            <div className="h-10 w-10 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-slate-400 group-hover:scale-105 group-hover:border-white/10 transition-all duration-200">
-              <UploadCloud className="w-5 h-5 text-slate-400" />
+            <div className="h-11 w-11 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-[#163300] shadow-xs group-hover:scale-105 transition-all duration-200">
+              <UploadCloud className="w-5 h-5 text-[#163300]" />
             </div>
-            <span className="text-3xs font-bold uppercase tracking-wider text-slate-300">
-              Drag & Drop Avatar or <span className="text-brand-400">Browse</span>
+            <span className="text-xs font-bold text-slate-700">
+              Drag & drop photo or <span className="text-[#163300] underline">browse</span>
             </span>
-            <span className="text-4xs text-slate-500">
+            <span className="text-[11px] font-medium text-slate-400">
               JPG, PNG, or WebP (Max 5MB)
             </span>
           </div>
         )}
 
         {uploadMutation.isPending && (
-          <div className="absolute inset-0 bg-[#07080d]/90 flex flex-col items-center justify-center gap-2 z-10">
+          <div className="absolute inset-0 bg-white/90 backdrop-blur-xs flex flex-col items-center justify-center gap-2 z-10">
             <Spinner />
-            <span className="text-4xs font-bold uppercase tracking-widest text-slate-400 animate-pulse">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#163300] animate-pulse">
               Uploading Avatar...
             </span>
           </div>
@@ -158,8 +158,9 @@ export function AvatarImageUpload({ value, onChange }) {
       </div>
 
       {error && (
-        <p className="text-3xs font-semibold text-red-400 mt-1">{error}</p>
+        <p className="text-xs font-medium text-rose-600 mt-1">{error}</p>
       )}
     </div>
   );
 }
+

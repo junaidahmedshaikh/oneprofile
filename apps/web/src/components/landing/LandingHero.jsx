@@ -12,6 +12,11 @@ import {
   Building2,
   ShieldCheck,
   Users,
+  Smartphone,
+  Download,
+  Share2,
+  QrCode,
+  Check,
 } from "lucide-react";
 
 export function LandingHero({ activeSegment = "personal" }) {
@@ -42,9 +47,9 @@ export function LandingHero({ activeSegment = "personal" }) {
   };
 
   return (
-    <section className="relative overflow-hidden bg-white pt-10 sm:pt-14 pb-16 sm:pb-24">
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-8 text-center">
-        {/* Category Eyebrow Pill */}
+    <section className="relative overflow-hidden bg-[#FAFAF7] pt-12 sm:pt-18 pb-20 sm:pb-32 border-b border-black/[0.07]">
+      <div className="max-w-[1280px] mx-auto px-6 sm:px-10 text-center">
+        {/* Editorial Eyebrow Tag */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSegment + "-eyebrow"}
@@ -52,24 +57,24 @@ export function LandingHero({ activeSegment = "personal" }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#163300]/5 border border-[#163300]/10 text-xs font-bold text-[#163300] mb-6"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/[0.03] border border-black/[0.06] text-[11px] font-semibold uppercase tracking-[0.16em] text-[#576159] mb-6 select-none"
           >
             {isBusiness ? (
               <>
-                <Building2 className="w-3.5 h-3.5 text-[#255203]" />
-                <span>Enterprise Digital Identity & Team Lead Generation</span>
+                <Building2 className="w-3.5 h-3.5 text-[#163300]" />
+                <span>Enterprise Identity & Central Brand Governance</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-3.5 h-3.5 text-[#255203]" />
-                <span>The AI-Powered Digital Identity & Mini-Website</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#163300]" />
+                <span>The Modern Standard for Personal Identity</span>
               </>
             )}
           </motion.div>
         </AnimatePresence>
 
-        {/* 1. Master Headline & Subtitle */}
-        <div className="max-w-4xl mx-auto space-y-4">
+        {/* 1. Master Editorial Headline & Subtitle */}
+        <div className="max-w-4xl mx-auto space-y-5">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSegment + "-heading"}
@@ -80,87 +85,86 @@ export function LandingHero({ activeSegment = "personal" }) {
             >
               {isBusiness ? (
                 <>
-                  <h1 className="font-parafina font-black text-[40px] sm:text-[68px] md:text-[84px] lg:text-[96px] text-[#163300] tracking-[-0.04em] uppercase leading-[0.92] text-balance">
-                    ONE BRAND IDENTITY.
-                    <br />
+                  <div className="font-editorial italic text-3xl sm:text-5xl md:text-6xl text-[#576159] tracking-[-0.015em] mb-1">
+                    Unified brand presence,
+                  </div>
+                  <h1 className="font-display font-black text-4xl sm:text-6xl md:text-7xl lg:text-[84px] text-[#121814] tracking-[-0.04em] uppercase leading-[0.92] text-balance">
                     EVERY SALES REP.
                     <br />
                     ZERO PAPER WASTE.
                   </h1>
-                  <p className="text-base sm:text-lg md:text-[19px] text-[#3A4833] font-normal max-w-2xl mx-auto leading-relaxed pt-3">
-                    Equip your entire organization with centralized digital business cards, co-branded NFC hardware, and automated CRM lead capture. Manage 5 to 5,000+ employees with single-click admin governance.
+                  <p className="text-base sm:text-lg text-[#576159] font-normal max-w-2xl mx-auto leading-relaxed pt-3">
+                    Equip your organization with centralized digital business cards, metallic NFC hardware, and automated CRM lead routing. Manage 5 to 5,000+ employees with single-click admin controls.
                   </p>
                 </>
               ) : (
                 <>
-                  <h1 className="font-parafina font-black text-[40px] sm:text-[68px] md:text-[84px] lg:text-[96px] text-[#163300] tracking-[-0.04em] uppercase leading-[0.92] text-balance">
-                    YOUR DIGITAL CARD.
-                    <br />
-                    YOUR MINI-WEBSITE.
-                    <br />
-                    ALL IN ONE TAP.
+                  <div className="font-editorial italic text-3xl sm:text-5xl md:text-6xl text-[#576159] tracking-[-0.015em] mb-1">
+                    The digital identity
+                  </div>
+                  <h1 className="font-display font-black text-4xl sm:text-6xl md:text-7xl lg:text-[84px] text-[#121814] tracking-[-0.04em] uppercase leading-[0.92] text-balance">
+                    THAT PRECEDES YOU.
                   </h1>
-                  <p className="text-base sm:text-lg md:text-[19px] text-[#3A4833] font-normal max-w-2xl mx-auto leading-relaxed pt-3">
-                    The modern way to share your contact details, showcase your portfolio, and capture qualified client leads. Save directly to phone address books in 1 tap — zero app required for recipients.
+                  <p className="text-base sm:text-lg text-[#576159] font-normal max-w-2xl mx-auto leading-relaxed pt-3">
+                    Your card, your portfolio, and your verified credentials in one contactless link. Save directly into any phone address book in 1 tap — zero recipient apps needed.
                   </p>
                 </>
               )}
             </motion.div>
           </AnimatePresence>
 
-          {/* 3. Interactive Handle / Company Claim Bar */}
+          {/* 2. Architectural Handle Claim Bar */}
           <form onSubmit={handleClaimSubmit} className="pt-6 max-w-xl mx-auto">
-            <div className="p-1.5 sm:p-2 bg-[#F2F4F7] rounded-full border border-black/10 focus-within:border-[#163300] focus-within:ring-2 focus-within:ring-[#9FE870]/60 transition-all flex items-center shadow-sm">
-              <div className="pl-4 sm:pl-5 pr-1 text-xs sm:text-sm font-bold text-slate-500 select-none shrink-0">
+            <div className="p-1.5 sm:p-2 bg-white rounded-2xl border border-black/[0.1] focus-within:border-[#163300] focus-within:ring-2 focus-within:ring-[#163300]/10 transition-all flex items-center shadow-xs">
+              <div className="pl-4 sm:pl-5 pr-1 text-xs sm:text-sm font-semibold font-mono text-[#879289] select-none shrink-0">
                 {isBusiness ? "oneprofile.in/company/" : "oneprofile.in/p/"}
               </div>
               <input
                 type="text"
                 value={handle}
                 onChange={(e) => setHandle(e.target.value)}
-                placeholder={isBusiness ? "yourcompany" : "yourname"}
-                className="w-full bg-transparent outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 border-none font-bold text-sm sm:text-base text-[#163300] placeholder-slate-400 py-1"
-                style={{ outline: "none", boxShadow: "none" }}
+                placeholder={isBusiness ? "acme-corp" : "alex"}
+                className="w-full bg-transparent outline-none border-none font-medium text-sm sm:text-base text-[#121814] placeholder-[#879289] py-1"
               />
               <button
                 type="submit"
-                className="shrink-0 px-5 sm:px-7 py-3 rounded-full font-bold text-xs sm:text-sm text-[#163300] bg-[#9FE870] hover:bg-[#8DE05B] shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                className="shrink-0 px-5 sm:px-6 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-[#FAFAF7] bg-[#163300] hover:bg-[#0E2100] transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer shadow-xs"
               >
-                <span>{isBusiness ? "Start Team Trial" : "Claim Free vCard"}</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>{isBusiness ? "Start Team Trial" : "Claim Handle"}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
             {/* Micro-Trust Guarantees */}
-            <div className="pt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-[#556947]">
+            <div className="pt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-[#576159]">
               {isBusiness ? (
                 <>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#255203]" />
-                    Centralized brand governance
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#163300]" />
+                    Centralized admin dashboard
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#255203]" />
-                    HubSpot & Salesforce CRM sync
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#163300]" />
+                    HubSpot & Salesforce sync
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#255203]" />
-                    Google Workspace & Azure SSO
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#163300]" />
+                    Zero app install needed
                   </span>
                 </>
               ) : (
                 <>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#255203]" />
-                    100% Free forever tier
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#163300]" />
+                    100% Free digital vCard
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#255203]" />
-                    Ready in under 3 minutes
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#163300]" />
+                    Setup in under 2 minutes
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#255203]" />
-                    Universal iOS & Android support
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#163300]" />
+                    Instant tap to iOS & Android
                   </span>
                 </>
               )}
@@ -168,162 +172,127 @@ export function LandingHero({ activeSegment = "personal" }) {
           </form>
         </div>
 
-        {/* 4. Center 3D Floating Network Globe with Orbiting OneProfile Digital Badges */}
-        <div className="relative mt-12 sm:mt-16 max-w-2xl mx-auto h-[380px] sm:h-[480px] md:h-[500px] flex items-center justify-center select-none">
-          {/* Floor Shadow */}
-          <div className="absolute bottom-6 w-72 sm:w-88 h-10 rounded-full bg-black/10 blur-xl -z-10 transform scale-y-50" />
+        {/* 3. Luxury Editorial Product Presentation */}
+        <div className="relative mt-14 sm:mt-20 max-w-4xl mx-auto">
+          {/* Subtle Grounding Shadow */}
+          <div className="absolute -bottom-6 inset-x-12 h-16 bg-black/[0.04] rounded-full blur-2xl -z-10" />
 
-          {/* Center 3D Globe Sphere */}
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
-            className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-[380px] md:h-[380px] rounded-full bg-gradient-to-br from-[#255203] via-[#163300] to-[#0A1800] shadow-[inset_-30px_-30px_70px_rgba(0,0,0,0.65),0_30px_70px_rgba(22,51,0,0.35)] flex items-center justify-center overflow-hidden border border-white/20"
-          >
-            {/* Atmospheric reflection */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_32%_28%,rgba(255,255,255,0.35)_0%,transparent_60%)] pointer-events-none" />
+          {/* Product Surface: Dual Layer Digital Identity Showcase */}
+          <div className="relative rounded-3xl border border-black/[0.08] bg-[#F6F5EE] p-6 sm:p-10 shadow-[0_16px_50px_-12px_rgba(18,24,20,0.06)] overflow-hidden">
+            {/* Fine Paper Top Light */}
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
 
-            {/* Continents in bright lime green #9FE870 */}
-            <svg
-              className="w-full h-full opacity-70"
-              viewBox="0 0 200 200"
-              fill="currentColor"
-            >
-              <path
-                d="M35,65 Q55,45 80,55 T125,50 T145,75 T115,115 T65,105 Z"
-                fill="#9FE870"
-              />
-              <path
-                d="M115,105 Q135,85 155,105 T165,135 T125,155 Z"
-                fill="#88D9BE"
-              />
-              <path d="M45,125 Q65,115 75,140 T55,165 Z" fill="#9FE870" />
-              <ellipse
-                cx="100"
-                cy="100"
-                rx="95"
-                ry="48"
-                fill="none"
-                stroke="rgba(255,255,255,0.2)"
-                strokeWidth="1"
-              />
-              <ellipse
-                cx="100"
-                cy="100"
-                rx="48"
-                ry="95"
-                fill="none"
-                stroke="rgba(255,255,255,0.2)"
-                strokeWidth="1"
-              />
-            </svg>
-          </motion.div>
-
-          {/* Floating Badge 1: Top Right */}
-          <motion.div
-            animate={{
-              y: [-8, 8, -8],
-              rotate: [0, 4, 0],
-            }}
-            transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-4 right-2 sm:top-8 sm:right-8 z-20"
-          >
-            <div className="bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-[0_16px_32px_rgba(0,0,0,0.18)] border border-black/10 flex items-center gap-3 text-left transform rotate-6">
-              <div className="w-9 h-9 rounded-xl bg-[#9FE870] flex items-center justify-center text-[#163300]">
-                {isBusiness ? <Building2 className="w-5 h-5" /> : <UserCheck className="w-5 h-5" />}
-              </div>
-              <div>
-                <div className="text-xs font-black text-[#163300] leading-none">
-                  {isBusiness ? "48 Team Cards Active 🏢" : "vCard Saved 📲"}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center text-left">
+              {/* Left Column: Physical & NFC Card Visualization */}
+              <div className="md:col-span-6 space-y-4">
+                <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#879289] font-bold">
+                  Physical Hardware • Metal Edition
                 </div>
-                <div className="text-[10px] font-semibold text-slate-500 mt-1">
-                  {isBusiness ? "Central Brand Governed" : "Direct to iOS & Android"}
+
+                {/* The Luxury Card */}
+                <div className="relative rounded-2xl bg-[#121814] text-white p-6 sm:p-7 shadow-[0_20px_40px_rgba(0,0,0,0.2)] border border-white/[0.12] overflow-hidden aspect-[1.58/1] flex flex-col justify-between group">
+                  {/* Subtle Metallic Grain & Sheen */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.03] via-transparent to-white/[0.06] pointer-events-none" />
+                  <div className="absolute -right-12 -top-12 w-40 h-40 bg-[#9FE870]/10 rounded-full blur-2xl pointer-events-none" />
+
+                  {/* Top: OneProfile Mark + Smart Chip */}
+                  <div className="flex items-center justify-between relative z-10">
+                    <span className="font-display font-bold text-sm tracking-tight text-white/90">
+                      oneprofile<span className="text-[#9FE870]">.in</span>
+                    </span>
+                    <div className="w-9 h-7 rounded-md bg-gradient-to-br from-[#D4AF37] via-[#F3E5AB] to-[#AA771C] p-0.5 shadow-xs flex items-center justify-center opacity-90">
+                      <div className="w-full h-full border border-black/20 rounded-xs flex items-center justify-center">
+                        <span className="text-[8px] font-mono font-black text-black/70">NFC</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Center: Tap Icon Indicator */}
+                  <div className="flex items-center gap-2 text-white/40 text-xs relative z-10">
+                    <Smartphone className="w-3.5 h-3.5 text-[#9FE870]" />
+                    <span className="text-[11px] font-mono tracking-wide text-white/60">Tap to Connect</span>
+                  </div>
+
+                  {/* Bottom: Cardholder Name & Title */}
+                  <div className="relative z-10 flex items-end justify-between">
+                    <div>
+                      <div className="text-base font-bold tracking-tight text-white flex items-center gap-1.5">
+                        {isBusiness ? "Acme Enterprise" : "Alex Rivera"}
+                        <span className="w-3.5 h-3.5 rounded-full bg-[#9FE870] text-[#163300] text-[9px] font-black inline-flex items-center justify-center">
+                          ✓
+                        </span>
+                      </div>
+                      <div className="text-xs text-white/60 font-medium">
+                        {isBusiness ? "Corporate Card #0842" : "Principal Product Designer"}
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-white/40">
+                      NFC v2.4
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-[#576159] pt-1 font-medium">
+                  <span>Sub-second transmission</span>
+                  <span className="font-mono text-[11px] text-[#163300] font-bold">0.4s Handshake</span>
                 </div>
               </div>
-            </div>
-          </motion.div>
 
-          {/* Floating Badge 2: Large Center/Bottom Left */}
-          <motion.div
-            animate={{
-              y: [8, -8, 8],
-              rotate: [-3, 3, -3],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.3,
-            }}
-            className="absolute bottom-10 left-2 sm:bottom-12 sm:left-12 z-30"
-          >
-            <div className="bg-[#163300] text-white px-4 py-3 rounded-2xl shadow-[0_20px_40px_rgba(22,51,0,0.45)] border border-white/15 flex items-center gap-3 text-left transform -rotate-6">
-              <div className="w-10 h-10 rounded-xl bg-[#9FE870] text-[#163300] flex items-center justify-center font-black">
-                <Zap className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xs font-extrabold text-[#9FE870] uppercase tracking-wider text-[10px]">
-                  {isBusiness ? "Salesforce CRM Synced" : "Inbound Lead"}
+              {/* Right Column: Live Mobile Identity Screen (What the recipient sees) */}
+              <div className="md:col-span-6 space-y-4">
+                <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#879289] font-bold">
+                  Recipient Instant View • Zero App Required
                 </div>
-                <div className="text-xs font-black text-white">
-                  {isBusiness ? "+142 Qualified Leads This Week" : "Sarah Jenkins • VP Growth"}
-                </div>
-                <div className="text-[10px] text-slate-300 font-medium">
-                  {isBusiness ? "Auto-routed to regional sales reps" : "Synced to Dashboard & CRM"}
-                </div>
-              </div>
-            </div>
-          </motion.div>
 
-          {/* Floating Badge 3: Mid Right */}
-          <motion.div
-            animate={{
-              y: [-6, 6, -6],
-              rotate: [4, -4, 4],
-            }}
-            transition={{
-              duration: 4.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.7,
-            }}
-            className="absolute bottom-24 right-0 sm:bottom-28 sm:right-6 z-20"
-          >
-            <div className="bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-[0_14px_28px_rgba(0,0,0,0.14)] border border-black/10 flex items-center gap-2.5 text-left transform rotate-3">
-              <div className="w-8 h-8 rounded-xl bg-[#F2F4F7] text-[#163300] flex items-center justify-center">
-                <CreditCard className="w-4 h-4 text-[#163300]" />
-              </div>
-              <div>
-                <div className="text-xs font-extrabold text-[#163300]">
-                  {isBusiness ? "Co-Branded NFC Hardware" : "1-Tap NFC Connect"}
+                {/* Recipient Mini-Site Preview Surface */}
+                <div className="rounded-2xl border border-black/[0.08] bg-white p-5 sm:p-6 shadow-xs space-y-4">
+                  {/* Avatar & Header */}
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-xl bg-[#163300] text-[#FAFAF7] font-display font-black text-lg flex items-center justify-center shrink-0 shadow-xs">
+                      {isBusiness ? "A" : "AR"}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-bold text-[#121814] flex items-center gap-1.5 truncate">
+                        {isBusiness ? "Acme Technologies" : "Alex Rivera"}
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                          Verified
+                        </span>
+                      </div>
+                      <div className="text-xs text-[#576159] truncate">
+                        {isBusiness ? "Enterprise SaaS Solutions" : "Design Systems & Product Architecture"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Primary Contact Actions */}
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-[#163300] text-[#FAFAF7] text-xs font-semibold shadow-xs">
+                      <Download className="w-3.5 h-3.5 text-[#9FE870]" />
+                      <span>Save vCard</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-[#F6F5EE] border border-black/[0.07] text-[#121814] text-xs font-semibold">
+                      <QrCode className="w-3.5 h-3.5 text-[#576159]" />
+                      <span>Share QR</span>
+                    </div>
+                  </div>
+
+                  {/* Metrics / Verified Status */}
+                  <div className="p-3 rounded-xl bg-[#FAFAF7] border border-black/[0.05] flex items-center justify-between text-xs">
+                    <div className="text-[#576159]">
+                      <span className="font-semibold text-[#121814]">Live Profile: </span>
+                      oneprofile.in/p/{isBusiness ? "acme" : "alex"}
+                    </div>
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                  </div>
                 </div>
-                <div className="text-[10px] text-emerald-700 font-bold">
-                  {isBusiness ? "Company logo laser-etched" : "Instant profile load"}
+
+                <div className="flex items-center justify-between text-xs text-[#576159] pt-1 font-medium">
+                  <span>Saves directly to Contacts</span>
+                  <span className="text-[#163300] font-bold">100% Native vCard</span>
                 </div>
               </div>
             </div>
-          </motion.div>
-
-          {/* Floating Badge 4: Far Bottom Left */}
-          <motion.div
-            animate={{
-              y: [10, -10, 10],
-              rotate: [-20, -15, -20],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1.1,
-            }}
-            className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 z-10"
-          >
-            <div className="bg-[#9FE870] text-[#163300] px-3.5 py-2 rounded-xl shadow-lg border border-black/10 flex items-center gap-2 transform -rotate-12">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span className="text-[11px] font-extrabold">
-                {isBusiness ? "Admin Console: 100% Compliant" : "15-Min Call Booked"}
-              </span>
-            </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

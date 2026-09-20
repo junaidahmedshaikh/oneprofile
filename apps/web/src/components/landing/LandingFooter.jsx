@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ShieldCheck, ArrowUp } from "lucide-react";
+import { OneProfileLogo } from "../ui/OneProfileLogo";
 
 export function LandingFooter() {
   const scrollToTop = () => {
@@ -8,21 +9,16 @@ export function LandingFooter() {
   };
 
   return (
-    <footer className="bg-[#163300] text-slate-300 pt-16 pb-12 text-xs border-t border-black/20">
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-8 space-y-12">
+    <footer className="bg-[#121814] text-slate-300 pt-18 pb-14 text-xs border-t border-white/[0.08]">
+      <div className="max-w-[1280px] mx-auto px-6 sm:px-10 space-y-12">
         {/* Top Section: Brand + Navigation Columns */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Col 1 & 2: Brand & Mission */}
           <div className="col-span-2 space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-[#9FE870] text-[#163300] flex items-center justify-center font-black text-xl tracking-tighter">
-                1
-              </div>
-              <span className="font-parafina font-black text-2xl text-white tracking-tight">
-                oneprofile<span className="text-[#9FE870]">.in</span>
-              </span>
-            </div>
-            <p className="text-slate-300 text-xs leading-relaxed max-w-sm">
+            <Link to="/" className="inline-block group">
+              <OneProfileLogo size="lg" variant="white" showDomain={true} />
+            </Link>
+            <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
               The digital business identity platform replacing disposable paper
               cards with smart, mobile-first mini-websites, instant vCards, and
               contactless NFC networking.

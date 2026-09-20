@@ -1,33 +1,27 @@
 import { motion } from "framer-motion";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { OneProfileLogo } from "../ui/OneProfileLogo";
+import { AmbientBackground } from "../ui/AmbientBackground";
 
 export function OnboardingShell({ children }) {
   return (
-    <div className="relative min-h-screen bg-[#090a0f] text-white flex flex-col justify-between overflow-x-hidden">
-      {/* Background ambient glows */}
-      <div className="glow-blob w-[500px] h-[500px] bg-brand-500/10 top-[-10%] left-[-10%]" />
-      <div className="glow-blob w-[600px] h-[600px] bg-cyan-500/5 bottom-[-20%] right-[-10%]" />
+    <div className="relative min-h-screen bg-[#FAFAF7] text-[#121814] flex flex-col justify-between overflow-x-hidden">
+      {/* Ambient background with quiet paper depth */}
+      <AmbientBackground />
 
       {/* Header bar */}
-      <header className="relative z-20 border-b border-white/[0.05] bg-[#090a0f]/65 backdrop-blur-xl px-6 py-4">
+      <header className="relative z-20 border-b border-black/[0.08] bg-[#FAFAF7]/85 backdrop-blur-md px-6 py-4">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img
-              src="/oneprofile_logo.png"
-              alt="OneProfile Logo"
-              className="h-8 w-auto object-contain"
-            />
-            <span className="font-display font-extrabold text-md tracking-tight">
-              OneProfile
-            </span>
-            <span className="hidden sm:inline-block h-4 w-px bg-white/10 mx-2" />
-            <span className="hidden sm:inline-block text-xs text-slate-400 font-medium">
-              Onboarding Workspace
+            <OneProfileLogo size="sm" variant="primary" showDomain={true} />
+            <span className="hidden sm:inline-block h-3.5 w-px bg-black/[0.12] mx-1" />
+            <span className="hidden sm:inline-block text-[11px] font-mono tracking-wider uppercase text-[#576159]">
+              Identity Studio
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-brand-400 animate-pulse" />
-            <span className="text-xs font-semibold text-slate-400">
+          <div className="flex items-center gap-2 bg-[#F6F5EE] border border-black/[0.08] px-3.5 py-1.5 rounded-full shadow-2xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#163300] animate-pulse" />
+            <span className="text-[11px] font-medium tracking-wide text-[#121814]">
               Autosave Active
             </span>
           </div>
@@ -37,22 +31,21 @@ export function OnboardingShell({ children }) {
       {/* Onboarding content */}
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 lg:px-8 flex-1 flex flex-col justify-center">
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="rounded-3xl border border-white/[0.06] bg-gradient-to-b from-white/[0.04] to-transparent p-6 sm:p-9 shadow-2xl backdrop-blur-2xl relative overflow-hidden"
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="rounded-2xl border border-black/[0.08] bg-white/95 backdrop-blur-sm p-6 sm:p-10 shadow-[0_20px_50px_rgba(18,24,20,0.03)] relative overflow-hidden"
         >
-          {/* Top glowing line decoration */}
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-500/20 to-transparent" />
+          {/* Subtle top interior hairline */}
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#9FE870]/40 to-transparent pointer-events-none" />
           <div className="relative z-10">{children || <Outlet />}</div>
         </motion.div>
       </div>
 
       {/* Footer */}
       <footer className="relative z-10 mx-auto w-full max-w-7xl px-6 py-6 text-center">
-        <p className="text-sm text-slate-500">
-          © {new Date().getFullYear()} OneProfile Technologies Inc. All progress
-          is securely cached to your account.
+        <p className="text-[11px] font-mono uppercase tracking-wider text-[#879289]">
+          © {new Date().getFullYear()} OneProfile Technologies. All progress is securely encrypted and synced.
         </p>
       </footer>
     </div>

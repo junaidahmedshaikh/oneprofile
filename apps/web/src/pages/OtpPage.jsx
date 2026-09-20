@@ -57,15 +57,15 @@ export function OtpPage() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.35 }}
       className="space-y-6"
     >
-      <div className="space-y-2">
-        <h2 className="font-display text-2.5xl font-extrabold text-slate-300 dark:text-white tracking-tight">
+      <div className="space-y-1.5">
+        <h2 className="font-display text-2.5xl sm:text-3xl font-bold text-[#121814] tracking-tight">
           One-time login
         </h2>
-        <p className="text-xs text-oneprofile-600 font-semibold">
-          Request a secure OTP and verify it here.
+        <p className="text-xs sm:text-sm text-[#576159]">
+          Sign in instantly without a password using an SMS or email verification code.
         </p>
       </div>
 
@@ -79,14 +79,16 @@ export function OtpPage() {
         >
           <Input
             label="Email or phone"
-            placeholder="name@company.com or +91 9223047765"
+            placeholder="name@company.com or +91 98765 43210"
             {...requestForm.register("identifier")}
             error={requestForm.formState.errors.identifier?.message}
           />
           <div className="pt-2">
             <Button
               type="submit"
-              className="w-full h-12 rounded-2xl"
+              variant="primary"
+              size="lg"
+              className="w-full text-xs font-semibold shadow-xs"
               loading={requestMutation.isPending}
             >
               Send verification code
@@ -108,7 +110,7 @@ export function OtpPage() {
             {...verifyForm.register("identifier")}
           />
           <div className="space-y-2">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 select-none">
+            <label className="block text-xs font-semibold text-[#121814] select-none">
               Verification code
             </label>
             <div className="flex justify-center py-2">
@@ -123,10 +125,12 @@ export function OtpPage() {
           <div className="pt-2">
             <Button
               type="submit"
-              className="w-full h-12 rounded-2xl"
+              variant="primary"
+              size="lg"
+              className="w-full text-xs font-semibold shadow-xs"
               loading={verifyMutation.isPending}
             >
-              Verify code
+              Verify & Enter
             </Button>
           </div>
         </form>
@@ -134,18 +138,19 @@ export function OtpPage() {
 
       {requestMutation.isError || verifyMutation.isError ? (
         <Alert variant="error">
-          Something went wrong. Please check details and try again.
+          Something went wrong. Please check your details and try again.
         </Alert>
       ) : null}
 
-      <div className="pt-3 border-t border-oneprofile-700 text-xs font-semibold text-center">
+      <div className="pt-4 border-t border-black/[0.06] text-xs text-center">
         <Link
-          className="text-oneprofile-600 hover:text-slate-300 dark:hover:text-white transition-colors"
+          className="text-[#576159] hover:text-[#121814] transition-colors"
           to="/login"
         >
-          Back to login
+          ← Back to sign in
         </Link>
       </div>
     </motion.div>
   );
 }
+

@@ -131,24 +131,24 @@ export function VerificationPage() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.35 }}
       className="space-y-6 max-w-md mx-auto"
     >
       <div className="space-y-2 text-center">
-        <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 text-primary mb-2">
-          <Mail className="w-6 h-6 text-[#2563EB]" />
+        <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-[#9FE870]/30 text-[#163300] mb-2 shadow-xs">
+          <Mail className="w-6 h-6 text-[#163300]" />
         </div>
-        <h2 className="font-display text-2.5xl font-extrabold text-slate-300 dark:text-white tracking-tight">
+        <h2 className="font-parafina text-2.5xl sm:text-3xl font-black text-[#163300] tracking-tight">
           Verify your email
         </h2>
-        <p className="text-xs text-oneprofile-600 font-semibold leading-relaxed">
-          We sent a 6-digit verification code to <span className="text-slate-300 font-bold">{email || "your email address"}</span>.
+        <p className="text-sm text-slate-600 font-medium leading-relaxed">
+          We sent a 6-digit verification code to{" "}
+          <span className="text-slate-900 font-bold">{email || "your email address"}</span>.
         </p>
       </div>
 
       {successMessage && (
         <Alert variant="success" className="flex items-start gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
           <span>{successMessage}</span>
         </Alert>
       )}
@@ -161,7 +161,6 @@ export function VerificationPage() {
 
       {errorMessage && (
         <Alert variant="error" className="flex items-start gap-2">
-          <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
           <span>{errorMessage}</span>
         </Alert>
       )}
@@ -176,7 +175,9 @@ export function VerificationPage() {
           />
           <Button
             type="button"
-            className="w-full h-12 rounded-2xl"
+            variant="primary"
+            size="lg"
+            className="w-full text-sm font-bold"
             onClick={handleResendCode}
             disabled={!email || isResending}
           >
@@ -197,7 +198,9 @@ export function VerificationPage() {
           <div className="space-y-3">
             <Button
               type="submit"
-              className="w-full h-12 rounded-2xl text-xs font-bold"
+              variant="primary"
+              size="lg"
+              className="w-full text-sm font-bold shadow-md shadow-[#163300]/10"
               loading={status === "loading"}
               disabled={otp.length !== 6 || status === "success"}
             >
@@ -209,12 +212,12 @@ export function VerificationPage() {
                 type="button"
                 onClick={handleResendCode}
                 disabled={cooldown > 0 || isResending}
-                className="text-primary hover:text-primary-hover disabled:text-oneprofile-600 transition-colors"
+                className="text-[#163300] hover:underline disabled:text-slate-400 font-bold transition-colors"
               >
                 {isResending ? "Resending..." : "Resend Code"}
               </button>
               {cooldown > 0 && (
-                <span className="text-oneprofile-600">
+                <span className="text-slate-400 font-medium">
                   Resend in {cooldown}s
                 </span>
               )}
@@ -223,15 +226,16 @@ export function VerificationPage() {
         </form>
       )}
 
-      <div className="pt-3 border-t border-oneprofile-700 text-xs font-semibold text-center">
+      <div className="pt-4 border-t border-slate-100 text-xs font-semibold text-center">
         <button
           type="button"
           onClick={handleBackToLogin}
-          className="text-oneprofile-600 hover:text-slate-300 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 mx-auto"
+          className="text-slate-500 hover:text-[#163300] transition-colors flex items-center justify-center gap-1.5 mx-auto font-medium"
         >
-          <ArrowLeft className="w-3.5 h-3.5" /> Back to login
+          <ArrowLeft className="w-4 h-4" /> Back to sign in
         </button>
       </div>
     </motion.div>
   );
 }
+

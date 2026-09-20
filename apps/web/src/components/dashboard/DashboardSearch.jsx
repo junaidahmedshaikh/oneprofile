@@ -125,7 +125,7 @@ export function DashboardSearch() {
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 z-40 bg-[#06070a]/40 backdrop-blur-[1.5px] transition-all cursor-default"
+          className="fixed inset-0 z-40 bg-slate-900/20 backdrop-blur-[1px] transition-all cursor-default"
         />
       )}
 
@@ -140,7 +140,7 @@ export function DashboardSearch() {
       >
         <div className="relative flex items-center">
           <Search 
-            className="absolute left-3.5 w-4 h-4 text-slate-500 pointer-events-none select-none" 
+            className="absolute left-3.5 w-4 h-4 text-slate-400 pointer-events-none select-none" 
             aria-hidden="true" 
           />
           
@@ -154,14 +154,14 @@ export function DashboardSearch() {
             }}
             onFocus={() => setIsOpen(true)}
             onKeyDown={handleKeyDown}
-            placeholder="Search workspace... (⌘K)"
-            className="w-full pl-10 pr-12 py-2 text-xs font-semibold rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] focus:bg-white/[0.05] focus:border-brand-500/50 focus:outline-none focus:ring-1 focus:ring-brand-500/30 text-white placeholder-slate-500 transition-all select-text"
+            placeholder="Quick search... (⌘K)"
+            className="w-full pl-10 pr-12 py-2 text-xs font-semibold rounded-2xl bg-slate-100 hover:bg-slate-100/80 focus:bg-white border border-slate-200 focus:border-[#163300] focus:outline-none focus:ring-2 focus:ring-[#9FE870]/30 text-slate-800 placeholder-slate-400 transition-all select-text shadow-inner"
             aria-autocomplete="list"
             aria-controls="search-results-listbox"
           />
 
           <kbd 
-            className="absolute right-3.5 text-3xs font-extrabold bg-white/[0.05] border border-white/[0.08] px-1.5 py-0.5 rounded-md text-slate-500 pointer-events-none select-none hidden sm:inline-block"
+            className="absolute right-3 text-[10px] font-bold bg-white border border-slate-200 px-1.5 py-0.5 rounded-md text-slate-500 pointer-events-none select-none hidden sm:inline-block shadow-xs"
             aria-hidden="true"
           >
             ⌘K
@@ -175,11 +175,11 @@ export function DashboardSearch() {
               id="search-results-listbox"
               role="listbox"
               aria-label="Search Workspace Suggestions"
-              initial={{ opacity: 0, y: 8, scale: 0.98 }}
+              initial={{ opacity: 0, y: 6, scale: 0.98 }}
               animate={{ opacity: 1, y: 4, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.98 }}
+              exit={{ opacity: 0, y: 6, scale: 0.98 }}
               transition={{ duration: 0.12, ease: "easeOut" }}
-              className="absolute left-0 right-0 mt-1.5 border border-oneprofile-700 bg-[#0c0d14] rounded-2xl shadow-2xl p-1.5 max-h-[280px] overflow-y-auto space-y-0.5 backdrop-blur-xl"
+              className="absolute left-0 right-0 mt-1.5 border border-slate-200 bg-white rounded-2xl shadow-xl p-1.5 max-h-[280px] overflow-y-auto space-y-0.5"
             >
               {filteredCommands.length ? (
                 filteredCommands.map((item, index) => {
@@ -192,10 +192,10 @@ export function DashboardSearch() {
                       aria-selected={isSelected}
                       onClick={() => handleSelect(item)}
                       onMouseEnter={() => setSelectedIndex(index)}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all ${
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-all ${
                         isSelected
-                          ? "bg-white/[0.04] text-white border border-white/[0.08] shadow-sm shadow-black/50"
-                          : "text-slate-400 hover:text-white border border-transparent"
+                          ? "bg-slate-100 text-[#163300] font-bold"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                       }`}
                     >
                       <span className="shrink-0" aria-hidden="true">
@@ -205,13 +205,13 @@ export function DashboardSearch() {
                         <div className="text-xs font-semibold truncate leading-tight">
                           {item.title}
                         </div>
-                        <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">
+                        <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
                           {item.category}
                         </div>
                       </div>
                       {isSelected && (
                         <span 
-                          className="text-[10px] font-extrabold text-brand-400 shrink-0 bg-brand-500/10 px-2 py-0.5 rounded-md border border-brand-500/20 hidden xs:inline-block select-none"
+                          className="text-[10px] font-bold text-[#163300] shrink-0 bg-[#9FE870]/30 px-2 py-0.5 rounded-md hidden xs:inline-block select-none"
                           aria-hidden="true"
                         >
                           ⏎ Jump
@@ -221,7 +221,7 @@ export function DashboardSearch() {
                   );
                 })
               ) : (
-                <div className="p-5 text-center text-xs text-slate-500 font-medium select-none" role="status">
+                <div className="p-4 text-center text-xs text-slate-400 font-medium select-none" role="status">
                   No matching workspace actions found.
                 </div>
               )}
@@ -232,3 +232,4 @@ export function DashboardSearch() {
     </>
   );
 }
+

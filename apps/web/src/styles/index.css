@@ -29,7 +29,32 @@
 }
 
 :root {
-  /* Premium Dark Theme Color Tokens */
+  /* OneProfile Premium Editorial Design System Tokens */
+  --op-bg-base: #FAFAF7;
+  --op-bg-paper: #F5F4EE;
+  --op-bg-subtle: #EDECE4;
+  --op-surface-card: #FFFFFF;
+  --op-surface-translucent: rgba(255, 255, 255, 0.92);
+  
+  --op-border-subtle: rgba(18, 24, 20, 0.07);
+  --op-border-card: rgba(18, 24, 20, 0.10);
+  --op-border-active: #163300;
+  
+  --op-text-ink: #121814;
+  --op-text-muted: #576159;
+  --op-text-subtle: #879289;
+
+  --op-brand-forest: #163300;
+  --op-brand-forest-dark: #0E2100;
+  --op-brand-lime: #9FE870;
+  --op-brand-lime-soft: rgba(159, 232, 112, 0.14);
+  --op-brand-emerald: #10B981;
+
+  --op-shadow-sm: 0 1px 2px 0 rgba(18, 24, 20, 0.03);
+  --op-shadow-card: 0 4px 20px -2px rgba(18, 24, 20, 0.04), 0 1px 3px rgba(18, 24, 20, 0.02);
+  --op-shadow-elevated: 0 20px 50px -10px rgba(22, 51, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.02);
+
+  /* Dark Theme Color Tokens */
   --color-nx-bg: #0B1020;
   --color-nx-surface: rgba(255, 255, 255, 0.05);
   --color-nx-surface-2: #111827;
@@ -43,9 +68,9 @@
   --color-nx-surface-soft: rgba(255, 255, 255, 0.04);
   
   /* Brand accents */
-  --brand-primary: #2563EB;
-  --brand-secondary: #3B82F6;
-  --brand-tertiary: #06B6D4;
+  --brand-primary: #163300;
+  --brand-secondary: #255203;
+  --brand-tertiary: #9FE870;
 }
 
 html,
@@ -57,12 +82,12 @@ body,
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 16px;
   line-height: 1.5;
-  letter-spacing: -0.01em;
-  color: #163300;
-  background-color: #FFFFFF;
+  letter-spacing: -0.012em;
+  color: #121814;
+  background-color: #FAFAF7;
   overflow-x: hidden;
   position: relative;
   -webkit-font-smoothing: antialiased;
@@ -84,10 +109,23 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Parafina Black', 'Parafina', 'Wise Sans', 'Syne', -apple-system, sans-serif;
-  line-height: 1.02;
-  letter-spacing: -0.025em;
+  font-family: 'Wise Sans', 'Parafina Black', 'Parafina', 'Syne', -apple-system, sans-serif;
+  line-height: 1.05;
+  letter-spacing: -0.028em;
   margin: 0;
+}
+
+.font-editorial {
+  font-family: 'Instrument Serif', Georgia, serif;
+  letter-spacing: -0.015em;
+}
+
+.editorial-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--op-text-muted);
 }
 
 p,
@@ -217,6 +255,56 @@ img {
   }
   100% {
     transform: translate(-30px, 40px) scale(0.9);
+  }
+}
+
+/* Ambient Slow Restrained Drift (20-28s duration, 15-25px translation) */
+@keyframes op-ambient-drift-1 {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate(22px, -18px) scale(1.04);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(-14px, 16px) scale(0.97);
+    opacity: 0.8;
+  }
+}
+
+@keyframes op-ambient-drift-2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(-20px, 16px) scale(1.03);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(16px, -12px) scale(0.96);
+    opacity: 0.75;
+  }
+}
+
+.animate-op-ambient-1 {
+  animation: op-ambient-drift-1 22s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+.animate-op-ambient-2 {
+  animation: op-ambient-drift-2 28s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-op-ambient-1,
+  .animate-op-ambient-2,
+  .glow-blob {
+    animation: none !important;
+    transform: none !important;
   }
 }
 

@@ -35,35 +35,35 @@ const getRelativeTime = (dateStr) => {
 export function ActivityTimeline({ activities = [] }) {
   if (!activities.length) {
     return (
-      <div className="py-6 text-center text-xs text-slate-500">
-        No recent activities recorded yet.
+      <div className="py-8 text-center text-xs text-[#879289]">
+        No recent activities recorded yet. Share your card to start tracking engagement.
       </div>
     );
   }
 
   return (
-    <div className="relative pl-6 space-y-6">
+    <div className="relative pl-6 space-y-5">
       {/* Central line track */}
-      <div className="absolute left-2.5 top-2 bottom-2 w-px bg-white/[0.06]" />
+      <div className="absolute left-2.5 top-2 bottom-2 w-px bg-black/[0.08]" />
 
       {activities.map((act, i) => (
         <motion.div
           key={act._id || i}
           initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3, delay: i * 0.05 }}
-          className="relative flex gap-4 items-start group"
+          transition={{ duration: 0.25, delay: i * 0.04 }}
+          className="relative flex gap-3.5 items-start group"
         >
           {/* Timeline node */}
-          <div className="absolute -left-6.5 mt-0.5 h-5.5 w-5.5 rounded-full border border-oneprofile-700 bg-oneprofile-900/40 flex items-center justify-center text-2xs shadow-sm z-10 group-hover:border-brand-500/30 transition-colors">
+          <div className="absolute -left-6.5 mt-0.5 h-6 w-6 rounded-full border border-black/[0.08] bg-[#F6F5EE] flex items-center justify-center text-xs shadow-2xs z-10 group-hover:border-[#163300] transition-colors">
             {getActivityIcon(act.type)}
           </div>
 
-          <div className="flex-1 space-y-1">
-            <p className="text-xs text-slate-300 font-semibold group-hover:text-white transition-colors">
+          <div className="flex-1 space-y-0.5 min-w-0">
+            <p className="text-xs text-[#121814] font-medium group-hover:text-[#163300] transition-colors leading-relaxed">
               {act.description}
             </p>
-            <span className="block text-3xs text-slate-500 font-bold uppercase tracking-wider">
+            <span className="block text-[10px] font-mono text-[#879289] uppercase tracking-wider">
               {getRelativeTime(act.createdAt)}
             </span>
           </div>
@@ -72,3 +72,4 @@ export function ActivityTimeline({ activities = [] }) {
     </div>
   );
 }
+

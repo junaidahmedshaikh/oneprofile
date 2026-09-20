@@ -30,7 +30,7 @@ export function PublicProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FCFCFD] grid place-items-center">
+      <div className="min-h-screen bg-[#FAFAF7] grid place-items-center">
         <Spinner />
       </div>
     );
@@ -38,7 +38,7 @@ export function PublicProfilePage() {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-[#FCFCFD] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#FAFAF7] flex items-center justify-center p-6">
         <div className="max-w-md w-full">
           <Alert variant="error" title="Profile Not Found">
             {error?.response?.data?.message ||
@@ -82,16 +82,16 @@ Thank you.`;
   const leadForm = (
     <div
       id="contact-section"
-      className="bg-white border border-[#E5E7EB] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[24px] p-6 sm:p-8 space-y-6"
+      className="bg-white border border-black/[0.08] shadow-[0_8px_30px_rgba(18,24,20,0.03)] rounded-2xl p-6 sm:p-8 space-y-6"
     >
       <div className="space-y-1">
-        <span className="text-3xs uppercase tracking-[0.25em] text-[#6B7280] font-bold block">
+        <span className="text-[10px] font-mono uppercase tracking-wider text-[#879289] block">
           COMMUNICATE
         </span>
-        <h2 className="text-lg sm:text-xl font-bold text-[#111827]">
+        <h2 className="text-xl sm:text-2xl font-display font-bold text-[#121814]">
           Get In Touch
         </h2>
-        <p className="text-xs text-[#6B7280] leading-relaxed">
+        <p className="text-xs text-[#576159] leading-relaxed">
           Send a direct inquiry or reach out instantly using any of the quick contact channels below.
         </p>
       </div>
@@ -101,20 +101,20 @@ Thank you.`;
         {profile?.contactDetails?.phone && (
           <a
             href={`tel:${profile.contactDetails.phone.replace(/[\s\(\)-]/g, "")}`}
-            className="h-11 px-4 rounded-xl border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
+            className="h-10 px-4 rounded-xl border border-black/[0.08] hover:border-black/[0.15] bg-white text-[#121814] text-xs font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
             title="Call Phone"
           >
-            <Phone className="w-4 h-4 text-[#2563EB]" />
+            <Phone className="w-3.5 h-3.5 text-[#163300]" />
             <span>Call</span>
           </a>
         )}
         {profile?.contactDetails?.email && (
           <a
             href={`mailto:${profile.contactDetails.email}`}
-            className="h-11 px-4 rounded-xl border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
+            className="h-10 px-4 rounded-xl border border-black/[0.08] hover:border-black/[0.15] bg-white text-[#121814] text-xs font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
             title="Send Email"
           >
-            <Mail className="w-4 h-4 text-[#2563EB]" />
+            <Mail className="w-3.5 h-3.5 text-[#121814]" />
             <span>Email</span>
           </a>
         )}
@@ -123,37 +123,37 @@ Thank you.`;
             href={`https://wa.me/${whatsAppNumber.replace(/[^0-9]/g, "")}`}
             target="_blank"
             rel="noreferrer"
-            className="h-11 px-4 rounded-xl border border-emerald-500/30 bg-emerald-50/50 hover:bg-emerald-100/50 text-emerald-800 text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
+            className="h-10 px-4 rounded-xl border border-black/[0.08] bg-[#F6F5EE] hover:bg-[#eae8de] text-[#163300] text-xs font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
             title="Message on WhatsApp"
           >
-            <MessageSquare className="w-4 h-4 text-emerald-600" />
+            <MessageSquare className="w-3.5 h-3.5 text-[#163300]" />
             <span>WhatsApp</span>
           </a>
         )}
         <button
           type="button"
           onClick={() => downloadVCardFile(profile)}
-          className="h-11 px-4 rounded-xl border border-[#E5E7EB] hover:bg-slate-50 text-[#111827] text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0"
+          className="h-10 px-4 rounded-xl bg-[#163300] hover:bg-[#121814] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0 shadow-2xs"
           title="Save Contact (vCard)"
         >
-          <Download className="w-4 h-4 text-[#2563EB]" />
+          <Download className="w-3.5 h-3.5 text-[#9FE870]" />
           <span>Save Contact</span>
         </button>
       </div>
 
-      <div className="pt-4 border-t border-slate-100 grid grid-cols-2 gap-4 text-3xs text-[#6B7280] font-bold uppercase tracking-wide">
+      <div className="pt-4 border-t border-black/[0.06] grid grid-cols-2 gap-4 text-[10px] font-mono text-[#879289] uppercase tracking-wider">
         <div className="flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Direct Response
+          <CheckCircle2 className="w-3.5 h-3.5 text-[#163300]" /> Direct Response
         </div>
         <div className="flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Confidential Inquiry
+          <CheckCircle2 className="w-3.5 h-3.5 text-[#163300]" /> Confidential Inquiry
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#FCFCFD] text-[#111827] selection:bg-[#2563EB]/10 relative pb-24 overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-[#FAFAF7] text-[#121814] selection:bg-[#9FE870] selection:text-[#163300] relative pb-24 overflow-x-hidden font-sans">
       {/* Main Profile Page Content */}
       <main className="relative z-10 mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
         {profile.profileType === "professional" ? (
@@ -164,13 +164,13 @@ Thank you.`;
       </main>
 
       {/* Mobile Sticky Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-[#E5E7EB] flex gap-3 z-30 md:hidden shadow-[0_-4px_16px_rgba(0,0,0,0.04)]">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#FAFAF7]/90 backdrop-blur-md border-t border-black/[0.08] flex gap-3 z-30 md:hidden shadow-[0_-4px_16px_rgba(0,0,0,0.04)]">
         {profile.contactDetails?.phone && (
           <a
             href={`tel:${profile.contactDetails.phone.replace(/[\s\(\)-]/g, "")}`}
-            className="flex-1 h-12 rounded-full text-xs font-bold bg-white border border-[#E5E7EB] text-[#111827] flex items-center justify-center gap-2 active:scale-[0.98]"
+            className="flex-1 h-11 rounded-xl text-xs font-semibold bg-white border border-black/[0.08] text-[#121814] flex items-center justify-center gap-2 active:scale-[0.98]"
           >
-            <Phone className="w-4 h-4" /> Call
+            <Phone className="w-3.5 h-3.5 text-[#163300]" /> Call
           </a>
         )}
         {whatsAppNumber && (
@@ -178,10 +178,10 @@ Thank you.`;
             href={`https://wa.me/${whatsAppNumber.replace(/[^0-9]/g, "")}`}
             target="_blank"
             rel="noreferrer"
-            className="flex-1 h-12 rounded-full text-xs font-bold bg-[#25D366] text-white flex items-center justify-center gap-2 active:scale-[0.98]"
+            className="flex-1 h-11 rounded-xl text-xs font-semibold bg-[#163300] text-white flex items-center justify-center gap-2 active:scale-[0.98]"
           >
-            <MessageSquare className="w-4 h-4" />
-            <span className="sm:hidden">WA</span>
+            <MessageSquare className="w-3.5 h-3.5 text-[#9FE870]" />
+            <span className="sm:hidden">WhatsApp</span>
             <span className="hidden sm:inline">WhatsApp</span>
           </a>
         )}

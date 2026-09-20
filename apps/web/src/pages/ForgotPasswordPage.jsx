@@ -142,21 +142,21 @@ export function ForgotPasswordPage() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.35 }}
       className="space-y-6 max-w-md mx-auto"
     >
       <div className="space-y-2 text-center">
-        <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 text-primary mb-2">
-          {mode === "request" && <Mail className="w-6 h-6 text-[#2563EB]" />}
-          {mode === "verify" && <KeyRound className="w-6 h-6 text-[#2563EB]" />}
-          {mode === "reset" && <Lock className="w-6 h-6 text-[#2563EB]" />}
+        <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-[#F6F5EE] border border-black/[0.08] text-[#163300] mb-2 shadow-2xs">
+          {mode === "request" && <Mail className="w-5 h-5 text-[#163300]" />}
+          {mode === "verify" && <KeyRound className="w-5 h-5 text-[#163300]" />}
+          {mode === "reset" && <Lock className="w-5 h-5 text-[#163300]" />}
         </div>
-        <h2 className="font-display text-2.5xl font-extrabold text-slate-300 dark:text-white tracking-tight">
+        <h2 className="font-display text-2.5xl sm:text-3xl font-bold text-[#121814] tracking-tight">
           {mode === "request" && "Reset access"}
           {mode === "verify" && "Enter Reset Code"}
           {mode === "reset" && "Set New Password"}
         </h2>
-        <p className="text-xs text-oneprofile-600 font-semibold leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#576159] leading-relaxed">
           {mode === "request" && "Enter your registered email address to receive a secure reset code."}
           {mode === "verify" && `We sent a 6-digit password reset code to ${email}.`}
           {mode === "reset" && "Choose a strong, unique password to secure your account access."}
@@ -165,7 +165,6 @@ export function ForgotPasswordPage() {
 
       {successMessage && (
         <Alert variant="success" className="flex items-start gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
           <span>{successMessage}</span>
         </Alert>
       )}
@@ -178,7 +177,6 @@ export function ForgotPasswordPage() {
 
       {errorMessage && (
         <Alert variant="error" className="flex items-start gap-2">
-          <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
           <span>{errorMessage}</span>
         </Alert>
       )}
@@ -198,7 +196,9 @@ export function ForgotPasswordPage() {
           <div className="pt-2">
             <Button
               type="submit"
-              className="w-full h-12 rounded-2xl text-xs font-bold"
+              variant="primary"
+              size="lg"
+              className="w-full text-xs font-semibold shadow-xs"
               loading={status === "loading"}
             >
               Send Reset Code
@@ -221,24 +221,26 @@ export function ForgotPasswordPage() {
           <div className="space-y-3">
             <Button
               type="submit"
-              className="w-full h-12 rounded-2xl text-xs font-bold"
+              variant="primary"
+              size="lg"
+              className="w-full text-xs font-semibold shadow-xs"
               loading={status === "loading"}
               disabled={otp.length !== 6 || status === "success"}
             >
               Verify Code
             </Button>
 
-            <div className="flex items-center justify-between text-xs font-semibold px-1">
+            <div className="flex items-center justify-between text-xs px-1">
               <button
                 type="button"
                 onClick={handleResendOtp}
                 disabled={cooldown > 0 || status === "loading"}
-                className="text-primary hover:text-primary-hover disabled:text-oneprofile-600 transition-colors"
+                className="text-[#163300] hover:underline disabled:text-[#879289] font-semibold transition-colors"
               >
                 Resend Code
               </button>
               {cooldown > 0 && (
-                <span className="text-oneprofile-600">
+                <span className="text-[#879289] font-mono">
                   Resend in {cooldown}s
                 </span>
               )}
@@ -270,7 +272,9 @@ export function ForgotPasswordPage() {
           <div className="pt-2">
             <Button
               type="submit"
-              className="w-full h-12 rounded-2xl text-xs font-bold"
+              variant="primary"
+              size="lg"
+              className="w-full text-xs font-semibold shadow-xs"
               loading={status === "loading"}
             >
               Reset Password
@@ -279,15 +283,16 @@ export function ForgotPasswordPage() {
         </form>
       )}
 
-      <div className="pt-3 border-t border-oneprofile-700 text-xs font-semibold text-center">
+      <div className="pt-4 border-t border-black/[0.06] text-xs text-center">
         <Link
-          className="text-oneprofile-600 hover:text-slate-300 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 mx-auto"
+          className="text-[#576159] hover:text-[#121814] transition-colors flex items-center justify-center gap-1.5 mx-auto font-medium"
           to="/login"
         >
-          <ArrowLeft className="w-3.5 h-3.5" /> Back to login
+          <ArrowLeft className="w-4 h-4" /> Back to sign in
         </Link>
       </div>
     </motion.div>
   );
 }
+
 

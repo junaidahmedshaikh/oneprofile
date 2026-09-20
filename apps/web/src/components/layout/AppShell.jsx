@@ -1,64 +1,40 @@
 import { useState } from "react";
-import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import {
+  LayoutDashboard,
+  UserCheck,
+  Globe,
+  ExternalLink,
+  LogOut,
+  Sparkles,
+  Smartphone,
+  ChevronRight,
+} from "lucide-react";
 import { Button } from "../ui/Button";
 import { authApi } from "../../lib/authApi";
 import { dashboardApi } from "../../lib/dashboardApi";
+import { profileApi } from "../../lib/profileApi";
 import { clearAuth } from "../../store/authSlice";
 import { DashboardSearch } from "../dashboard/DashboardSearch";
+import { OneProfileLogo } from "../ui/OneProfileLogo";
 
 const navItems = [
   {
     to: "/dashboard",
     label: "Dashboard",
-    icon: (
-      <svg
-        className="h-5 w-5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"
-        />
-      </svg>
-    ),
+    icon: LayoutDashboard,
   },
-  // {
-  //   to: "/sessions",
-  //   label: "Devices",
-  //   icon: (
-  //     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-  //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-  //     </svg>
-  //   )
-  // },
-
   {
     to: "/identity",
-    label: "Identity Settings",
-    icon: (
-      <svg
-        className="h-5 w-5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-        />
-      </svg>
-    ),
+    label: "Identity Studio",
+    icon: UserCheck,
   },
 ];
+
+import { AmbientBackground } from "../ui/AmbientBackground";
 
 export function AppShell() {
   const dispatch = useDispatch();
@@ -85,8 +61,18 @@ export function AppShell() {
     enabled: !!authUser,
   });
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
   const displayUser = meQuery.data || authUser;
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile", "me"],
+    queryFn: async () => {
+      const response = await profileApi.me();
+      return response.data.data;
+    },
+    enabled: !!authUser,
+  });
+
+  const liveSlug = profile?.slug || displayUser?.publishedProfileSlug || displayUser?.username;
 
   const logoutMutation = useMutation({
     mutationFn: () => authApi.logout(),
@@ -97,124 +83,141 @@ export function AppShell() {
   });
 
   return (
-    <div className="relative min-h-screen text-white flex flex-col">
-      {/* Background ambient glows */}
-      <div className="glow-blob w-[500px] h-[500px] bg-brand-500/10 top-[-10%] left-[-10%]" />
-      <div className="glow-blob w-[600px] h-[600px] bg-purple-500/5 bottom-[-20%] right-[-10%]" />
+    <div className="relative min-h-screen bg-[#FAFAF7] text-[#121814] flex flex-col selection:bg-[#9FE870] selection:text-[#163300]">
+      <AmbientBackground />
 
-      {/* Header bar */}
-      <header className="relative z-20 border-b border-white/[0.05] bg-[#090a0f]/10 rounded-3xl mx-10 mt-2 backdrop-blur-xl px-6 py-4 sticky top-0">
+      {/* Sticky Editorial Workspace Header */}
+      <header className="sticky top-0 z-30 border-b border-black/[0.07] bg-[#FAFAF7]/90 backdrop-blur-md px-4 sm:px-8 py-3">
         <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">
+          {/* Brand Logo & Context Label */}
           <div className="flex items-center gap-3 shrink-0">
-            <img
-              src="/oneprofile_logo.png"
-              alt="OneProfile Logo"
-              className="h-10 w-auto object-contain"
-            />
-            <span className="font-display font-extrabold text-md tracking-tight hidden xs:inline-block">
-              OneProfile
+            <Link to="/dashboard" className="flex items-center gap-2.5 group">
+              <OneProfileLogo size="md" variant="primary" showDomain={true} />
+            </Link>
+            <span className="hidden sm:inline-block h-3.5 w-px bg-black/[0.12] mx-1" />
+            <span className="hidden sm:inline-block text-[11px] font-bold uppercase tracking-[0.16em] text-[#879289]">
+              Workspace
             </span>
-            <span className="hidden sm:inline-block h-4 w-px bg-white/10 mx-2" />
           </div>
 
           {/* Center search command bar */}
-          <div className="flex-1 max-w-sm hidden md:block">
+          <div className="flex-1 max-w-md hidden md:block">
             <DashboardSearch />
           </div>
 
+          {/* Right actions: Live Profile pill, user badge, sign out */}
           <div className="flex items-center gap-3">
+            {liveSlug ? (
+              <a
+                href={`/p/${liveSlug}`}
+                target="_blank"
+                rel="noreferrer"
+                title="View your public digital profile in new tab"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#163300] text-[#9FE870] hover:bg-[#0E2100] text-xs font-semibold transition-all shadow-xs shrink-0"
+              >
+                <Globe className="w-3.5 h-3.5 text-[#9FE870]" />
+                <span className="hidden sm:inline">oneprofile.in/p/{liveSlug}</span>
+                <span className="sm:hidden">Live Profile</span>
+                <ExternalLink className="w-3 h-3 text-[#9FE870]/80" />
+              </a>
+            ) : null}
+
             {displayUser ? (
               <div
-                className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-white/[0.03] border border-white/[0.06]"
+                className="flex items-center gap-2 px-2.5 py-1.5 rounded-2xl bg-white/90 border border-black/[0.08] shadow-xs"
                 aria-label={`Logged in as ${displayUser.name}`}
               >
-                <span className="text-xs font-semibold text-slate-300 hidden lg:inline-block truncate max-w-[100px]">
+                <div className="w-6 h-6 rounded-full bg-[#163300] text-[#9FE870] font-display font-black text-xs flex items-center justify-center shrink-0">
+                  {displayUser.name?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <span className="text-xs font-semibold text-[#121814] hidden lg:inline-block truncate max-w-[110px]">
                   {displayUser.name}
                 </span>
               </div>
             ) : null}
 
             <Button
-              variant="secondary"
+              variant="ghost"
+              size="sm"
               aria-label="Sign out of account"
-              className="min-h-9 h-9 rounded-xl px-3.5 text-xs font-bold border-white/[0.08]"
+              className="h-9 rounded-xl px-3 text-xs font-semibold text-[#576159] hover:text-rose-600 hover:bg-rose-50"
               loading={logoutMutation.isPending}
               onClick={() => logoutMutation.mutate()}
             >
-              Sign out
+              <LogOut className="w-3.5 h-3.5 sm:mr-1.5" />
+              <span className="hidden sm:inline">Sign out</span>
             </Button>
           </div>
         </div>
       </header>
 
+      {/* Mobile Search Bar */}
+      <div className="block md:hidden px-4 pt-4">
+        <DashboardSearch />
+      </div>
+
       {/* Main split grid */}
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 lg:px-8 flex-1 grid gap-8 lg:grid-cols-[240px_1fr]">
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-8 sm:py-8 flex-1 grid gap-8 lg:grid-cols-[240px_1fr]">
         {/* Navigation Sidebar */}
-        <aside className="space-y-8">
-          <div className="rounded-ds-card border border-oneprofile-700 bg-oneprofile-900/40 p-6 backdrop-blur-xl">
-            <div className="text-3xs uppercase tracking-[0.25em] text-primary font-bold px-3 mb-5">
-              Menu Navigation
+        <aside className="space-y-6">
+          <div className="rounded-3xl border border-black/[0.07] bg-white/80 backdrop-blur-sm p-4 sm:p-5 shadow-xs space-y-4">
+            <div className="text-[10px] uppercase tracking-[0.2em] text-[#879289] font-bold px-2">
+              Workspace
             </div>
 
-            {/* Search visible on mobile sidebar */}
-            <div className="block md:hidden mb-5 px-1">
-              <DashboardSearch />
-            </div>
-
-            <nav className="space-y-2.5" aria-label="Sidebar Navigation">
+            <nav className="space-y-1" aria-label="Sidebar Navigation">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.to;
+                const IconComponent = item.icon;
                 return (
                   <NavLink
                     key={item.to}
                     to={item.to}
                     aria-label={`Go to ${item.label}`}
-                    className={`flex items-center gap-4 rounded-ds-btn px-5 py-3.5 text-xs font-bold transition-all duration-150 ease-ds-out relative overflow-hidden ${
+                    className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-all duration-150 ${
                       isActive
-                        ? "bg-primary/10 text-white border border-primary/20 shadow-ds-card"
-                        : "text-slate-400 hover:text-white hover:bg-white/[0.03] border border-transparent"
+                        ? "bg-[#163300] text-[#FAFAF7] shadow-xs"
+                        : "text-[#576159] hover:text-[#121814] hover:bg-black/[0.04]"
                     }`}
                   >
-                    <span
-                      className={isActive ? "text-primary" : "text-slate-500"}
-                    >
-                      {item.icon}
-                    </span>
-                    <span>{item.label}</span>
-                    {isActive ? (
-                      <motion.div
-                        layoutId="activePill"
-                        className="absolute left-0 top-3.5 bottom-3.5 w-1.2 bg-primary rounded-full"
-                        transition={{
-                          type: "spring",
-                          stiffness: 380,
-                          damping: 30,
-                        }}
+                    <div className="flex items-center gap-2.5">
+                      <IconComponent
+                        className={`w-4 h-4 ${
+                          isActive ? "text-[#9FE870]" : "text-[#879289]"
+                        }`}
                       />
-                    ) : null}
+                      <span>{item.label}</span>
+                    </div>
+                    {isActive ? (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#9FE870]" />
+                    ) : (
+                      <ChevronRight className="w-3.5 h-3.5 text-black/20" />
+                    )}
                   </NavLink>
                 );
               })}
             </nav>
           </div>
 
-          {/* Quick Help Card */}
-          <div className="hidden lg:block rounded-ds-card border border-white/[0.03] bg-gradient-to-br from-white/[0.02] to-transparent p-5 backdrop-blur-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 rounded-full blur-xl pointer-events-none" />
-            <h4 className="text-xs font-bold text-white mb-2">
-              Need assistance?
-            </h4>
-            <p className="text-3xs leading-relaxed text-slate-500 font-semibold">
-              Set up your custom username, digital business card, and sync with
-              your local integrations securely.
+          {/* Smart NFC Card Promo Widget */}
+          <div className="rounded-3xl border border-black/[0.08] bg-[#121814] p-5 text-white shadow-md space-y-3.5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-28 h-28 bg-[#9FE870]/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#9FE870] uppercase tracking-wider">
+                <Smartphone className="w-4 h-4" />
+                <span>NFC Hardware</span>
+              </div>
+              <span className="text-[10px] font-mono text-white/50">NFC v2.4</span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed font-normal">
+              Tap your physical metallic card to any modern smartphone to transmit your digital profile in 1 tap.
             </p>
-            <a
-              href="mailto:support@oneprofile.id"
-              aria-label="Contact support email address"
-              className="inline-block mt-3.5 text-3xs font-bold text-primary hover:underline"
+            <Link
+              to="/pricing"
+              className="inline-flex items-center justify-center w-full py-2 px-3 rounded-xl bg-[#9FE870] hover:bg-[#8DE05B] text-[#163300] font-bold text-xs transition-colors shadow-xs"
             >
-              Email Helpdesk →
-            </a>
+              Order NFC Card →
+            </Link>
           </div>
         </aside>
 
@@ -226,3 +229,4 @@ export function AppShell() {
     </div>
   );
 }
+

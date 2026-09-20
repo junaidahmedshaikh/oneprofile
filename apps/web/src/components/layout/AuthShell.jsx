@@ -1,116 +1,141 @@
 import { motion } from "framer-motion";
 import { Outlet, Link } from "react-router-dom";
-import clsx from "clsx";
+import { ShieldCheck, Sparkles, Smartphone, Check, ArrowRight } from "lucide-react";
+import { OneProfileLogo } from "../ui/OneProfileLogo";
 
 export function AuthShell({ eyebrow, title, subtitle, children, sideContent }) {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-oneprofile-950 text-oneprofile-500 flex flex-col justify-between transition-colors duration-300">
-      {/* Background ambient glows */}
-      <div className="glow-blob w-[500px] h-[500px] bg-primary/10 top-[-10%] left-[-10%]" />
-      <div className="glow-blob w-[600px] h-[600px] bg-secondary/5 bottom-[-20%] right-[-10%] delay-3000" />
-      <div className="glow-blob w-[400px] h-[400px] bg-purple-500/5 top-[30%] right-[20%] delay-5000" />
+    <div className="relative min-h-screen bg-[#FAFAF7] text-[#121814] flex flex-col justify-between selection:bg-[#9FE870] selection:text-[#163300]">
+      {/* Ambient background with quiet paper depth */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#9FE870]/12 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 -right-32 w-96 h-96 bg-[#163300]/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 left-1/4 w-[500px] h-[500px] bg-[#163300]/5 rounded-full blur-3xl" />
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `radial-gradient(#121814 1px, transparent 1px)`,
+            backgroundSize: "24px 24px",
+          }}
+        />
+      </div>
 
       {/* Header bar */}
-      <header className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-6 flex items-center justify-between">
-        <Link to="/login" className="flex items-center gap-2.5 group">
-          <img
-            src="oneprofile_vertical_logo.png"
-            alt="OneProfile Logo"
-            className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-200"
-          />
+      <header className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-8 pt-6 sm:pt-8 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2.5 group transition-transform active:scale-95">
+          <OneProfileLogo size="md" variant="primary" showDomain={true} />
         </Link>
-        <span className="text-xs font-bold uppercase tracking-widest text-oneprofile-600 select-none">
-          v1.0.0
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F6F5EE] border border-black/[0.08] text-[11px] font-mono uppercase tracking-wider text-[#576159]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#163300]" />
+            Enterprise-ready
+          </span>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#576159] hover:text-[#121814] transition-colors py-1.5 px-3 rounded-xl hover:bg-black/[0.04]"
+          >
+            Back to Home
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </header>
 
       {/* Main split grid */}
-      <div className="relative  z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-12 px-6 py-12 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
-        {/* Left Side: Presentation */}
+      <main className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-12 px-6 sm:px-8 py-10 lg:grid-cols-[1.08fr_0.92fr]">
+        {/* Left Side: Brand Story & Live Showcase */}
         <motion.section
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
           className="flex flex-col justify-center h-full max-w-xl"
         >
           <div>
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-slate-400/20 text-3xs font-bold uppercase tracking-wider text-primary">
-              <span className="h-2 w-2 rounded-full bg-slate-600 animate-pulse" />
-              {eyebrow || "Digital Identity"}
-            </span>
-            <h1 className="mt-6 font-display text-2xl font-extrabold tracking-tight text-slate-300 dark:text-white sm:text-2xl lg:text-4xl leading-[1.1]">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F6F5EE] border border-black/[0.08] text-[#163300] text-xs font-mono uppercase tracking-wider shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5" />
+              {eyebrow || "Digital Identity Suite"}
+            </div>
+
+            <h1 className="mt-5 font-display text-3xl sm:text-4xl lg:text-[44px] font-bold tracking-tight text-[#121814] leading-[1.08]">
               {title}
             </h1>
-            <p className="mt-6 text-xs leading-relaxed text-oneprofile-600 font-semibold">
+
+            <p className="mt-4 text-base sm:text-lg text-[#576159] leading-relaxed">
               {subtitle}
             </p>
           </div>
 
-          <div className="mt-12 hidden lg:block">
+          <div className="mt-8 hidden lg:block">
             {sideContent || (
-              <div className="relative p-1 bg-oneprofile-100 border border-oneprofile-700 rounded-ds-card overflow-hidden shadow-ds-card backdrop-blur-xl">
-                {/* Simulated Premium profile card */}
-                <div className="relative  p-6 rounded-2xl overflow-hidden bg-oneprofile-900/40">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="relative rounded-2xl border border-black/[0.08] bg-white p-6 shadow-[0_20px_50px_rgba(18,24,20,0.03)] space-y-5">
+                {/* Live Card Mockup */}
+                <div className="relative rounded-xl bg-[#121814] p-6 text-white border border-black/[0.12] shadow-sm overflow-hidden">
+                  <div className="absolute top-0 right-0 w-44 h-44 bg-[#9FE870]/10 rounded-full blur-2xl pointer-events-none" />
 
-                  {/* Card head */}
-                  <div className="flex items-center justify-between">
+                  {/* Header of card */}
+                  <div className="flex items-center justify-between relative z-10">
                     <div className="flex items-center gap-3">
-                      <div className="h-11 w-11 rounded-xl p-0.5 ">
-                        {/* <div className="h-full w-full rounded-md border border-oneprofile-700 bg-oneprofile-900/40 flex items-center justify-center text-xs font-bold text-primary">
-                          OP
-                        </div> */}
-                        <img
-                          src="/oneprofile_logo.png"
-                          alt="OneProfile Logo"
-                          className="h-full w-full object-contain rounded-md"
-                        />
+                      <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center font-bold text-[#9FE870] text-sm font-display">
+                        AR
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-slate-300 dark:text-white">
-                          OneProfile Premium
+                        <div className="text-sm font-bold text-white flex items-center gap-1.5">
+                          Alex Rivera
+                          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#163300] text-[#9FE870] text-[10px] font-bold">
+                            ✓
+                          </span>
                         </div>
-                        <div className="text-3xs text-oneprofile-600 font-semibold">
-                          oneprofile.id/sarah
+                        <div className="text-xs text-[#879289] font-mono">
+                          oneprofile.in/p/alex
                         </div>
                       </div>
                     </div>
-                    <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-4xs font-bold uppercase tracking-wider text-emerald-400">
-                      Verified
+                    <span className="rounded-full bg-white/[0.08] border border-white/10 px-3 py-1 text-[11px] font-mono uppercase tracking-wider text-[#9FE870] flex items-center gap-1">
+                      <Smartphone className="w-3 h-3" /> NFC Card Active
                     </span>
                   </div>
 
-                  {/* Body elements representing different modules */}
-                  <div className="mt-6 space-y-3">
-                    <div className="h-px bg-oneprofile-700" />
-                    <div className="flex items-center justify-between text-xs text-oneprofile-600 py-1">
-                      <span>Digital Business Card</span>
-                      <span className="text-primary dark:text-slate-300 font-bold">
-                        Active
-                      </span>
+                  {/* Metrics preview */}
+                  <div className="grid grid-cols-3 gap-3 mt-6 pt-5 border-t border-white/10 text-center relative z-10">
+                    <div className="bg-white/[0.04] rounded-xl p-2.5 border border-white/10">
+                      <div className="text-lg font-bold font-display text-white">
+                        4,820
+                      </div>
+                      <div className="text-[10px] text-[#879289] font-mono uppercase tracking-wider">
+                        Profile Views
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between text-xs text-oneprofile-600 py-1">
-                      <span>Mini Portfolio Website</span>
-                      <span className="text-primary font-bold dark:text-slate-300">
-                        Published
-                      </span>
+                    <div className="bg-white/[0.04] rounded-xl p-2.5 border border-white/10">
+                      <div className="text-lg font-bold font-display text-[#9FE870]">
+                        98.4%
+                      </div>
+                      <div className="text-[10px] text-[#879289] font-mono uppercase tracking-wider">
+                        Contact Saves
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between text-xs text-oneprofile-600 py-1">
-                      <span>Booking Calendar</span>
-                      <span className="text-primary font-bold">Active</span>
+                    <div className="bg-white/[0.04] rounded-xl p-2.5 border border-white/10">
+                      <div className="text-lg font-bold font-display text-white">
+                        Instant
+                      </div>
+                      <div className="text-[10px] text-[#879289] font-mono uppercase tracking-wider">
+                        NFC Tap Sync
+                      </div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Visual mockup block */}
-                  <div className="mt-6 bg-oneprofile-950/60 rounded-2xl border border-oneprofile-700 p-4 flex gap-4 items-center">
-                    <div className="h-10 w-10 shrink-0 bg-white/5 rounded-xl flex items-center justify-center text-lg">
-                      ✨
+                {/* Trust Points */}
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#121814]">
+                    <div className="w-5 h-5 rounded-full bg-[#F6F5EE] border border-black/[0.08] text-[#163300] flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 stroke-[3]" />
                     </div>
-                    <div className="flex-1">
-                      <div className="h-2 w-20 bg-slate-400/20 rounded-full" />
-                      <div className="h-1.5 w-32 bg-slate-400/10 rounded-full mt-2" />
+                    <span>Zero app install needed</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#121814]">
+                    <div className="w-5 h-5 rounded-full bg-[#F6F5EE] border border-black/[0.08] text-[#163300] flex items-center justify-center shrink-0">
+                      <ShieldCheck className="w-3.5 h-3.5" />
                     </div>
-                    <div className="h-5 w-14 bg-slate-300/10 border border-slate-400/20 rounded-lg" />
+                    <span>End-to-end encrypted</span>
                   </div>
                 </div>
               </div>
@@ -118,28 +143,41 @@ export function AuthShell({ eyebrow, title, subtitle, children, sideContent }) {
           </div>
         </motion.section>
 
-        {/* Right Side: Form Content Card */}
+        {/* Right Side: Form Card */}
         <motion.section
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3, delay: 0.1, ease: "easeOut" }}
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.35, delay: 0.05, ease: "easeOut" }}
           className="w-full flex items-center justify-center"
         >
-          <div className="w-full max-w-[460px] bg-oneprofile-100 rounded-ds-modal border border-oneprofile-700 p-6 sm:p-9 shadow-ds-modal backdrop-blur-xl relative overflow-hidden">
-            {/* Top glowing line decoration */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+          <div className="w-full max-w-[480px] bg-white rounded-2xl border border-black/[0.08] p-7 sm:p-10 shadow-[0_20px_50px_rgba(18,24,20,0.03)] relative overflow-hidden">
+            {/* Top accent hairline */}
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#9FE870]/60 to-transparent" />
             <div className="relative z-10">{children || <Outlet />}</div>
           </div>
         </motion.section>
-      </div>
+      </main>
 
       {/* Footer bar */}
-      <footer className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-6 text-center lg:text-left">
-        <p className="text-xs text-oneprofile-600  tracking-wider">
-          © {new Date().getFullYear()} OneProfile Technologies Inc. All rights
-          reserved.
+      <footer className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-8 py-6 text-center sm:flex sm:items-center sm:justify-between border-t border-black/[0.08]">
+        <p className="text-[11px] font-mono uppercase tracking-wider text-[#879289]">
+          © {new Date().getFullYear()} OneProfile Technologies Inc. All rights reserved.
         </p>
+        <div className="flex items-center justify-center gap-5 mt-3 sm:mt-0 text-[11px] font-mono uppercase tracking-wider text-[#576159]">
+          <Link to="/pricing" className="hover:text-[#121814] transition-colors">
+            Pricing
+          </Link>
+          <span className="text-black/20">•</span>
+          <a href="#" className="hover:text-[#121814] transition-colors">
+            Privacy Policy
+          </a>
+          <span className="text-black/20">•</span>
+          <a href="#" className="hover:text-[#121814] transition-colors">
+            Terms of Service
+          </a>
+        </div>
       </footer>
     </div>
   );
 }
+

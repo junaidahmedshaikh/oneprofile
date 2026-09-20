@@ -1,53 +1,102 @@
-export function BusinessPreview({ values }) {
-  const { companyName, tagline, description, logoUrl, services = [], products = [] } = values;
+import { Building2, Globe, Mail, Phone, Download } from "lucide-react";
+
+export function BusinessPreview({ values = {} }) {
+  const {
+    companyName,
+    tagline,
+    description,
+    logoUrl,
+    services = [],
+    products = [],
+    contactDetails = {},
+    location = {},
+  } = values;
 
   return (
-    <div className="space-y-5 animate-fadeUp">
+    <div className="space-y-4 select-none">
       {/* Company Cover Banner */}
-      <div className="h-20 w-full bg-gradient-to-tr from-brand-500/20 to-brand-400/5 rounded-xl border border-white/5 flex items-center justify-center text-3xs font-extrabold uppercase text-slate-500 select-none">
-        Corporate Banner
+      <div className="h-24 w-full bg-gradient-to-r from-[#163300] to-[#2d5214] rounded-xl relative overflow-hidden flex items-end p-3 shadow-inner">
+        <div className="absolute inset-0 bg-black/10" />
+        <span className="relative z-10 text-[9px] font-mono uppercase tracking-widest text-white/90 bg-black/30 backdrop-blur-md px-2 py-0.5 rounded">
+          Business Card
+        </span>
       </div>
 
       {/* Brand Header */}
-      <div className="flex items-center gap-3.5">
+      <div className="flex items-start gap-3.5 -mt-7 px-2 relative z-10">
         {logoUrl ? (
           <img
             src={logoUrl}
             alt="Logo"
-            className="h-12 w-12 rounded-2xl object-cover border border-white/10 shadow"
+            className="h-14 w-14 rounded-xl object-cover border-2 border-white bg-white shadow-md shrink-0"
           />
         ) : (
-          <div className="h-12 w-12 rounded-2xl bg-brand-500/20 border border-brand-500/30 flex items-center justify-center font-bold text-brand-300">
+          <div className="h-14 w-14 rounded-xl bg-[#163300] text-[#9FE870] border-2 border-white flex items-center justify-center font-display font-bold text-lg shadow-md shrink-0">
             {(companyName || "B").charAt(0).toUpperCase()}
           </div>
         )}
-        <div className="min-w-0">
-          <div className="text-sm font-bold text-white truncate">{companyName || "Business Name"}</div>
-          <div className="text-3xs text-slate-400 mt-0.5 truncate max-w-[160px]">
-            {tagline || "Brand Tagline"}
-          </div>
+        <div className="min-w-0 pt-7">
+          <h4 className="text-base font-display font-bold text-[#121814] truncate">
+            {companyName || "Business Name"}
+          </h4>
+          <p className="text-xs text-[#576159] truncate mt-0.5">
+            {tagline || "Brand Tagline or Industry"}
+          </p>
         </div>
       </div>
 
-      <div className="h-px bg-white/[0.06]" />
+      {/* Quick Location */}
+      {location?.city && (
+        <div className="px-2 text-[11px] text-[#879289]">
+          📍 {[location.city, location.country].filter(Boolean).join(", ")}
+        </div>
+      )}
+
+      <div className="h-px bg-black/[0.06]" />
 
       {/* Description Summary */}
-      <div className="space-y-1">
-        <span className="text-3xs uppercase tracking-[0.25em] text-slate-500 font-bold">About Us</span>
-        <p className="text-2xs text-slate-300 leading-relaxed truncate-3-lines">
-          {description || "Provide details about your business offerings and organization goals."}
+      <div className="px-2 space-y-1">
+        <span className="text-[10px] font-mono uppercase tracking-wider text-[#879289]">
+          About Organization
+        </span>
+        <p className="text-xs text-[#576159] leading-relaxed line-clamp-3">
+          {description || "Provide details about your business offerings, mission, and company goals."}
         </p>
       </div>
 
       {/* Catalog Counts */}
-      <div className="grid grid-cols-2 gap-3.5 py-1">
-        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-center">
-          <span className="text-3xs font-semibold text-slate-500 block">Services</span>
-          <span className="text-sm font-bold text-white mt-1 block">{services.length} Packages</span>
+      <div className="grid grid-cols-2 gap-2.5 pt-1">
+        <div className="p-3 rounded-xl bg-[#F6F5EE] border border-black/[0.06] text-center">
+          <span className="text-[10px] font-mono text-[#879289] uppercase tracking-wider block">
+            Services
+          </span>
+          <span className="text-sm font-display font-bold text-[#121814] mt-0.5 block">
+            {services.length} Listed
+          </span>
         </div>
-        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-center">
-          <span className="text-3xs font-semibold text-slate-500 block">Products</span>
-          <span className="text-sm font-bold text-white mt-1 block">{products.length} Items</span>
+        <div className="p-3 rounded-xl bg-[#F6F5EE] border border-black/[0.06] text-center">
+          <span className="text-[10px] font-mono text-[#879289] uppercase tracking-wider block">
+            Products
+          </span>
+          <span className="text-sm font-display font-bold text-[#121814] mt-0.5 block">
+            {products.length} Catalogued
+          </span>
+        </div>
+      </div>
+
+      {/* Interactive Micro Actions */}
+      <div className="grid grid-cols-3 gap-1.5 pt-2">
+        <div className="flex items-center justify-center gap-1.5 p-2 rounded-lg bg-white border border-black/[0.08] text-[#121814] text-[10px] font-medium shadow-2xs">
+          <Phone className="w-3 h-3 text-[#163300]" />
+          <span>Call</span>
+        </div>
+        <div className="flex items-center justify-center gap-1.5 p-2 rounded-lg bg-white border border-black/[0.08] text-[#121814] text-[10px] font-medium shadow-2xs">
+          <Mail className="w-3 h-3 text-[#163300]" />
+          <span>Email</span>
+        </div>
+        <div className="flex items-center justify-center gap-1.5 p-2 rounded-lg bg-[#163300] text-white text-[10px] font-medium shadow-2xs">
+          <Download className="w-3 h-3 text-[#9FE870]" />
+          <span>Save Card</span>
         </div>
       </div>
     </div>
